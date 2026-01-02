@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS public.projects (
   tutor TEXT,
   start_date DATE NOT NULL,
   end_date DATE NOT NULL,
+  CHECK (end_date >= start_date),
   approved_ante_project BOOLEAN NOT NULL DEFAULT FALSE,
   approved_ante_project_at TIMESTAMPTZ,
   project_received BOOLEAN NOT NULL DEFAULT FALSE,

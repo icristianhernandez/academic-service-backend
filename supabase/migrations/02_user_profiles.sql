@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS public.students (
   section TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CHECK (ci ~ '^[0-9]{5,20}$'),
   UNIQUE (user_id),
   UNIQUE (ci)
 );

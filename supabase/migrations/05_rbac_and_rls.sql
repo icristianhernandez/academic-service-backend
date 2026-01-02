@@ -78,7 +78,7 @@ AS $$
     SELECT 1 FROM public.role_assignments ra
     WHERE ra.user_id = p_uid
       AND ra.role_name = 'dean'
-      AND (ra.faculty_id IS NULL OR ra.faculty_id = p_faculty_id)
+      AND ra.faculty_id = p_faculty_id
   );
 $$;
 
@@ -91,7 +91,7 @@ AS $$
     SELECT 1 FROM public.role_assignments ra
     WHERE ra.user_id = p_uid
       AND ra.role_name IN ('director_school', 'coordinator')
-      AND (ra.school_id IS NULL OR ra.school_id = p_school_id)
+      AND ra.school_id = p_school_id
   );
 $$;
 
@@ -191,6 +191,7 @@ BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'projects' AND policyname = 'projects_update_scoped'
   ) THEN
+    -- Only scoped administrative roles can update projects; students are read-only
     CREATE POLICY projects_update_scoped ON public.projects
     FOR UPDATE USING (
       public.has_global_access(auth.uid())
