@@ -95,6 +95,26 @@ AS $$
   );
 $$;
 
+-- Helper to determine administrative access to a project via its student
+CREATE OR REPLACE FUNCTION public.can_manage_project(p_uid UUID, p_student_id BIGINT)
+RETURNS BOOLEAN
+LANGUAGE sql
+STABLE
+AS $$
+  SELECT
+    public.has_global_access(p_uid)
+    OR EXISTS (
+      SELECT 1 FROM public.students s
+      WHERE s.id = p_student_id
+        AND public.has_faculty_access(p_uid, s.faculty_id)
+    )
+    OR EXISTS (
+      SELECT 1 FROM public.students s
+      WHERE s.id = p_student_id
+        AND public.has_school_access(p_uid, s.school_id)
+    );
+$$;
+
 -- Enable RLS
 ALTER TABLE public.students ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
@@ -169,17 +189,7 @@ BEGIN
   ) THEN
     CREATE POLICY projects_select_scoped ON public.projects
     FOR SELECT USING (
-      public.has_global_access(auth.uid())
-      OR EXISTS (
-        SELECT 1 FROM public.students s
-        WHERE s.id = public.projects.student_id
-          AND public.has_faculty_access(auth.uid(), s.faculty_id)
-      )
-      OR EXISTS (
-        SELECT 1 FROM public.students s
-        WHERE s.id = public.projects.student_id
-          AND public.has_school_access(auth.uid(), s.school_id)
-      )
+      public.can_manage_project(auth.uid(), public.projects.student_id)
       OR EXISTS (
         SELECT 1 FROM public.students s
         WHERE s.id = public.projects.student_id
@@ -194,30 +204,10 @@ BEGIN
     -- Only scoped administrative roles can update projects; students are read-only
     CREATE POLICY projects_update_scoped ON public.projects
     FOR UPDATE USING (
-      public.has_global_access(auth.uid())
-      OR EXISTS (
-        SELECT 1 FROM public.students s
-        WHERE s.id = public.projects.student_id
-          AND public.has_faculty_access(auth.uid(), s.faculty_id)
-      )
-      OR EXISTS (
-        SELECT 1 FROM public.students s
-        WHERE s.id = public.projects.student_id
-          AND public.has_school_access(auth.uid(), s.school_id)
-      )
+      public.can_manage_project(auth.uid(), public.projects.student_id)
     )
     WITH CHECK (
-      public.has_global_access(auth.uid())
-      OR EXISTS (
-        SELECT 1 FROM public.students s
-        WHERE s.id = public.projects.student_id
-          AND public.has_faculty_access(auth.uid(), s.faculty_id)
-      )
-      OR EXISTS (
-        SELECT 1 FROM public.students s
-        WHERE s.id = public.projects.student_id
-          AND public.has_school_access(auth.uid(), s.school_id)
-      )
+      public.can_manage_project(auth.uid(), public.projects.student_id)
     );
   END IF;
 
@@ -226,17 +216,7 @@ BEGIN
   ) THEN
     CREATE POLICY projects_insert_scoped ON public.projects
     FOR INSERT WITH CHECK (
-      public.has_global_access(auth.uid())
-      OR EXISTS (
-        SELECT 1 FROM public.students s
-        WHERE s.id = public.projects.student_id
-          AND public.has_faculty_access(auth.uid(), s.faculty_id)
-      )
-      OR EXISTS (
-        SELECT 1 FROM public.students s
-        WHERE s.id = public.projects.student_id
-          AND public.has_school_access(auth.uid(), s.school_id)
-      )
+      public.can_manage_project(auth.uid(), public.projects.student_id)
       OR EXISTS (
         SELECT 1 FROM public.students s
         WHERE s.id = public.projects.student_id
