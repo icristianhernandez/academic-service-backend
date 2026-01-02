@@ -52,15 +52,15 @@ RETURNS trigger
 LANGUAGE plpgsql
 AS $$
 BEGIN
-  IF NEW.approved_ante_project AND (OLD IS NULL OR NOT OLD.approved_ante_project) AND NEW.approved_ante_project_at IS NULL THEN
+  IF NEW.approved_ante_project AND (TG_OP = 'INSERT' OR NOT OLD.approved_ante_project) AND NEW.approved_ante_project_at IS NULL THEN
     NEW.approved_ante_project_at := NOW();
   END IF;
 
-  IF NEW.project_received AND (OLD IS NULL OR NOT OLD.project_received) AND NEW.project_received_at IS NULL THEN
+  IF NEW.project_received AND (TG_OP = 'INSERT' OR NOT OLD.project_received) AND NEW.project_received_at IS NULL THEN
     NEW.project_received_at := NOW();
   END IF;
 
-  IF NEW.approved_final_project AND (OLD IS NULL OR NOT OLD.approved_final_project) AND NEW.approved_final_project_at IS NULL THEN
+  IF NEW.approved_final_project AND (TG_OP = 'INSERT' OR NOT OLD.approved_final_project) AND NEW.approved_final_project_at IS NULL THEN
     NEW.approved_final_project_at := NOW();
   END IF;
 

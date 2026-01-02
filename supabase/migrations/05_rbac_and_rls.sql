@@ -202,7 +202,7 @@ BEGIN
   END IF;
 
   IF NOT EXISTS (
-    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'projects' AND policyname = 'projects_update_scoped'
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'projects' AND policyname = 'projects_update_using'
   ) THEN
     -- Only scoped administrative roles can update projects; students are read-only
     CREATE POLICY projects_update_using ON public.projects

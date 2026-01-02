@@ -66,7 +66,7 @@ RETURNS UUID
 LANGUAGE sql
 STABLE
 AS $$
-  SELECT COALESCE(auth.uid(), NULLIF(current_setting('request.jwt.claim.sub', TRUE), '')::UUID, NULL);
+  SELECT COALESCE(auth.uid(), NULLIF(current_setting('request.jwt.claim.sub', TRUE), '')::UUID);
 $$;
 
 -- Audit logging for inserts and updates
