@@ -35,7 +35,7 @@
 - Timestamps: created_at/updated_at on transactional tables; audit log records table name, action, record PK, old/new JSON snapshots, and user identifier when available (auth.uid()).
 
 ## Access model scaffold
-- `access_roles` table seeds allowed organizational roles (rectoria, vicerrectorado_academico, planeamiento_admision, direccion_general, decano, director_escuela, coordinador).
+- `access_roles` table seeds allowed organizational roles (rectoria, vicerrectorado_academico, planeamiento_admision — Dirección de planeamiento y admisión, direccion_general, decano, director_escuela, coordinador) using the same role_key values as the migration seeds.
 - `user_roles` maps auth.users (user_id UUID) to one or more access_roles. Future RLS policies can use these tables; current migration only seeds structure.
 
 ## Migration steps
