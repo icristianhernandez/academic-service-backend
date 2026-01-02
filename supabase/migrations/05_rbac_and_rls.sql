@@ -225,14 +225,8 @@ BEGIN
     CREATE POLICY projects_admin_update ON public.projects
     FOR UPDATE USING (
       public.can_manage_project(auth.uid(), public.projects.student_id)
-    );
-  END IF;
-
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'projects' AND policyname = 'projects_admin_update_check'
-  ) THEN
-    CREATE POLICY projects_admin_update_check ON public.projects
-    FOR UPDATE WITH CHECK (
+    )
+    WITH CHECK (
       public.can_manage_project(auth.uid(), public.projects.student_id)
     );
   END IF;

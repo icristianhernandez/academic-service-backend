@@ -74,12 +74,7 @@ BEGIN
     RETURN auth.uid();
   END IF;
 
-  BEGIN
-    RETURN v_claim::UUID;
-  EXCEPTION
-    WHEN invalid_text_representation THEN
-      RETURN auth.uid();
-  END;
+  RETURN v_claim::UUID;
 EXCEPTION
   WHEN invalid_text_representation THEN
     RETURN auth.uid();
