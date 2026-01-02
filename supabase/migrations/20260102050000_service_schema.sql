@@ -91,8 +91,7 @@ create table if not exists public.service_enrollments (
   section_id smallint not null references public.sections(id),
   created_at timestamptz not null default timezone('utc', now()),
   updated_at timestamptz not null default timezone('utc', now()),
-  constraint service_enrollments_school_faculty_fk foreign key (school_id, faculty_id) references public.schools(id, faculty_id),
-  unique (person_id)
+  constraint service_enrollments_school_faculty_fk foreign key (school_id, faculty_id) references public.schools(id, faculty_id)
 );
 
 create table if not exists public.institutions (
@@ -185,10 +184,11 @@ create or replace function public.log_audit() returns trigger as $$
 declare
   pk text;
   snapshot jsonb;
+  pk_column text := coalesce(tg_argv[0], 'id');
 begin
-  -- Assumes audited tables expose an `id` primary key; update if auditing tables with different PK names.
+  -- Pass the PK column name as the first trigger argument (defaults to `id`).
   snapshot := case when tg_op = 'DELETE' then to_jsonb(old) else to_jsonb(new) end;
-  pk := coalesce(snapshot->>'id', '');
+  pk := coalesce(snapshot->>pk_column, '');
   insert into public.audit_log(table_name, record_id, action, actor_id, old_data, new_data)
   values (
     tg_table_name,
@@ -234,23 +234,23 @@ create trigger set_user_roles_updated_at before update on public.user_roles
 
 -- Trigger attachments (audit)
 create trigger audit_people after insert or update on public.people
-  for each row execute function public.log_audit();
+  for each row execute function public.log_audit('id');
 create trigger audit_person_contacts after insert or update on public.person_contacts
-  for each row execute function public.log_audit();
+  for each row execute function public.log_audit('id');
 create trigger audit_service_enrollments after insert or update on public.service_enrollments
-  for each row execute function public.log_audit();
+  for each row execute function public.log_audit('id');
 create trigger audit_institutions after insert or update on public.institutions
-  for each row execute function public.log_audit();
+  for each row execute function public.log_audit('id');
 create trigger audit_projects after insert or update on public.projects
-  for each row execute function public.log_audit();
+  for each row execute function public.log_audit('id');
 create trigger audit_project_specific_objectives after insert or update on public.project_specific_objectives
-  for each row execute function public.log_audit();
+  for each row execute function public.log_audit('id');
 create trigger audit_project_supervisors after insert or update on public.project_supervisors
-  for each row execute function public.log_audit();
+  for each row execute function public.log_audit('id');
 create trigger audit_project_milestones after insert or update on public.project_milestones
-  for each row execute function public.log_audit();
+  for each row execute function public.log_audit('id');
 create trigger audit_user_roles after insert or update on public.user_roles
-  for each row execute function public.log_audit();
+  for each row execute function public.log_audit('id');
 
 -- Trigger attachments (prevent delete)
 create trigger no_delete_people before delete on public.people
