@@ -144,7 +144,7 @@ create table if not exists public.project_milestones (
   project_id bigint not null references public.projects(id),
   milestone_type_id smallint not null references public.milestone_types(id),
   approved boolean not null,
-  decision_date date,
+  decision_date date not null,
   notes text,
   created_at timestamptz not null default timezone('utc', now()),
   updated_at timestamptz not null default timezone('utc', now()),
@@ -186,6 +186,7 @@ declare
   pk text;
   snapshot jsonb;
 begin
+  -- Assumes audited tables expose an `id` primary key; update if auditing tables with different PK names.
   snapshot := case when tg_op = 'DELETE' then to_jsonb(old) else to_jsonb(new) end;
   pk := coalesce(snapshot->>'id', '');
   insert into public.audit_log(table_name, record_id, action, actor_id, old_data, new_data)
