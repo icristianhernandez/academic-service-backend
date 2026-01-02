@@ -123,14 +123,21 @@ RETURNS BOOLEAN
 LANGUAGE sql
 STABLE
 AS $$
-  SELECT COALESCE(
-    EXISTS (
-      SELECT 1 FROM public.students s
-      WHERE s.id = p_student_id
-        AND s.user_id = p_uid
-    ),
-    FALSE
+  SELECT EXISTS (
+    SELECT 1 FROM public.students s
+    WHERE s.id = p_student_id
+      AND s.user_id = p_uid
   );
+$$;
+
+CREATE OR REPLACE FUNCTION public.can_access_project(p_uid UUID, p_student_id BIGINT)
+RETURNS BOOLEAN
+LANGUAGE sql
+STABLE
+AS $$
+  SELECT
+    public.can_manage_project(p_uid, p_student_id)
+    OR public.is_project_owner(p_uid, p_student_id);
 $$;
 
 -- Enable RLS
@@ -207,25 +214,24 @@ BEGIN
   ) THEN
     CREATE POLICY projects_select_scoped ON public.projects
     FOR SELECT USING (
-      public.can_manage_project(auth.uid(), public.projects.student_id)
-      OR public.is_project_owner(auth.uid(), public.projects.student_id)
+      public.can_access_project(auth.uid(), public.projects.student_id)
     );
   END IF;
 
   IF NOT EXISTS (
-    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'projects' AND policyname = 'projects_update_using'
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'projects' AND policyname = 'projects_admin_update'
   ) THEN
     -- Scoped administrative roles can update projects; students may only insert/select their own projects
-    CREATE POLICY projects_update_using ON public.projects
+    CREATE POLICY projects_admin_update ON public.projects
     FOR UPDATE USING (
       public.can_manage_project(auth.uid(), public.projects.student_id)
     );
   END IF;
 
   IF NOT EXISTS (
-    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'projects' AND policyname = 'projects_update_check'
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'projects' AND policyname = 'projects_admin_update_check'
   ) THEN
-    CREATE POLICY projects_update_check ON public.projects
+    CREATE POLICY projects_admin_update_check ON public.projects
     FOR UPDATE WITH CHECK (
       public.can_manage_project(auth.uid(), public.projects.student_id)
     );
@@ -236,8 +242,7 @@ BEGIN
   ) THEN
     CREATE POLICY projects_insert_scoped ON public.projects
     FOR INSERT WITH CHECK (
-      public.can_manage_project(auth.uid(), public.projects.student_id)
-      OR public.is_project_owner(auth.uid(), public.projects.student_id)
+      public.can_access_project(auth.uid(), public.projects.student_id)
     );
   END IF;
 END;

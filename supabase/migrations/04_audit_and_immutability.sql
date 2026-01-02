@@ -74,7 +74,12 @@ BEGIN
     RETURN auth.uid();
   END IF;
 
-  RETURN COALESCE(auth.uid(), v_claim::UUID);
+  BEGIN
+    RETURN v_claim::UUID;
+  EXCEPTION
+    WHEN invalid_text_representation THEN
+      RETURN auth.uid();
+  END;
 EXCEPTION
   WHEN invalid_text_representation THEN
     RETURN auth.uid();
@@ -93,12 +98,12 @@ BEGIN
   v_actor := public.current_actor_id();
 
   IF TG_OP = 'INSERT' THEN
-    v_record_id := COALESCE(NEW.id::TEXT, '');
+    v_record_id := COALESCE(NEW.id::TEXT, 'UNKNOWN');
     INSERT INTO public.audit_log (table_name, record_id, action, old_data, new_data, acted_by)
     VALUES (TG_TABLE_NAME, v_record_id, 'INSERT', NULL, TO_JSONB(NEW), v_actor);
     RETURN NEW;
   ELSIF TG_OP = 'UPDATE' THEN
-    v_record_id := COALESCE(NEW.id::TEXT, OLD.id::TEXT, '');
+    v_record_id := COALESCE(NEW.id::TEXT, OLD.id::TEXT, 'UNKNOWN');
     INSERT INTO public.audit_log (table_name, record_id, action, old_data, new_data, acted_by)
     VALUES (TG_TABLE_NAME, v_record_id, 'UPDATE', TO_JSONB(OLD), TO_JSONB(NEW), v_actor);
     RETURN NEW;
