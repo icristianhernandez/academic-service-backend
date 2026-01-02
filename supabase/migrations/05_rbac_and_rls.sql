@@ -101,18 +101,21 @@ RETURNS BOOLEAN
 LANGUAGE sql
 STABLE
 AS $$
-  SELECT
-    public.has_global_access(p_uid)
-    OR EXISTS (
-      SELECT 1 FROM public.students s
-      WHERE s.id = p_student_id
-        AND public.has_faculty_access(p_uid, s.faculty_id)
-    )
-    OR EXISTS (
-      SELECT 1 FROM public.students s
-      WHERE s.id = p_student_id
-        AND public.has_school_access(p_uid, s.school_id)
-    );
+  SELECT CASE
+    WHEN p_uid IS NULL THEN FALSE
+    ELSE
+      public.has_global_access(p_uid)
+      OR EXISTS (
+        SELECT 1 FROM public.students s
+        WHERE s.id = p_student_id
+          AND public.has_faculty_access(p_uid, s.faculty_id)
+      )
+      OR EXISTS (
+        SELECT 1 FROM public.students s
+        WHERE s.id = p_student_id
+          AND public.has_school_access(p_uid, s.school_id)
+      )
+  END;
 $$;
 
 -- Enable RLS
@@ -202,11 +205,17 @@ BEGIN
     SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'projects' AND policyname = 'projects_update_scoped'
   ) THEN
     -- Only scoped administrative roles can update projects; students are read-only
-    CREATE POLICY projects_update_scoped ON public.projects
+    CREATE POLICY projects_update_using ON public.projects
     FOR UPDATE USING (
       public.can_manage_project(auth.uid(), public.projects.student_id)
-    )
-    WITH CHECK (
+    );
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'projects' AND policyname = 'projects_update_check'
+  ) THEN
+    CREATE POLICY projects_update_check ON public.projects
+    FOR UPDATE WITH CHECK (
       public.can_manage_project(auth.uid(), public.projects.student_id)
     );
   END IF;

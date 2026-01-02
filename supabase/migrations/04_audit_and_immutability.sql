@@ -60,6 +60,15 @@ BEGIN
 END;
 $$;
 
+-- Helper to retrieve acting user id consistently
+CREATE OR REPLACE FUNCTION public.current_actor_id()
+RETURNS UUID
+LANGUAGE sql
+STABLE
+AS $$
+  SELECT COALESCE(auth.uid(), NULLIF(current_setting('request.jwt.claim.sub', TRUE), '')::UUID, NULL);
+$$;
+
 -- Audit logging for inserts and updates
 CREATE OR REPLACE FUNCTION public.log_audit()
 RETURNS trigger
@@ -69,7 +78,7 @@ DECLARE
   v_actor UUID;
   v_record_id TEXT;
 BEGIN
-  v_actor := COALESCE(auth.uid(), NULLIF(current_setting('request.jwt.claim.sub', TRUE), '')::UUID, NULL);
+  v_actor := public.current_actor_id();
 
   IF TG_OP = 'INSERT' THEN
     v_record_id := COALESCE(NEW.id::TEXT, '');
