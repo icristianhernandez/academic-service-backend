@@ -40,13 +40,15 @@ create table if not exists public.sections (
 create table if not exists public.milestone_types (
   id smallserial primary key,
   key text not null unique,
-  description text
+  description text,
+  created_at timestamptz not null default timezone('utc', now())
 );
 
 create table if not exists public.supervisor_roles (
   id smallserial primary key,
   key text not null unique,
-  description text
+  description text,
+  created_at timestamptz not null default timezone('utc', now())
 );
 
 create table if not exists public.access_roles (
@@ -286,7 +288,7 @@ insert into public.supervisor_roles (key, description) values
 on conflict (key) do nothing;
 
 insert into public.milestone_types (key, description) values
-  ('anteproyecto_aprobado', 'Ante proyecto aprobado'),
+  ('anteproyecto_aprobado', 'Anteproyecto aprobado'),
   ('proyecto_recibido', 'Proyecto recibido'),
   ('proyecto_final_aprobado', 'Proyecto final aprobado')
 on conflict (key) do nothing;
