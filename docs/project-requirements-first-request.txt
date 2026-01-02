@@ -1,0 +1,31 @@
+1. Apellidos
+1. Nombres
+2. C.I
+3. Dirección de correo electrónico
+4. Número (s) de contacto (hasta dos espacios)
+5. Facultad
+6. Escuela 
+7. Semestre 
+8. Turno
+9. Sección
+
+Segunda parte 
+1. Nombre del proyecto
+2. Objetivo general
+3. Objetivos específicos (hasta 4 espacios)
+4. Justificación 
+5. Introducción 
+6. Resumen 
+7. Institución donde cumplirá el servicio
+8. Fecha de inicio
+9. Fecha aproximada  de cierre
+
+Tercera parte
+1. Coordinador
+2. Tutor 
+3. Aprobado ante proyecto si/no + fecha
+4. Proyecto recibido si/no + fecha
+5. Aprobado proyecto final si/no + fecha
+
+El sistema debe dejar registro de entradas y modificaciones. (Sin poder borrar estos registros)
+Acceso rectoría/vicerrectorado académico/ dirección de planeamiento y admisión/Direccion/Decanos/Directores Escuela/Coordinadores.
