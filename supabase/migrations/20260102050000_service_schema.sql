@@ -13,7 +13,8 @@ create table if not exists public.schools (
   faculty_id bigint not null references public.faculties(id),
   name text not null,
   created_at timestamptz not null default timezone('utc', now()),
-  unique (faculty_id, name)
+  unique (faculty_id, name),
+  unique (id, faculty_id)
 );
 
 create table if not exists public.semesters (
@@ -55,7 +56,8 @@ create table if not exists public.access_roles (
   id smallserial primary key,
   role_key text not null unique,
   display_name text not null,
-  description text
+  description text,
+  created_at timestamptz not null default timezone('utc', now())
 );
 
 -- Core person data
@@ -89,6 +91,7 @@ create table if not exists public.service_enrollments (
   section_id smallint not null references public.sections(id),
   created_at timestamptz not null default timezone('utc', now()),
   updated_at timestamptz not null default timezone('utc', now()),
+  constraint service_enrollments_school_faculty_fk foreign key (school_id, faculty_id) references public.schools(id, faculty_id),
   unique (person_id)
 );
 
@@ -103,7 +106,7 @@ create table if not exists public.institutions (
 create table if not exists public.projects (
   id bigserial primary key,
   enrollment_id bigint not null references public.service_enrollments(id),
-  institution_id bigint references public.institutions(id),
+  institution_id bigint not null references public.institutions(id),
   project_name text not null,
   general_objective text not null,
   justification text,
@@ -182,7 +185,7 @@ create or replace function public.log_audit() returns trigger as $$
 declare
   pk text;
 begin
-  pk := case when tg_op in ('INSERT', 'UPDATE') then coalesce((new).id::text, '') else null end;
+  pk := coalesce((to_jsonb(new))->>'id', (to_jsonb(old))->>'id');
   insert into public.audit_log(table_name, record_id, action, actor_id, old_data, new_data)
   values (tg_table_name, pk, tg_op, auth.uid(), case when tg_op = 'UPDATE' then to_jsonb(old) else null end, to_jsonb(new));
   return new;

@@ -30,7 +30,7 @@
 - C.I. and email unique per person.
 - Contact numbers: CHECK(contact_order IN (1,2)) and UNIQUE(person_id, contact_order) to cap at two entries.
 - Specific objectives: CHECK(seq BETWEEN 1 AND 4) and UNIQUE(project_id, seq).
-- Milestones: constrained by enumerated milestone_type (anteproyecto_aprobado, proyecto_recibido, proyecto_final_aprobado). One row per project per type enforced by UNIQUE(project_id, milestone_type).
+- Milestones: constrained by enumerated milestone_type (anteproyecto_aprobado, proyecto_recibido, proyecto_final_aprobado). One row per project per type enforced by UNIQUE(project_id, milestone_type_id).
 - Deletions are blocked on core tables (people, contacts, enrollments, projects, objectives, supervisors, milestones, institutions) via BEFORE DELETE triggers that raise exceptions.
 - Timestamps: created_at/updated_at on transactional tables; audit log records table name, action, record PK, old/new JSON snapshots, and user identifier when available (auth.uid()).
 
