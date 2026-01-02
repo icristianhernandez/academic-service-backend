@@ -34,7 +34,8 @@ create table public.user_profiles (
   faculty_id uuid references public.faculties(id),
   school_id uuid references public.schools(id),
   created_at timestamptz not null default timezone('utc', now()),
-  updated_at timestamptz not null default timezone('utc', now())
+  updated_at timestamptz not null default timezone('utc', now()),
+  check (school_id is null or faculty_id is not null)
 );
 
 create table public.students (
@@ -52,7 +53,12 @@ create table public.students (
   section text not null,
   created_at timestamptz not null default timezone('utc', now()),
   updated_at timestamptz not null default timezone('utc', now()),
-  check (coalesce(array_length(contacts, 1), 0) <= 2)
+  check (coalesce(array_length(contacts, 1), 0) <= 2),
+  check (
+    school_id in (
+      select id from public.schools where faculty_id = students.faculty_id
+    )
+  )
 );
 
 create table public.projects (
@@ -81,14 +87,34 @@ create table public.projects (
   check (end_date is null or start_date <= end_date),
   check (not preproject_approved or preproject_approved_at is not null),
   check (not project_received or project_received_at is not null),
-  check (not final_approved or final_approved_at is not null)
+  check (not final_approved or final_approved_at is not null),
+  check (
+    coordinator_id in (
+      select user_id from public.user_profiles where role = 'coordinador'
+    )
+  ),
+  check (
+    tutor_id in (
+      select user_id from public.user_profiles where role = 'tutor'
+    )
+  ),
+  check (
+    preproject_approved_at is null
+    or project_received_at is null
+    or preproject_approved_at <= project_received_at
+  ),
+  check (
+    project_received_at is null
+    or final_approved_at is null
+    or project_received_at <= final_approved_at
+  )
 );
 
 create table public.audit_log (
   id bigserial primary key,
   table_name text not null,
   record_id text not null,
-  action text not null check (action in ('INSERT', 'UPDATE')),
+  action text not null check (action in ('INSERT', 'UPDATE', 'DELETE')),
   old_data jsonb,
   new_data jsonb,
   performed_by uuid,
@@ -96,6 +122,8 @@ create table public.audit_log (
 );
 
 create index audit_log_table_name_idx on public.audit_log(table_name);
+create index schools_faculty_id_idx on public.schools(faculty_id, id);
+create index user_profiles_role_user_idx on public.user_profiles(role, user_id);
 
 create or replace function public.get_claim_text(claim text)
 returns text
@@ -168,17 +196,17 @@ begin
     to_jsonb(old)->>'id',
     to_jsonb(new)->>'user_id',
     to_jsonb(old)->>'user_id',
-    ''
+    'UNKNOWN'
   );
 
   insert into public.audit_log(table_name, record_id, action, old_data, new_data, performed_by)
   values (tg_table_name, rec_id, tg_op, to_jsonb(old), to_jsonb(new), auth.uid());
 
-  if tg_op = 'INSERT' then
-    return new;
-  else
-    return new;
+  if tg_op = 'DELETE' then
+    return old;
   end if;
+
+  return new;
 end;
 $$;
 
@@ -280,8 +308,10 @@ create policy projects_select on public.projects
 for select
 using (
   public.has_role(public.staff_roles())
-  or auth.uid() = (
-    select s.user_id from public.students s where s.id = public.projects.student_id
+  or exists (
+    select 1 from public.students s
+    where s.id = public.projects.student_id
+    and s.user_id = auth.uid()
   )
 );
 
@@ -289,8 +319,10 @@ create policy projects_insert on public.projects
 for insert
 with check (
   public.has_role(public.staff_roles())
-  or auth.uid() = (
-    select s.user_id from public.students s where s.id = public.projects.student_id
+  or exists (
+    select 1 from public.students s
+    where s.id = public.projects.student_id
+    and s.user_id = auth.uid()
   )
 );
 
@@ -298,14 +330,18 @@ create policy projects_update on public.projects
 for update
 using (
   public.has_role(public.staff_roles())
-  or auth.uid() = (
-    select s.user_id from public.students s where s.id = public.projects.student_id
+  or exists (
+    select 1 from public.students s
+    where s.id = public.projects.student_id
+    and s.user_id = auth.uid()
   )
 )
 with check (
   public.has_role(public.staff_roles())
-  or auth.uid() = (
-    select s.user_id from public.students s where s.id = public.projects.student_id
+  or exists (
+    select 1 from public.students s
+    where s.id = public.projects.student_id
+    and s.user_id = auth.uid()
   )
 );
 

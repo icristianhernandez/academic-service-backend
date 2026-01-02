@@ -24,7 +24,7 @@
 | --- | --- | --- |
 | user_id | uuid (PK, FK → auth.users.id) | Supabase auth user. |
 | full_name | text | Display name. |
-| role | app_role enum | One of rectoría, vicerrectorado, planeamiento, decano, director_escuela, coordinador, tutor, student. |
+| role | app_role enum | One of rectoria, vicerrectorado, planeamiento, decano, director_escuela, coordinador, tutor, student. |
 | faculty_id | uuid (FK → faculties.id, nullable) | Affiliated faculty. |
 | school_id | uuid (FK → schools.id, nullable) | Affiliated school. |
 | created_at | timestamptz | Creation timestamp (UTC). |
@@ -41,7 +41,7 @@
 | email | text (unique) | Dirección de correo electrónico. |
 | contacts | text[] | Up to two contact numbers. |
 | faculty_id | uuid (FK → faculties.id) | Faculty membership. |
-| school_id | uuid (FK → schools.id) | School membership. |
+| school_id | uuid (FK → schools.id) | School membership (must align with faculty_id). |
 | semester | smallint | Semester number (1-12). |
 | shift | text | Turno. |
 | section | text | Sección. |
@@ -53,8 +53,8 @@
 | --- | --- | --- |
 | id | uuid (PK) | Project identifier. |
 | student_id | uuid (FK → students.id) | Owning student. |
-| coordinator_id | uuid (FK → user_profiles.user_id) | Coordinator. |
-| tutor_id | uuid (FK → user_profiles.user_id) | Tutor. |
+| coordinator_id | uuid (FK → user_profiles.user_id) | Coordinator (role coordinador). |
+| tutor_id | uuid (FK → user_profiles.user_id) | Tutor (role tutor). |
 | name | text | Project name. |
 | general_objective | text | Objetivo general. |
 | specific_objectives | text[] | Up to four objetivos específicos. |
@@ -79,7 +79,7 @@
 | id | bigserial (PK) | Audit entry identifier. |
 | table_name | text | Table being logged. |
 | record_id | text | Primary key value of the affected row. |
-| action | text | INSERT or UPDATE. |
+| action | text | INSERT, UPDATE, or DELETE. |
 | old_data | jsonb | Snapshot before change (null on insert). |
 | new_data | jsonb | Snapshot after change. |
 | performed_by | uuid | auth.uid() that triggered the change. |
@@ -88,7 +88,7 @@
 ## Roles and RLS
 - `app_role` enum backs JWT claims and `user_profiles.role`.
 - Helper functions: `current_app_role`, `get_claim_text`, `staff_roles`, and `has_role` check JWT claims first, then fall back to the stored profile.
-- RLS is enabled on every table. Staff roles (rectoría, vicerrectorado, planeamiento, decano, director_escuela, coordinador) can read and manage reference data; students can see their own rows and may see catalog tables. Coordinators/tutors are stored in `user_profiles` and referenced by projects.
+- RLS is enabled on every table. Staff roles (rectoria, vicerrectorado, planeamiento, decano, director_escuela, coordinador) can read and manage reference data; students can see their own rows and may see catalog tables. Coordinators/tutors are stored in `user_profiles` and referenced by projects.
 - Delete operations are blocked via RLS deny-all delete policies plus `prevent_delete` triggers on core tables and the audit log.
 
 ## Audit Logging Strategy
