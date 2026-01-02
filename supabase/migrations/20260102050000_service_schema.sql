@@ -166,7 +166,7 @@ create table if not exists public.audit_log (
   id bigserial primary key,
   table_name text not null,
   record_id text,
-  action text not null check (action in ('INSERT', 'UPDATE')),
+  action text not null check (action in ('INSERT', 'UPDATE', 'DELETE')),
   changed_at timestamptz not null default timezone('utc', now()),
   actor_id uuid,
   old_data jsonb,
@@ -184,10 +184,22 @@ $$ language plpgsql;
 create or replace function public.log_audit() returns trigger as $$
 declare
   pk text;
+  snapshot jsonb;
 begin
-  pk := coalesce((to_jsonb(new))->>'id', (to_jsonb(old))->>'id');
+  snapshot := case when tg_op = 'DELETE' then to_jsonb(old) else to_jsonb(new) end;
+  pk := coalesce(snapshot->>'id', '');
   insert into public.audit_log(table_name, record_id, action, actor_id, old_data, new_data)
-  values (tg_table_name, pk, tg_op, auth.uid(), case when tg_op = 'UPDATE' then to_jsonb(old) else null end, to_jsonb(new));
+  values (
+    tg_table_name,
+    pk,
+    tg_op,
+    auth.uid(),
+    case when tg_op in ('UPDATE', 'DELETE') then to_jsonb(old) else null end,
+    case when tg_op in ('INSERT', 'UPDATE') then to_jsonb(new) else null end
+  );
+  if tg_op = 'DELETE' then
+    return old;
+  end if;
   return new;
 end;
 $$ language plpgsql;
@@ -220,23 +232,23 @@ create trigger set_user_roles_updated_at before update on public.user_roles
   for each row execute function public.set_updated_at();
 
 -- Trigger attachments (audit)
-create trigger audit_people before insert or update on public.people
+create trigger audit_people after insert or update on public.people
   for each row execute function public.log_audit();
-create trigger audit_person_contacts before insert or update on public.person_contacts
+create trigger audit_person_contacts after insert or update on public.person_contacts
   for each row execute function public.log_audit();
-create trigger audit_service_enrollments before insert or update on public.service_enrollments
+create trigger audit_service_enrollments after insert or update on public.service_enrollments
   for each row execute function public.log_audit();
-create trigger audit_institutions before insert or update on public.institutions
+create trigger audit_institutions after insert or update on public.institutions
   for each row execute function public.log_audit();
-create trigger audit_projects before insert or update on public.projects
+create trigger audit_projects after insert or update on public.projects
   for each row execute function public.log_audit();
-create trigger audit_project_specific_objectives before insert or update on public.project_specific_objectives
+create trigger audit_project_specific_objectives after insert or update on public.project_specific_objectives
   for each row execute function public.log_audit();
-create trigger audit_project_supervisors before insert or update on public.project_supervisors
+create trigger audit_project_supervisors after insert or update on public.project_supervisors
   for each row execute function public.log_audit();
-create trigger audit_project_milestones before insert or update on public.project_milestones
+create trigger audit_project_milestones after insert or update on public.project_milestones
   for each row execute function public.log_audit();
-create trigger audit_user_roles before insert or update on public.user_roles
+create trigger audit_user_roles after insert or update on public.user_roles
   for each row execute function public.log_audit();
 
 -- Trigger attachments (prevent delete)
