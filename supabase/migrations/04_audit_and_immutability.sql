@@ -63,10 +63,22 @@ $$;
 -- Helper to retrieve acting user id consistently
 CREATE OR REPLACE FUNCTION public.current_actor_id()
 RETURNS UUID
-LANGUAGE sql
+LANGUAGE plpgsql
 STABLE
 AS $$
-  SELECT COALESCE(auth.uid(), NULLIF(current_setting('request.jwt.claim.sub', TRUE), '')::UUID);
+DECLARE
+  v_claim TEXT;
+BEGIN
+  v_claim := current_setting('request.jwt.claim.sub', TRUE);
+  IF v_claim IS NULL OR v_claim = '' THEN
+    RETURN auth.uid();
+  END IF;
+
+  RETURN COALESCE(auth.uid(), v_claim::UUID);
+EXCEPTION
+  WHEN invalid_text_representation THEN
+    RETURN auth.uid();
+END;
 $$;
 
 -- Audit logging for inserts and updates

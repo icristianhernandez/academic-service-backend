@@ -118,6 +118,21 @@ AS $$
   END;
 $$;
 
+CREATE OR REPLACE FUNCTION public.is_project_owner(p_uid UUID, p_student_id BIGINT)
+RETURNS BOOLEAN
+LANGUAGE sql
+STABLE
+AS $$
+  SELECT COALESCE(
+    EXISTS (
+      SELECT 1 FROM public.students s
+      WHERE s.id = p_student_id
+        AND s.user_id = p_uid
+    ),
+    FALSE
+  );
+$$;
+
 -- Enable RLS
 ALTER TABLE public.students ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
@@ -193,18 +208,14 @@ BEGIN
     CREATE POLICY projects_select_scoped ON public.projects
     FOR SELECT USING (
       public.can_manage_project(auth.uid(), public.projects.student_id)
-      OR EXISTS (
-        SELECT 1 FROM public.students s
-        WHERE s.id = public.projects.student_id
-          AND s.user_id = auth.uid()
-      )
+      OR public.is_project_owner(auth.uid(), public.projects.student_id)
     );
   END IF;
 
   IF NOT EXISTS (
     SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'projects' AND policyname = 'projects_update_using'
   ) THEN
-    -- Only scoped administrative roles can update projects; students are read-only
+    -- Scoped administrative roles can update projects; students may only insert/select their own projects
     CREATE POLICY projects_update_using ON public.projects
     FOR UPDATE USING (
       public.can_manage_project(auth.uid(), public.projects.student_id)
@@ -226,11 +237,7 @@ BEGIN
     CREATE POLICY projects_insert_scoped ON public.projects
     FOR INSERT WITH CHECK (
       public.can_manage_project(auth.uid(), public.projects.student_id)
-      OR EXISTS (
-        SELECT 1 FROM public.students s
-        WHERE s.id = public.projects.student_id
-          AND s.user_id = auth.uid()
-      )
+      OR public.is_project_owner(auth.uid(), public.projects.student_id)
     );
   END IF;
 END;
