@@ -17,9 +17,9 @@ npm install supabase --save-dev
 If updating, clean supabase first to allow a clean update:
 
 ```bash
-supabase db diff -f my_schema
-supabase db dump --local --data-only > supabase/seed.sql
-supabase stop --no-backup
+npx supabase db diff -f my_schema
+npx supabase db dump --local --data-only > supabase/seed.sql
+npx supabase stop --no-backup
 ```
 
 To create the supabase DB in the repo (first time command):
@@ -37,7 +37,7 @@ npx supabase start
 ## Stop supabase instance
 
 ```bash
-supabase stop
+npx supabase stop
 ```
 
 ## Migrations (for adding or altering DB objects locally — rules and tables, not rows)
@@ -48,7 +48,7 @@ supabase stop
 Create a diff-based migration:
 
 ```bash
-supabase db diff --use-pg-schema -f <feature-name>
+npx supabase db diff --use-pg-schema -f <feature-name>
 ```
 
 This creates:
@@ -62,7 +62,7 @@ Review the generated SQL file and make any necessary adjustments.
 Create a new migration and write SQL directly:
 
 ```bash
-supabase migration new <feature-name>
+npx supabase migration new <feature-name>
 ```
 
 This creates:
@@ -76,7 +76,7 @@ Add the SQL to the above file.
 Reset the DB to the current migrations (applied):
 
 ```bash
-supabase db reset
+npx supabase db reset
 ```
 
 ## Seed / Sample data (persisted across restarts for debugging)
@@ -86,7 +86,7 @@ supabase db reset
 - You can dump the current session's seeded data:
 
 ```bash
-supabase db dump --local --data-only > supabase/seed.sql
+npx supabase db dump --local --data-only > supabase/seed.sql
 ```
 
 ## Deploy changes
@@ -94,8 +94,8 @@ supabase db dump --local --data-only > supabase/seed.sql
 Login and link your project:
 
 ```bash
-supabase login
-supabase link --project-ref <project-id>
+npx supabase login
+npx supabase link --project-ref <project-id>
 ```
 
 You can get `<project-id>` from your project's dashboard URL: https://supabase.com/dashboard/project/<project-id>
@@ -103,19 +103,19 @@ You can get `<project-id>` from your project's dashboard URL: https://supabase.c
 Apply migrations/changes from the remote instance:
 
 ```bash
-supabase db pull
-supabase migration up
-supabase db reset
+npx supabase db pull
+npx supabase migration up
+npx supabase db reset
 ```
 
 Push DB changes:
 
 ```bash
-supabase db push
+npx supabase db push
 ```
 
 Deploy Edge Functions (if used):
 
 ```bash
-supabase functions deploy <function_name>
+npx supabase functions deploy <function_name>
 ```
