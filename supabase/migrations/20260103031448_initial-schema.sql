@@ -117,13 +117,6 @@ CREATE TABLE projects (
     student_id uuid REFERENCES users (id),
     institution_id uuid REFERENCES institutions (id),
     title text NOT NULL,
-    general_objective text NOT NULL,
-    specific_objective_1 text,
-    specific_objective_2 text,
-    specific_objective_3 text,
-    specific_objective_4 text,
-    justification text,
-    introduction text,
     abstract text
 );
 
