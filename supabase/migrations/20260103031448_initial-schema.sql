@@ -176,9 +176,10 @@ END;
 $$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE PROCEDURE enable_audit_tracking(
+CREATE OR REPLACE FUNCTION enable_audit_tracking(
     VARIADIC target_table_names text []
 )
+RETURNS void
 LANGUAGE plpgsql
 AS $$
 DECLARE
@@ -201,10 +202,11 @@ BEGIN
 
         EXECUTE trigger_definition_sql;
     END LOOP;
+    RETURN;
 END;
 $$;
 
-CALL enable_audit_tracking(
+SELECT enable_audit_tracking(
     'countries',
     'states',
     'cities',
