@@ -8,17 +8,6 @@ CREATE TABLE audit_meta (
     updated_by uuid DEFAULT auth.uid()
 );
 
-CREATE OR REPLACE FUNCTION handle_audit_update()
-RETURNS trigger
-AS $$
-BEGIN
-  NEW.updated_at = now();
-  NEW.updated_by = auth.uid();
-  RETURN NEW;
-END;
-$$
-LANGUAGE plpgsql;
-
 CREATE TABLE countries (
     LIKE audit_meta INCLUDING ALL,
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -182,6 +171,17 @@ CREATE TABLE audit_logs (
     old_values jsonb,
     new_values jsonb
 );
+
+CREATE OR REPLACE FUNCTION handle_audit_update()
+RETURNS trigger
+AS $$
+BEGIN
+  NEW.updated_at = now();
+  NEW.updated_by = auth.uid();
+  RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
 
 CREATE OR REPLACE PROCEDURE enable_audit_tracking(
     VARIADIC target_table_names text []
