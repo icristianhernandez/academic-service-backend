@@ -128,21 +128,20 @@ CREATE TABLE documents (
     uploaded_by uuid REFERENCES users (id) ON DELETE CASCADE NOT NULL
 );
 
--- I need to think better about the following table workflow/names...
-CREATE TABLE stages (
+CREATE TABLE projects_stages (
     LIKE audit_meta INCLUDING ALL,
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     stage_name text NOT NULL UNIQUE
 );
 
-CREATE TABLE project_stages (
+CREATE TABLE project_stage_history (
     LIKE audit_meta INCLUDING ALL,
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     project_id uuid REFERENCES projects (id) ON DELETE CASCADE NOT NULL,
-    stage_id uuid REFERENCES stages (id) NOT NULL,
+    stage_id uuid REFERENCES projects_stages (id) NOT NULL,
     document_id uuid REFERENCES documents (id),
     observations text,
-    reached_at timestamptz DEFAULT now() NOT NULL
+    completed boolean DEFAULT false NOT NULL
 );
 
 CREATE TABLE invitations (
@@ -181,6 +180,7 @@ CREATE OR REPLACE FUNCTION enable_audit_tracking(
 )
 RETURNS void
 LANGUAGE plpgsql
+VOLATILE -- Explicitly marks that this function changes the database state
 AS $$
 DECLARE
     current_table_name text;
@@ -191,8 +191,14 @@ BEGIN
     LOOP
         dynamic_trigger_name := format('trg_audit_update_%s', current_table_name);
 
+        EXECUTE format(
+            'DROP TRIGGER IF EXISTS %I ON %I',
+            dynamic_trigger_name,
+            current_table_name
+        );
+
         trigger_definition_sql := format(
-            'CREATE OR REPLACE TRIGGER %I
+            'CREATE TRIGGER %I
              BEFORE UPDATE ON %I
              FOR EACH ROW
              EXECUTE FUNCTION handle_audit_update()',
@@ -202,7 +208,6 @@ BEGIN
 
         EXECUTE trigger_definition_sql;
     END LOOP;
-    RETURN;
 END;
 $$;
 
@@ -222,8 +227,8 @@ SELECT enable_audit_tracking(
     'institutions',
     'projects',
     'documents',
-    'stages',
-    'project_stages',
+    'projects_stages',
+    'project_stage_history',
     'invitations',
     'audit_logs'
 );
