@@ -2,12 +2,12 @@
 
 ### Table: audit_meta
 
-| Attribute  | Data Type   | Nullable | Default | Constraints | Dev Notes |
-| :--------- | :---------- | :------- | :------ | :---------- | :-------- |
-| created_at | timestamptz | No       | now()   |             |           |
-| updated_at | timestamptz | No       | now()   |             |           |
-| created_by | uuid        | Yes      |         |             |           |
-| updated_by | uuid        | Yes      |         |             |           |
+| Attribute  | Data Type   | Nullable | Default     | Constraints | Dev Notes |
+| :--------- | :---------- | :------- | :---------- | :---------- | :-------- |
+| created_at | timestamptz | No       | now()       |             |           |
+| created_by | uuid        | No       | auth.uid()  |             | NOT NULL, defaults to auth.uid() |
+| updated_at | timestamptz | No       | now()       |             |           |
+| updated_by | uuid        | Yes      | auth.uid()  |             | defaults to auth.uid() |
 
 ---
 
@@ -19,7 +19,7 @@
 | country_name | text        | No       |                   | UNIQUE      |           |
 | created_at   | timestamptz | No       | now()             |             |           |
 | updated_at   | timestamptz | No       | now()             |             |           |
-| created_by   | uuid        | Yes      |                   |             |           |
+| created_by   | uuid        | No       | auth.uid()       |             | Inherits from audit_meta (NOT NULL, defaults to auth.uid()) |
 | updated_by   | uuid        | Yes      |                   |             |           |
 
 ---
@@ -73,6 +73,7 @@
 | id          | uuid        | No       | gen_random_uuid() | PK                 |           |
 | location_id | uuid        | Yes      |                   | FK -> locations.id |           |
 | campus_name | text        | No       |                   | UNIQUE             |           |
+| president_id| uuid        | Yes      |                   | FK -> users.id     |           |
 | created_at  | timestamptz | No       | now()             |                    |           |
 | updated_at  | timestamptz | No       | now()             |                    |           |
 | created_by  | uuid        | Yes      |                   |                    |           |
@@ -87,6 +88,8 @@
 | id           | uuid        | No       | gen_random_uuid() | PK                |           |
 | campus_id    | uuid        | No       |                   | FK -> campuses.id |           |
 | faculty_name | text        | No       |                   | UNIQUE            |           |
+| dean_id      | uuid        | Yes      |                   | FK -> users.id    |           |
+| coordinator_id | uuid      | Yes      |                   | FK -> users.id    |           |
 | created_at   | timestamptz | No       | now()             |                   |           |
 | updated_at   | timestamptz | No       | now()             |                   |           |
 | created_by   | uuid        | Yes      |                   |                   |           |
@@ -101,6 +104,7 @@
 | id          | uuid        | No       | gen_random_uuid() | PK                 |           |
 | faculty_id  | uuid        | No       |                   | FK -> faculties.id |           |
 | school_name | text        | No       |                   | UNIQUE             |           |
+| tutor_id    | uuid        | Yes      |                   | FK -> users.id     |           |
 | created_at  | timestamptz | No       | now()             |                    |           |
 | updated_at  | timestamptz | No       | now()             |                    |           |
 | created_by  | uuid        | Yes      |                   |                    |           |
@@ -129,6 +133,32 @@
 | semester_enum | '1', '2', '3', '4', '5', '6', '7', '8', '9', '10' | Replaces semesters table |
 | section_enum  | 'A', 'B', 'C', 'D', 'E', 'F'              | Replaces sections table  |
 | shift_enum    | 'MORNING', 'EVENING'                      | Replaces shifts table    |
+
+---
+
+### Audit & triggers
+
+The database uses handle_audit_update trigger and enable_audit_tracking(...) to maintain updated_at and updated_by fields on writes (see supabase/migrations/20260103031448_initial-schema.sql:61-106 and 172-206). The current migration enables audit tracking for the following tables:
+
+- countries
+- states
+- cities
+- locations
+- campuses
+- faculties
+- schools
+- roles
+- students
+- users
+- institutions
+- projects
+- documents
+- projects_stages  (note: referenced name — mismatch with documented project_stages section)
+- project_stage_history (note: referenced but not present in docs)
+- invitations
+- audit_logs
+
+If you add/remove tables with audit tracked fields, ensure enable_audit_tracking(...) is updated accordingly.
 
 ---
 
@@ -161,7 +191,7 @@
 | updated_at  | timestamptz   | No       | now()   |                       |          |
 | created_by  | uuid          | Yes      |         |                       |          |
 | updated_by  | uuid          | Yes      |         |                       |          |
-| Dev Notes:   | Students table is indexed on faculty_id and school_id; audit tracked | |  |  | |
+| Dev Notes:   | Students table: audit tracked. Note: indexes on faculty_id and school_id were referenced in docs but are not present in migration; consider adding them if needed. | |  |  |  |
 
 ---
 
@@ -182,26 +212,26 @@
 
 ### Table: projects
 
-| Attribute            | Data Type   | Nullable | Default           | Constraints           | Dev Notes |
-| :------------------- | :---------- | :------- | :---------------- | :-------------------- | :-------- |
-| id                   | uuid        | No       | gen_random_uuid() | PK                    |           |
-| tutor_id             | uuid        | Yes      |                   | FK -> users.id        |           |
-| coordinator_id       | uuid        | Yes      |                   | FK -> users.id        |           |
-| student_id           | uuid        | Yes      |                   | FK -> users.id        |           |
-| institution_id       | uuid        | Yes      |                   | FK -> institutions.id |           |
-| title                | text        | No       |                   |                       |           |
-| general_objective    | text        | No       |                   |                       |           |
-| specific_objective_1 | text        | Yes      |                   |                       |           |
-| specific_objective_2 | text        | Yes      |                   |                       |           |
-| specific_objective_3 | text        | Yes      |                   |                       |           |
-| specific_objective_4 | text        | Yes      |                   |                       |           |
-| justification        | text        | Yes      |                   |                       |           |
-| introduction         | text        | Yes      |                   |                       |           |
-| abstract             | text        | Yes      |                   |                       |           |
-| created_at           | timestamptz | No       | now()             |                       |           |
-| updated_at           | timestamptz | No       | now()             |                       |           |
-| created_by           | uuid        | Yes      |                   |                       |           |
-| updated_by           | uuid        | Yes      |                   |                       |           |
+| Attribute                | Data Type   | Nullable | Default           | Constraints           | Dev Notes |
+| :----------------------- | :---------- | :------- | :---------------- | :-------------------- | :-------- |
+| id                       | uuid        | No       | gen_random_uuid() | PK                    |           |
+| tutor_id                 | uuid        | Yes      |                   | FK -> users.id        |           |
+| coordinator_id           | uuid        | Yes      |                   | FK -> users.id        |           |
+| student_id               | uuid        | Yes      |                   | FK -> users.id        |           |
+| institution_id           | uuid        | Yes      |                   | FK -> institutions.id |           |
+| title                    | text        | No       |                   |                       |           |
+| abstract                 | text        | Yes      |                   |                       |           |
+| pre_project_document_id  | uuid        | Yes      |                   | FK -> documents.id    |           |
+| pre_project_observations | text        | Yes      |                   |                       |           |
+| pre_project_approved_at  | timestamptz | Yes      | NULL              |                       |           |
+| project_document_id      | uuid        | Yes      |                   | FK -> documents.id    |           |
+| project_observations     | text        | Yes      |                   |                       |           |
+| project_received_at      | timestamptz | Yes      | NULL              |                       |           |
+| final_project_approved_at| timestamptz | Yes      |                   |                       |           |
+| created_at               | timestamptz | No       | now()             |                       |           |
+| updated_at               | timestamptz | No       | now()             |                       |           |
+| created_by               | uuid        | Yes      |                   |                       |           |
+| updated_by               | uuid        | Yes      |                   |                       |           |
 
 ---
 
@@ -233,6 +263,8 @@
 ---
 
 ### Table: project_stages
+
+**Note:** The project_stages table was previously part of the schema but is not created in the current migration. The migration's enable_audit_tracking call references 'projects_stages' and 'project_stage_history' (supabase/migrations/20260103031448_initial-schema.sql:208-226), indicating a naming mismatch: the audit list references pluralized/alternate table names. Action required: decide whether to restore/rename the tables in the migration to match this documented schema or to remove these entries from enable_audit_tracking. For now, this section remains documented for reference.
 
 | Attribute    | Data Type   | Nullable | Default           | Constraints                         | Dev Notes |
 | :----------- | :---------- | :------- | :---------------- | :---------------------------------- | :-------- |
