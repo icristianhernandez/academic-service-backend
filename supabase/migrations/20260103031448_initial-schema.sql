@@ -50,21 +50,25 @@ CREATE TABLE campuses (
     LIKE audit_meta INCLUDING ALL,
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     location_id uuid REFERENCES locations (id),
-    campus_name text NOT NULL UNIQUE
+    campus_name text NOT NULL UNIQUE,
+    president_id uuid REFERENCES users (id)
 );
 
 CREATE TABLE faculties (
     LIKE audit_meta INCLUDING ALL,
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     campus_id uuid NOT NULL REFERENCES campuses (id),
-    faculty_name text NOT NULL UNIQUE
+    faculty_name text NOT NULL UNIQUE,
+    dean_id uuid REFERENCES users (id),
+    coordinator_id uuid REFERENCES users (id)
 );
 
 CREATE TABLE schools (
     LIKE audit_meta INCLUDING ALL,
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     faculty_id uuid NOT NULL REFERENCES faculties (id),
-    school_name text NOT NULL UNIQUE
+    school_name text NOT NULL UNIQUE,
+    tutor_id uuid REFERENCES users (id)
 );
 
 CREATE TABLE roles (

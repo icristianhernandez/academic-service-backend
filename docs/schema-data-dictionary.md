@@ -126,9 +126,9 @@
 
 | Type          | Values                                   | Dev Notes                |
 | :------------ | :--------------------------------------- | :----------------------- |
-| semester_enum | '1','2','3','4','5','6','7','8','9','10' | Replaces semesters table |
-| section_enum  | 'A','B','C','D','E','F'                  | Replaces sections table  |
-| shift_enum    | 'MORNING','EVENING'                      | Replaces shifts table    |
+| semester_enum | '1', '2', '3', '4', '5', '6', '7', '8', '9', '10' | Replaces semesters table |
+| section_enum  | 'A', 'B', 'C', 'D', 'E', 'F'              | Replaces sections table  |
+| shift_enum    | 'MORNING', 'EVENING'                      | Replaces shifts table    |
 
 ---
 
@@ -143,7 +143,6 @@
 | email             | varchar(50)   | No       |         | UNIQUE           |                                  |
 | primary_contact   | text          | No       |         |                  |                                  |
 | secondary_contact | text          | Yes      |         |                  |                                  |
-| role_id           | uuid          | Yes      |         | FK -> roles.id   |                                  |
 | role_id           | uuid          | Yes      |         | FK -> roles.id   |                                  |
 
 ---
@@ -162,10 +161,7 @@
 | updated_at  | timestamptz   | No       | now()   |                       |          |
 | created_by  | uuid          | Yes      |         |                       |          |
 | updated_by  | uuid          | Yes      |         |                       |          |
-| created_at        | timestamptz   | No       | now()   |                  |                                  |
-| updated_at        | timestamptz   | No       | now()   |                  |                                  |
-| created_by        | uuid          | Yes      |         |                  |                                  |
-| updated_by        | uuid          | Yes      |         |                  |                                  |
+| Dev Notes:   | Students table is indexed on faculty_id and school_id; audit tracked | |  |  | |
 
 ---
 
@@ -287,10 +283,3 @@
 
 ---
 
-### Custom Types
-
-| Type          | Values                                   | Dev Notes                |
-| :------------ | :--------------------------------------- | :----------------------- |
-| semester_enum | '1','2','3','4','5','6','7','8','9','10' | Replaces semesters table |
-| section_enum  | 'A','B','C','D','E','F'                  | Replaces sections table  |
-| shift_enum    | 'MORNING','EVENING'                      | Replaces shifts table    |
