@@ -84,7 +84,13 @@ CREATE TABLE users (
     email varchar(50) NOT NULL UNIQUE,
     primary_contact text NOT NULL,
     secondary_contact text,
-    role_id uuid REFERENCES roles (id),
+    role_id uuid REFERENCES roles (id)
+);
+
+CREATE TABLE students (
+    LIKE audit_meta INCLUDING ALL,
+    user_id uuid PRIMARY KEY REFERENCES users (id) ON DELETE CASCADE,
+    faculty_id uuid REFERENCES faculties (id),
     school_id uuid REFERENCES schools (id),
     semester semester_enum,
     shift shift_enum,
@@ -204,7 +210,7 @@ SELECT enable_audit_tracking(
     'faculties',
     'schools',
     'roles',
-    
+    'students',
     'users',
     'institutions',
     'projects',

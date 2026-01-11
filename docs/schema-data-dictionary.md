@@ -144,10 +144,24 @@
 | primary_contact   | text          | No       |         |                  |                                  |
 | secondary_contact | text          | Yes      |         |                  |                                  |
 | role_id           | uuid          | Yes      |         | FK -> roles.id   |                                  |
-| school_id         | uuid          | Yes      |         | FK -> schools.id |                                  |
-| semester          | semester_enum | Yes      |         |                  | Used to store student's semester |
-| shift             | shift_enum    | Yes      |         |                  | Used to store student's shift    |
-| section           | section_enum  | Yes      |         |                  | Used to store student's section  |
+| role_id           | uuid          | Yes      |         | FK -> roles.id   |                                  |
+
+---
+
+### Table: students
+
+| Attribute   | Data Type     | Nullable | Default | Constraints           | Dev Notes |
+| :---------- | :------------ | :------- | :------ | :-------------------- | :-------- |
+| user_id     | uuid          | No       |         | PK -> users.id        |          |
+| faculty_id  | uuid          | Yes      |         | FK -> faculties.id    |          |
+| school_id   | uuid          | Yes      |         | FK -> schools.id      |          |
+| semester    | semester_enum | Yes      |         |                       |          |
+| shift       | shift_enum    | Yes      |         |                       |          |
+| section     | section_enum  | Yes      |         |                       |          |
+| created_at  | timestamptz   | No       | now()   |                       |          |
+| updated_at  | timestamptz   | No       | now()   |                       |          |
+| created_by  | uuid          | Yes      |         |                       |          |
+| updated_by  | uuid          | Yes      |         |                       |          |
 | created_at        | timestamptz   | No       | now()   |                  |                                  |
 | updated_at        | timestamptz   | No       | now()   |                  |                                  |
 | created_by        | uuid          | Yes      |         |                  |                                  |
