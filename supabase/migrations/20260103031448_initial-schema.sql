@@ -1,6 +1,13 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS plpgsql_check;
 
+CREATE TYPE semester_enum AS
+ENUM ('1', '2', '3', '4', '5', '6', '7', '8', '9', '10');
+
+CREATE TYPE section_enum AS ENUM ('A', 'B', 'C', 'D', 'E', 'F');
+
+CREATE TYPE shift_enum AS ENUM ('MORNING', 'EVENING');
+
 CREATE TABLE audit_meta (
     created_at timestamptz DEFAULT now() NOT NULL,
     created_by uuid DEFAULT auth.uid() NOT NULL,
@@ -67,23 +74,6 @@ CREATE TABLE roles (
     permission_level integer NOT NULL
 );
 
-CREATE TABLE semesters (
-    LIKE audit_meta INCLUDING ALL,
-    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    semester_name varchar(12) NOT NULL UNIQUE
-);
-
-CREATE TABLE shifts (
-    LIKE audit_meta INCLUDING ALL,
-    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    shift_name varchar(12) NOT NULL UNIQUE
-);
-
-CREATE TABLE sections (
-    LIKE audit_meta INCLUDING ALL,
-    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    section_name varchar(12) NOT NULL UNIQUE
-);
 
 CREATE TABLE users (
     LIKE audit_meta INCLUDING ALL,
@@ -96,9 +86,9 @@ CREATE TABLE users (
     secondary_contact text,
     role_id uuid REFERENCES roles (id),
     school_id uuid REFERENCES schools (id),
-    semester_id uuid REFERENCES semesters (id),
-    shift_id uuid REFERENCES shifts (id),
-    section_id uuid REFERENCES sections (id)
+    semester semester_enum,
+    shift shift_enum,
+    section section_enum
 );
 
 CREATE TABLE institutions (
@@ -145,7 +135,7 @@ CREATE TABLE invitations (
     email text NOT NULL UNIQUE,
     role_id uuid REFERENCES roles (id),
     token text NOT NULL,
-    is_active boolean DEFAULT true
+    is_active boolean DEFAULT TRUE
 );
 
 CREATE TABLE audit_logs (
@@ -214,9 +204,7 @@ SELECT enable_audit_tracking(
     'faculties',
     'schools',
     'roles',
-    'semesters',
-    'shifts',
-    'sections',
+    
     'users',
     'institutions',
     'projects',
