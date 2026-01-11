@@ -117,7 +117,17 @@ CREATE TABLE projects (
     student_id uuid REFERENCES users (id),
     institution_id uuid REFERENCES institutions (id),
     title text NOT NULL,
-    abstract text
+    abstract text,
+
+    pre_project_document_id uuid REFERENCES documents (id),
+    pre_project_observations text,
+    pre_project_approved_at timestamptz DEFAULT NULL,
+
+    project_document_id uuid REFERENCES documents (id),
+    project_observations text,
+    project_received_at timestamptz DEFAULT NULL,
+
+    final_project_approved_at timestamptz
 );
 
 CREATE TABLE documents (
@@ -126,22 +136,6 @@ CREATE TABLE documents (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     storage_path text NOT NULL UNIQUE,
     uploaded_by uuid REFERENCES users (id) ON DELETE CASCADE NOT NULL
-);
-
-CREATE TABLE projects_stages (
-    LIKE audit_meta INCLUDING ALL,
-    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    stage_name text NOT NULL UNIQUE
-);
-
-CREATE TABLE project_stage_history (
-    LIKE audit_meta INCLUDING ALL,
-    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    project_id uuid REFERENCES projects (id) ON DELETE CASCADE NOT NULL,
-    stage_id uuid REFERENCES projects_stages (id) NOT NULL,
-    document_id uuid REFERENCES documents (id),
-    observations text,
-    completed boolean DEFAULT false NOT NULL
 );
 
 CREATE TABLE invitations (
