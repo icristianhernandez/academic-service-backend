@@ -21,14 +21,12 @@ CREATE TABLE countries (
     country_name text NOT NULL UNIQUE
 );
 
-
 CREATE TABLE states (
     LIKE audit_meta INCLUDING ALL,
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     country_id uuid NOT NULL REFERENCES countries (id),
     state_name text NOT NULL UNIQUE
 );
-
 
 CREATE TABLE cities (
     LIKE audit_meta INCLUDING ALL,
@@ -37,7 +35,6 @@ CREATE TABLE cities (
     city_name text NOT NULL UNIQUE
 );
 
-
 CREATE TABLE locations (
     LIKE audit_meta INCLUDING ALL,
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -45,6 +42,24 @@ CREATE TABLE locations (
     address text NOT NULL
 );
 
+CREATE TABLE roles (
+    LIKE audit_meta INCLUDING ALL,
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    role_name text NOT NULL UNIQUE,
+    permission_level integer NOT NULL
+);
+
+CREATE TABLE users (
+    LIKE audit_meta INCLUDING ALL,
+    id uuid PRIMARY KEY,
+    first_name varchar(20) NOT NULL,
+    last_name varchar(20) NOT NULL,
+    national_id varchar(12) NOT NULL UNIQUE,
+    email varchar(50) NOT NULL UNIQUE,
+    primary_contact text NOT NULL,
+    secondary_contact text,
+    role_id uuid REFERENCES roles (id)
+);
 
 CREATE TABLE campuses (
     LIKE audit_meta INCLUDING ALL,
@@ -71,26 +86,6 @@ CREATE TABLE schools (
     tutor_id uuid REFERENCES users (id)
 );
 
-CREATE TABLE roles (
-    LIKE audit_meta INCLUDING ALL,
-    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    role_name text NOT NULL UNIQUE,
-    permission_level integer NOT NULL
-);
-
-
-CREATE TABLE users (
-    LIKE audit_meta INCLUDING ALL,
-    id uuid PRIMARY KEY,
-    first_name varchar(20) NOT NULL,
-    last_name varchar(20) NOT NULL,
-    national_id varchar(12) NOT NULL UNIQUE,
-    email varchar(50) NOT NULL UNIQUE,
-    primary_contact text NOT NULL,
-    secondary_contact text,
-    role_id uuid REFERENCES roles (id)
-);
-
 CREATE TABLE students (
     LIKE audit_meta INCLUDING ALL,
     user_id uuid PRIMARY KEY REFERENCES users (id) ON DELETE CASCADE,
@@ -107,6 +102,14 @@ CREATE TABLE institutions (
     location_id uuid REFERENCES locations (id),
     contact_person_id uuid REFERENCES users (id),
     institution_name text NOT NULL UNIQUE
+);
+
+CREATE TABLE documents (
+    LIKE audit_meta INCLUDING ALL,
+    -- that can have a display name, and size, type metadata, but I'm unsure
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    storage_path text NOT NULL UNIQUE,
+    uploaded_by uuid REFERENCES users (id) ON DELETE CASCADE NOT NULL
 );
 
 CREATE TABLE projects (
@@ -128,14 +131,6 @@ CREATE TABLE projects (
     project_received_at timestamptz DEFAULT NULL,
 
     final_project_approved_at timestamptz
-);
-
-CREATE TABLE documents (
-    LIKE audit_meta INCLUDING ALL,
-    -- that can have a display name, and size, type metadata, but I'm unsure
-    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    storage_path text NOT NULL UNIQUE,
-    uploaded_by uuid REFERENCES users (id) ON DELETE CASCADE NOT NULL
 );
 
 CREATE TABLE invitations (
