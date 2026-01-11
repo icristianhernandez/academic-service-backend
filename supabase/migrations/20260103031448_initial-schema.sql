@@ -219,8 +219,6 @@ SELECT enable_audit_tracking(
     'institutions',
     'projects',
     'documents',
-    'projects_stages',
-    'project_stage_history',
     'invitations',
     'audit_logs'
 );
