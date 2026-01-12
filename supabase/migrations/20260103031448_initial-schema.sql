@@ -51,7 +51,7 @@ CREATE TABLE roles (
 
 CREATE TABLE users (
     LIKE audit_meta INCLUDING ALL,
-    id uuid PRIMARY KEY,
+    id uuid REFERENCES auth.users NOT NULL PRIMARY KEY,
     first_name varchar(20) NOT NULL,
     last_name varchar(20) NOT NULL,
     national_id varchar(12) NOT NULL UNIQUE,
@@ -88,7 +88,8 @@ CREATE TABLE schools (
 
 CREATE TABLE students (
     LIKE audit_meta INCLUDING ALL,
-    user_id uuid PRIMARY KEY REFERENCES users (id) ON DELETE CASCADE,
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id uuid REFERENCES users (id),
     faculty_id uuid REFERENCES faculties (id),
     school_id uuid REFERENCES schools (id),
     semester semester_enum,
@@ -144,13 +145,13 @@ CREATE TABLE invitations (
 );
 
 CREATE TABLE audit_logs (
-    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    LIKE audit_meta INCLUDING ALL,
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     record_id uuid,
     table_name text NOT NULL,
     payload jsonb,
-    operation text NOT NULL,
-    auth_uid uuid,
-    created_at timestamptz DEFAULT now() NOT NULL
+    operation_name text NOT NULL,
+    auth_uid uuid
 );
 
 CREATE OR REPLACE FUNCTION handle_audit_update()
@@ -172,19 +173,12 @@ AS $$
 DECLARE
     current_table_name text;
     dynamic_trigger_name text;
-    trigger_definition_sql text;
 BEGIN
     FOREACH current_table_name IN ARRAY target_table_names
     LOOP
         dynamic_trigger_name := format('trg_audit_update_%s', current_table_name);
 
         EXECUTE format(
-            'DROP TRIGGER IF EXISTS %I ON %I',
-            dynamic_trigger_name,
-            current_table_name
-        );
-
-        trigger_definition_sql := format(
             'CREATE TRIGGER %I
              BEFORE UPDATE ON %I
              FOR EACH ROW
@@ -192,8 +186,6 @@ BEGIN
             dynamic_trigger_name,
             current_table_name
         );
-
-        EXECUTE trigger_definition_sql;
     END LOOP;
 END;
 $$;
@@ -212,8 +204,7 @@ CALL enable_audit_tracking(
     'institutions',
     'projects',
     'documents',
-    'invitations',
-    'audit_logs'
+    'invitations'
 );
 
 CREATE OR REPLACE FUNCTION log_changes()
@@ -221,17 +212,23 @@ RETURNS trigger
 LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
-begin
-  insert into audit_logs (
+DECLARE
+  pk_value uuid;
+BEGIN
+  pk_value := coalesce(new.id, old.id);
+
+  IF pk_value IS NULL THEN
+    RAISE EXCEPTION 'Table % does not provide an id column for auditing', tg_table_name;
+  END IF;
+
+  INSERT INTO audit_logs (
     record_id,
     table_name,
     payload,
-    operation,
+    operation_name,
     auth_uid
-  ) values (
-    -- Assumes your table has a column named "id". 
-    -- If your PK is different, you might need to adjust this or use logic to find the PK.
-    coalesce(new.id, old.id),
+  ) VALUES (
+    pk_value,
     tg_table_name,
     jsonb_build_object(
       'old_record', row_to_json(old),
@@ -240,8 +237,8 @@ begin
     tg_op,
     auth.uid()
   );
-  return new;
-end;
+  RETURN NEW;
+END;
 $$;
 
 CREATE OR REPLACE PROCEDURE attach_audit_triggers(
@@ -251,16 +248,17 @@ LANGUAGE plpgsql
 AS $$
 DECLARE
     t_name text;
+    trigger_name text;
 BEGIN
     FOREACH t_name IN ARRAY table_names
     LOOP
-        EXECUTE format('DROP TRIGGER IF EXISTS audit_%I_changes ON %I', t_name, t_name);
+        trigger_name := format('audit_%s_changes', t_name);
 
         EXECUTE format('
-            CREATE TRIGGER audit_%I_changes
+            CREATE TRIGGER %I
             AFTER INSERT OR UPDATE OR DELETE ON %I
             FOR EACH ROW EXECUTE FUNCTION log_changes();', 
-            t_name, t_name);
+            trigger_name, t_name);
     END LOOP;
 END;
 $$;
@@ -275,11 +273,10 @@ CALL attach_audit_triggers(
     'faculties',
     'schools',
     'roles',
-    'students',
     'users',
+    'students',
     'institutions',
     'projects',
     'documents',
-    'invitations',
-    'audit_logs'
+    'invitations'
 );

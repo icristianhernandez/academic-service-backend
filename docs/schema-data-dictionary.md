@@ -15,7 +15,7 @@
 - `audit_meta` base columns: `created_at timestamptz NOT NULL DEFAULT now()`, `created_by uuid NOT NULL DEFAULT auth.uid()`, `updated_at timestamptz NOT NULL DEFAULT now()`, `updated_by uuid DEFAULT auth.uid()`.
 - Tables created with `LIKE audit_meta INCLUDING ALL` inherit these columns and defaults.
 - Trigger function `handle_audit_update` sets `updated_at` and `updated_by` on updates.
-- `enable_audit_tracking(...)` is enabled for: countries, states, cities, locations, campuses, faculties, schools, roles, students, users, institutions, projects, documents, invitations, audit_logs. If you add/remove tracked tables, update the migration accordingly.
+- `enable_audit_tracking(...)` is enabled for: countries, states, cities, locations, campuses, faculties, schools, roles, students, users, institutions, projects, documents, invitations. If you add/remove tracked tables, update the migration accordingly.
 
 ---
 
@@ -256,12 +256,12 @@
 
 | Attribute      | Data Type   | Nullable | Default           | Constraints | Dev Notes             |
 | :------------- | :---------- | :------- | :---------------- | :---------- | :-------------------- |
-| id             | uuid        | No       | gen_random_uuid() | PK          |                       |
-| table_name     | text        | No       |                   |             |                       |
-| operation_type | text        | No       |                   |             |                       |
-| record_id      | uuid        | Yes      |                   |             |                       |
-| old_values     | jsonb       | Yes      |                   |             |                       |
-| new_values     | jsonb       | Yes      |                   |             |                       |
+| id             | uuid        | No       | gen_random_uuid() | PK          | Inherits audit fields |
+| record_id      | uuid        | Yes      |                   |             | Inherits audit fields |
+| table_name     | text        | No       |                   |             | Inherits audit fields |
+| payload        | jsonb       | Yes      |                   |             | Inherits audit fields |
+| operation_name | text        | No       |                   |             | Inherits audit fields |
+| auth_uid       | uuid        | Yes      |                   |             | Inherits audit fields |
 | created_at     | timestamptz | No       | now()             |             | Inherits audit fields |
 | updated_at     | timestamptz | No       | now()             |             | Inherits audit fields |
 | created_by     | uuid        | No       | auth.uid()        |             | Inherits audit fields |
