@@ -266,9 +266,3 @@
 | updated_at     | timestamptz | No       | now()             |             | Inherits audit fields |
 | created_by     | uuid        | No       | auth.uid()        |             | Inherits audit fields |
 | updated_by     | uuid        | Yes      | auth.uid()        |             | Inherits audit fields |
-
----
-
-## Removed / Deprecated (for reference)
-
-- Previous documentation sections for `stages`, `project_stages`, and `project_stage_history` are removed here because the current migration does not create these tables. If they should exist, add them back to migrations and to `enable_audit_tracking`.
