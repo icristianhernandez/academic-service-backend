@@ -144,22 +144,39 @@ CREATE TABLE invitations (
     is_active boolean DEFAULT TRUE
 );
 
+-- https://wiki.postgresql.org/wiki/Audit_trigger
 CREATE TABLE audit_logs (
-    LIKE audit_meta INCLUDING ALL,
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    record_id uuid,
+    schema_name text NOT NULL,
     table_name text NOT NULL,
-    payload jsonb,
     operation_name text NOT NULL,
-    auth_uid uuid
+    auth_uid uuid DEFAULT auth.uid(),
+    payload jsonb,
+    created_at timestamptz DEFAULT now()
 );
+ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
+-- all visible and that's a security risk, at least other operations are blocked
+CREATE POLICY read_only_audit_logs
+ON audit_logs
+FOR SELECT
+TO authenticated
+USING (
+    TRUE
+);
+CREATE INDEX idx_audit_logs_table ON audit_logs (table_name);
+CREATE INDEX idx_audit_logs_created ON audit_logs (created_at);
 
 CREATE OR REPLACE FUNCTION handle_audit_update()
 RETURNS trigger
 AS $$
 BEGIN
-  NEW.updated_at = now();
-  NEW.updated_by = auth.uid();
+  NEW := jsonb_populate_record(
+    NEW,
+    jsonb_build_object(
+      'updated_at', now(),
+      'updated_by', auth.uid()
+    )
+  );
   RETURN NEW;
 END;
 $$
@@ -194,33 +211,37 @@ CREATE OR REPLACE FUNCTION log_changes()
 RETURNS trigger
 LANGUAGE plpgsql
 SECURITY DEFINER
+SET search_path = pg_catalog, extensions
 AS $$
 DECLARE
-  pk_value uuid;
+  change_payload jsonb;
 BEGIN
-  pk_value := coalesce(new.id, old.id);
-
-  IF pk_value IS NULL THEN
-    RAISE EXCEPTION 'Table % does not provide an id column for auditing', tg_table_name;
+  IF (TG_OP = 'DELETE') THEN
+    change_payload := jsonb_build_object('old_record', to_jsonb(OLD));
+  ELSIF (TG_OP = 'UPDATE') THEN
+    change_payload := jsonb_build_object(
+      'old_record', to_jsonb(OLD),
+      'new_record', to_jsonb(NEW)
+    );
+  ELSIF (TG_OP = 'INSERT') THEN
+    change_payload := jsonb_build_object('new_record', to_jsonb(NEW));
   END IF;
 
-  INSERT INTO audit_logs (
-    record_id,
+  INSERT INTO public.audit_logs (
+    schema_name,
     table_name,
-    payload,
     operation_name,
-    auth_uid
+    auth_uid,
+    payload
   ) VALUES (
-    pk_value,
-    tg_table_name,
-    jsonb_build_object(
-      'old_record', row_to_json(old),
-      'new_record', row_to_json(new)
-    ),
-    tg_op,
-    auth.uid()
+    TG_TABLE_SCHEMA,
+    TG_TABLE_NAME,
+    TG_OP,
+    auth.uid(),
+    change_payload
   );
-  RETURN NEW;
+
+  RETURN NULL;
 END;
 $$;
 

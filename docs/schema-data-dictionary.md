@@ -166,18 +166,19 @@
 
 ## Table: students
 
-| Attribute  | Data Type     | Nullable | Default    | Constraints                          | Dev Notes             |
-| :--------- | :------------ | :------- | :--------- | :----------------------------------- | :-------------------- |
-| user_id    | uuid          | No       |            | PK, FK -> users.id ON DELETE CASCADE |                       |
-| faculty_id | uuid          | Yes      |            | FK -> faculties.id                   |                       |
-| school_id  | uuid          | Yes      |            | FK -> schools.id                     |                       |
-| semester   | semester_enum | Yes      |            |                                      |                       |
-| shift      | shift_enum    | Yes      |            |                                      |                       |
-| section    | section_enum  | Yes      |            |                                      |                       |
-| created_at | timestamptz   | No       | now()      |                                      | Inherits audit fields |
-| updated_at | timestamptz   | No       | now()      |                                      | Inherits audit fields |
-| created_by | uuid          | No       | auth.uid() |                                      | Inherits audit fields |
-| updated_by | uuid          | Yes      | auth.uid() |                                      | Inherits audit fields |
+| Attribute  | Data Type     | Nullable | Default           | Constraints        | Dev Notes             |
+| :--------- | :------------ | :------- | :---------------- | :----------------- | :-------------------- |
+| id         | uuid          | No       | gen_random_uuid() | PK                 |                       |
+| user_id    | uuid          | Yes      |                   | FK -> users.id     |                       |
+| faculty_id | uuid          | Yes      |                   | FK -> faculties.id |                       |
+| school_id  | uuid          | Yes      |                   | FK -> schools.id   |                       |
+| semester   | semester_enum | Yes      |                   |                    |                       |
+| shift      | shift_enum    | Yes      |                   |                    |                       |
+| section    | section_enum  | Yes      |                   |                    |                       |
+| created_at | timestamptz   | No       | now()             |                    | Inherits audit fields |
+| updated_at | timestamptz   | No       | now()             |                    | Inherits audit fields |
+| created_by | uuid          | No       | auth.uid()        |                    | Inherits audit fields |
+| updated_by | uuid          | Yes      | auth.uid()        |                    | Inherits audit fields |
 
 ---
 
@@ -254,15 +255,14 @@
 
 ## Table: audit_logs
 
-| Attribute      | Data Type   | Nullable | Default           | Constraints | Dev Notes             |
-| :------------- | :---------- | :------- | :---------------- | :---------- | :-------------------- |
-| id             | uuid        | No       | gen_random_uuid() | PK          | Inherits audit fields |
-| record_id      | uuid        | Yes      |                   |             | Inherits audit fields |
-| table_name     | text        | No       |                   |             | Inherits audit fields |
-| payload        | jsonb       | Yes      |                   |             | Inherits audit fields |
-| operation_name | text        | No       |                   |             | Inherits audit fields |
-| auth_uid       | uuid        | Yes      |                   |             | Inherits audit fields |
-| created_at     | timestamptz | No       | now()             |             | Inherits audit fields |
-| updated_at     | timestamptz | No       | now()             |             | Inherits audit fields |
-| created_by     | uuid        | No       | auth.uid()        |             | Inherits audit fields |
-| updated_by     | uuid        | Yes      | auth.uid()        |             | Inherits audit fields |
+| Attribute      | Data Type   | Nullable | Default           | Constraints | Dev Notes                        |
+| :------------- | :---------- | :------- | :---------------- | :---------- | :------------------------------- |
+| id             | uuid        | No       | gen_random_uuid() | PK          |                                  |
+| schema_name    | text        | No       |                   |             |                                  |
+| table_name     | text        | No       |                   |             | Indexed (idx_audit_logs_table)   |
+| operation_name | text        | No       |                   |             |                                  |
+| auth_uid       | uuid        | Yes      | auth.uid()        |             |                                  |
+| payload        | jsonb       | Yes      |                   |             |                                  |
+| created_at     | timestamptz | No       | now()             |             | Indexed (idx_audit_logs_created) |
+
+- Row Level Security: enabled with `read_only_audit_logs` policy for `authenticated` role.
