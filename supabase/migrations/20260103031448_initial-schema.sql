@@ -144,13 +144,13 @@ CREATE TABLE invitations (
 );
 
 CREATE TABLE audit_logs (
-    LIKE audit_meta INCLUDING ALL,
-    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    table_name text NOT NULL,
-    operation_type text NOT NULL,
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     record_id uuid,
-    old_values jsonb,
-    new_values jsonb
+    table_name text NOT NULL,
+    payload jsonb,
+    operation text NOT NULL,
+    auth_uid uuid,
+    created_at timestamptz DEFAULT now() NOT NULL
 );
 
 CREATE OR REPLACE FUNCTION handle_audit_update()
@@ -199,6 +199,74 @@ END;
 $$;
 
 CALL enable_audit_tracking(
+    'countries',
+    'states',
+    'cities',
+    'locations',
+    'campuses',
+    'faculties',
+    'schools',
+    'roles',
+    'students',
+    'users',
+    'institutions',
+    'projects',
+    'documents',
+    'invitations',
+    'audit_logs'
+);
+
+CREATE OR REPLACE FUNCTION log_changes()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+begin
+  insert into audit_logs (
+    record_id,
+    table_name,
+    payload,
+    operation,
+    auth_uid
+  ) values (
+    -- Assumes your table has a column named "id". 
+    -- If your PK is different, you might need to adjust this or use logic to find the PK.
+    coalesce(new.id, old.id),
+    tg_table_name,
+    jsonb_build_object(
+      'old_record', row_to_json(old),
+      'new_record', row_to_json(new)
+    ),
+    tg_op,
+    auth.uid()
+  );
+  return new;
+end;
+$$;
+
+CREATE OR REPLACE PROCEDURE attach_audit_triggers(
+    VARIADIC table_names text []
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    t_name text;
+BEGIN
+    FOREACH t_name IN ARRAY table_names
+    LOOP
+        EXECUTE format('DROP TRIGGER IF EXISTS audit_%I_changes ON %I', t_name, t_name);
+
+        EXECUTE format('
+            CREATE TRIGGER audit_%I_changes
+            AFTER INSERT OR UPDATE OR DELETE ON %I
+            FOR EACH ROW EXECUTE FUNCTION log_changes();', 
+            t_name, t_name);
+    END LOOP;
+END;
+$$;
+
+
+CALL attach_audit_triggers(
     'countries',
     'states',
     'cities',
