@@ -164,12 +164,10 @@ END;
 $$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION enable_audit_tracking(
+CREATE OR REPLACE PROCEDURE enable_audit_tracking(
     VARIADIC target_table_names text []
 )
-RETURNS void
 LANGUAGE plpgsql
-VOLATILE -- Explicitly marks that this function changes the database state
 AS $$
 DECLARE
     current_table_name text;
@@ -200,7 +198,7 @@ BEGIN
 END;
 $$;
 
-SELECT enable_audit_tracking(
+CALL enable_audit_tracking(
     'countries',
     'states',
     'cities',
