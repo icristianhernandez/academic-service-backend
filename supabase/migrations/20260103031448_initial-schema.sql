@@ -190,23 +190,6 @@ BEGIN
 END;
 $$;
 
-CALL enable_audit_tracking(
-    'countries',
-    'states',
-    'cities',
-    'locations',
-    'campuses',
-    'faculties',
-    'schools',
-    'roles',
-    'students',
-    'users',
-    'institutions',
-    'projects',
-    'documents',
-    'invitations'
-);
-
 CREATE OR REPLACE FUNCTION log_changes()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -263,8 +246,42 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE PROCEDURE setup_audit_triggers(
+    VARIADIC table_names text []
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    current_table_name text;
+    audit_trigger_name text;
+    log_trigger_name text;
+BEGIN
+    FOREACH current_table_name IN ARRAY table_names
+    LOOP
+        audit_trigger_name := format('trg_audit_update_%s', current_table_name);
+        log_trigger_name := format('audit_%s_changes', current_table_name);
 
-CALL attach_audit_triggers(
+        EXECUTE format(
+            'CREATE TRIGGER %I
+             BEFORE UPDATE ON %I
+             FOR EACH ROW
+             EXECUTE FUNCTION handle_audit_update()',
+            audit_trigger_name,
+            current_table_name
+        );
+
+        EXECUTE format('
+            CREATE TRIGGER %I
+            AFTER INSERT OR UPDATE OR DELETE ON %I
+            FOR EACH ROW EXECUTE FUNCTION log_changes();', 
+            log_trigger_name,
+            current_table_name
+        );
+    END LOOP;
+END;
+$$;
+
+CALL setup_audit_triggers(
     'countries',
     'states',
     'cities',

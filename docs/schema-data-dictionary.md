@@ -15,7 +15,7 @@
 - `audit_meta` base columns: `created_at timestamptz NOT NULL DEFAULT now()`, `created_by uuid NOT NULL DEFAULT auth.uid()`, `updated_at timestamptz NOT NULL DEFAULT now()`, `updated_by uuid DEFAULT auth.uid()`.
 - Tables created with `LIKE audit_meta INCLUDING ALL` inherit these columns and defaults.
 - Trigger function `handle_audit_update` sets `updated_at` and `updated_by` on updates.
-- `enable_audit_tracking(...)` is enabled for: countries, states, cities, locations, campuses, faculties, schools, roles, students, users, institutions, projects, documents, invitations. If you add/remove tracked tables, update the migration accordingly.
+- `setup_audit_triggers(...)` creates both update and change audit triggers for: countries, states, cities, locations, campuses, faculties, schools, roles, students, users, institutions, projects, documents, invitations. If you add/remove tracked tables, update the migration accordingly.
 
 ---
 
