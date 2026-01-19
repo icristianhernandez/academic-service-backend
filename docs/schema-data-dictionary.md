@@ -199,15 +199,23 @@
 
 ## Table: documents
 
-| Attribute    | Data Type   | Nullable | Default           | Constraints                      | Dev Notes                                       |
-| :----------- | :---------- | :------- | :---------------- | :------------------------------- | :---------------------------------------------- |
-| id           | uuid        | No       | gen_random_uuid() | PK                               | Can store display/name/size/type metadata later |
-| storage_path | text        | No       |                   | UNIQUE                           |                                                 |
-| uploaded_by  | uuid        | No       |                   | FK -> users.id ON DELETE CASCADE |                                                 |
-| created_at   | timestamptz | No       | now()             |                                  | Inherits audit fields                           |
-| updated_at   | timestamptz | No       | now()             |                                  | Inherits audit fields                           |
-| created_by   | uuid        | No       | auth.uid()        |                                  | Inherits audit fields                           |
-| updated_by   | uuid        | Yes      | auth.uid()        |                                  | Inherits audit fields                           |
+| Attribute    | Data Type   | Nullable | Default           | Constraints                                 | Dev Notes                                       |
+| :----------- | :---------- | :------- | :---------------- | :------------------------------------------ | :---------------------------------------------- |
+| id           | uuid        | No       | gen_random_uuid() | PK                                          | Can store display/name/size/type metadata later |
+| bucket_id    | text        | No       | project           | FK -> storage.buckets.id                     | Uses shared project bucket (public)             |
+| storage_path | text        | No       |                   | UNIQUE (bucket_id, storage_path)            |                                                 |
+| uploaded_by  | uuid        | No       |                   | FK -> users.id ON DELETE CASCADE            |                                                 |
+
+
+Bucket: `project`
+
+- Inserted in migration with `public = TRUE`.
+- RLS policies allow all actions (`SELECT`, `INSERT`, `UPDATE`, `DELETE`) for the `authenticated` role when `bucket_id = 'project'`.
+- This bucket is shared for both pre-project and project documents.
+| created_at   | timestamptz | No       | now()             |                                             | Inherits audit fields                           |
+| updated_at   | timestamptz | No       | now()             |                                             | Inherits audit fields                           |
+| created_by   | uuid        | No       | auth.uid()        |                                             | Inherits audit fields                           |
+| updated_by   | uuid        | Yes      | auth.uid()        |                                             | Inherits audit fields                           |
 
 ---
 

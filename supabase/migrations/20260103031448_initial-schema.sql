@@ -107,11 +107,40 @@ CREATE TABLE institutions (
 
 CREATE TABLE documents (
     LIKE audit_meta INCLUDING ALL,
-    -- that can have a display name, and size, type metadata, but I'm unsure
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    storage_path text NOT NULL UNIQUE,
-    uploaded_by uuid REFERENCES users (id) ON DELETE CASCADE NOT NULL
+    bucket_id text NOT NULL DEFAULT 'project' REFERENCES storage.buckets (id),
+    storage_path text NOT NULL,
+    uploaded_by uuid REFERENCES users (id) ON DELETE CASCADE NOT NULL,
+    UNIQUE (bucket_id, storage_path)
 );
+
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('project', 'project', TRUE);
+
+CREATE POLICY project_documents_read
+ON storage.objects
+FOR SELECT
+TO authenticated
+USING (bucket_id = 'project');
+
+CREATE POLICY project_documents_insert
+ON storage.objects
+FOR INSERT
+TO authenticated
+WITH CHECK (bucket_id = 'project');
+
+CREATE POLICY project_documents_update
+ON storage.objects
+FOR UPDATE
+TO authenticated
+USING (bucket_id = 'project')
+WITH CHECK (bucket_id = 'project');
+
+CREATE POLICY project_documents_delete
+ON storage.objects
+FOR DELETE
+TO authenticated
+USING (bucket_id = 'project');
 
 CREATE TABLE projects (
     LIKE audit_meta INCLUDING ALL,
