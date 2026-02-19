@@ -1,0 +1,160 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Project: Install Dependencies",
+      "type": "shell",
+      "command": "npm",
+      "args": ["install"],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Dev: Full Setup",
+      "type": "shell",
+      "command": "npx",
+      "args": ["supabase", "start"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "dependsOn": "SQL: Lint",
+      "dependsOrder": "sequence",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "SQL: Lint",
+      "type": "shell",
+      "command": "sqlfluff",
+      "args": ["lint", "supabase/migrations/*.sql"],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^(.*\\.sql):([0-9]+):([0-9]+): (.+)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "message": 4
+        }
+      }
+    },
+    {
+      "label": "SQL: Fix",
+      "type": "shell",
+      "command": "sqlfluff",
+      "args": ["fix", "supabase/migrations/*.sql"],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Supabase: Start",
+      "type": "shell",
+      "command": "npx",
+      "args": ["supabase", "start"],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Supabase: Stop",
+      "type": "shell",
+      "command": "npx",
+      "args": ["supabase", "stop"],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Supabase: Status",
+      "type": "shell",
+      "command": "npx",
+      "args": ["supabase", "status"],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "DB: Reset",
+      "type": "shell",
+      "command": "npx",
+      "args": ["supabase", "db", "reset"],
+      "group": "build",
+      "dependsOn": "SQL: Lint",
+      "dependsOrder": "sequence",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "DB: New Migration",
+      "type": "shell",
+      "command": "npx",
+      "args": ["supabase", "migration", "new", "${input:migrationName}"],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "DB: Diff Migration",
+      "type": "shell",
+      "command": "npx",
+      "args": ["supabase", "db", "diff", "--use-pg-schema", "-f", "${input:migrationName}"],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "DB: Dump Seed Data",
+      "type": "shell",
+      "command": "npx",
+      "args": ["supabase", "db", "dump", "--local", "--data-only", "-f", "supabase/seed.sql"],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "migrationName",
+      "description": "Enter a name for the migration (e.g., add-users-table)",
+      "default": "new-feature",
+      "type": "promptString"
+    }
+  ]
+}
