@@ -118,6 +118,10 @@ break these guidelines.
 - The following workflow instructions are mandatory and can't be avoided, even
   if the user asks otherwise.
 
+- Always load `supabase-postgres-best-practices` skill for any database-related
+  task or question (SQL migrations, schema design, indexes, RLS, query
+  optimization, performance analysis)
+
 - After implementing changes, run a test-fix loop before finishing so each
   change has all errors resolved:
   - Lint: `sqlfluff lint supabase/migrations/*.sql`

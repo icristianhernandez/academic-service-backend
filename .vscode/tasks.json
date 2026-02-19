@@ -148,6 +148,33 @@
       },
       "problemMatcher": []
     }
+    ,
+    {
+      "label": "Supabase AI Skills Update (Repo Wide)",
+      "type": "process",
+      "command": "npx",
+      "args": [
+        "skills",
+        "add",
+        "supabase/agent-skills",
+        "--skill",
+        "*",
+        "-y"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "DISABLE_TELEMETRY": "1",
+          "DO_NOT_TRACK": "1",
+          "INSTALL_INTERNAL_SKILLS": "0"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
   ],
   "inputs": [
     {
