@@ -64,9 +64,9 @@ CREATE TABLE users (
 CREATE TABLE campuses (
     LIKE audit_meta INCLUDING ALL,
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    location_id uuid REFERENCES locations (id),
+    location_id uuid NOT NULL REFERENCES locations (id),
     campus_name text NOT NULL UNIQUE,
-    president_id uuid REFERENCES users (id)
+    president_id uuid NOT NULL REFERENCES users (id)
 );
 
 CREATE TABLE faculties (
@@ -74,8 +74,8 @@ CREATE TABLE faculties (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     campus_id uuid NOT NULL REFERENCES campuses (id),
     faculty_name text NOT NULL UNIQUE,
-    dean_id uuid REFERENCES users (id),
-    coordinator_id uuid REFERENCES users (id)
+    dean_id uuid NOT NULL REFERENCES users (id),
+    coordinator_id uuid NOT NULL REFERENCES users (id)
 );
 
 CREATE TABLE schools (
@@ -83,15 +83,15 @@ CREATE TABLE schools (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     faculty_id uuid NOT NULL REFERENCES faculties (id),
     school_name text NOT NULL UNIQUE,
-    tutor_id uuid REFERENCES users (id)
+    tutor_id uuid NOT NULL REFERENCES users (id)
 );
 
 CREATE TABLE students (
     LIKE audit_meta INCLUDING ALL,
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id uuid REFERENCES users (id),
-    faculty_id uuid REFERENCES faculties (id),
-    school_id uuid REFERENCES schools (id),
+    user_id uuid NOT NULL REFERENCES users (id),
+    faculty_id uuid NOT NULL REFERENCES faculties (id),
+    school_id uuid NOT NULL REFERENCES schools (id),
     semester semester_enum,
     shift shift_enum,
     section section_enum
@@ -145,14 +145,14 @@ USING (bucket_id = 'project');
 CREATE TABLE projects (
     LIKE audit_meta INCLUDING ALL,
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    tutor_id uuid REFERENCES users (id),
-    coordinator_id uuid REFERENCES users (id),
-    student_id uuid REFERENCES users (id),
-    institution_id uuid REFERENCES institutions (id),
+    tutor_id uuid NOT NULL REFERENCES users (id),
+    coordinator_id uuid NOT NULL REFERENCES users (id),
+    student_id uuid NOT NULL REFERENCES users (id),
+    institution_id uuid NOT NULL REFERENCES institutions (id),
     title text NOT NULL,
     abstract text,
 
-    pre_project_document_id uuid REFERENCES documents (id),
+    pre_project_document_id uuid NOT NULL REFERENCES documents (id),
     pre_project_observations text,
     pre_project_approved_at timestamptz DEFAULT NULL,
 

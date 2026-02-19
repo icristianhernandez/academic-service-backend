@@ -123,9 +123,9 @@
 | Attribute    | Data Type   | Nullable | Default           | Constraints        | Dev Notes             |
 | :----------- | :---------- | :------- | :---------------- | :----------------- | :-------------------- |
 | id           | uuid        | No       | gen_random_uuid() | PK                 |                       |
-| location_id  | uuid        | Yes      |                   | FK -> locations.id |                       |
+| location_id  | uuid        | No       |                   | FK -> locations.id |                       |
 | campus_name  | text        | No       |                   | UNIQUE             |                       |
-| president_id | uuid        | Yes      |                   | FK -> users.id     |                       |
+| president_id | uuid        | No       |                   | FK -> users.id     |                       |
 | created_at   | timestamptz | No       | now()             |                    | Inherits audit fields |
 | updated_at   | timestamptz | No       | now()             |                    | Inherits audit fields |
 | created_by   | uuid        | No       | auth.uid()        |                    | Inherits audit fields |
@@ -140,8 +140,8 @@
 | id             | uuid        | No       | gen_random_uuid() | PK                |                       |
 | campus_id      | uuid        | No       |                   | FK -> campuses.id |                       |
 | faculty_name   | text        | No       |                   | UNIQUE            |                       |
-| dean_id        | uuid        | Yes      |                   | FK -> users.id    |                       |
-| coordinator_id | uuid        | Yes      |                   | FK -> users.id    |                       |
+| dean_id        | uuid        | No       |                   | FK -> users.id    |                       |
+| coordinator_id | uuid        | No       |                   | FK -> users.id    |                       |
 | created_at     | timestamptz | No       | now()             |                   | Inherits audit fields |
 | updated_at     | timestamptz | No       | now()             |                   | Inherits audit fields |
 | created_by     | uuid        | No       | auth.uid()        |                   | Inherits audit fields |
@@ -156,7 +156,7 @@
 | id          | uuid        | No       | gen_random_uuid() | PK                 |                       |
 | faculty_id  | uuid        | No       |                   | FK -> faculties.id |                       |
 | school_name | text        | No       |                   | UNIQUE             |                       |
-| tutor_id    | uuid        | Yes      |                   | FK -> users.id     |                       |
+| tutor_id    | uuid        | No       |                   | FK -> users.id     |                       |
 | created_at  | timestamptz | No       | now()             |                    | Inherits audit fields |
 | updated_at  | timestamptz | No       | now()             |                    | Inherits audit fields |
 | created_by  | uuid        | No       | auth.uid()        |                    | Inherits audit fields |
@@ -169,9 +169,9 @@
 | Attribute  | Data Type     | Nullable | Default           | Constraints        | Dev Notes             |
 | :--------- | :------------ | :------- | :---------------- | :----------------- | :-------------------- |
 | id         | uuid          | No       | gen_random_uuid() | PK                 |                       |
-| user_id    | uuid          | Yes      |                   | FK -> users.id     |                       |
-| faculty_id | uuid          | Yes      |                   | FK -> faculties.id |                       |
-| school_id  | uuid          | Yes      |                   | FK -> schools.id   |                       |
+| user_id    | uuid          | No       |                   | FK -> users.id     |                       |
+| faculty_id | uuid          | No       |                   | FK -> faculties.id |                       |
+| school_id  | uuid          | No       |                   | FK -> schools.id   |                       |
 | semester   | semester_enum | Yes      |                   |                    |                       |
 | shift      | shift_enum    | Yes      |                   |                    |                       |
 | section    | section_enum  | Yes      |                   |                    |                       |
@@ -202,20 +202,19 @@
 | Attribute    | Data Type   | Nullable | Default           | Constraints                                 | Dev Notes                                       |
 | :----------- | :---------- | :------- | :---------------- | :------------------------------------------ | :---------------------------------------------- |
 | id           | uuid        | No       | gen_random_uuid() | PK                                          | Can store display/name/size/type metadata later |
-| bucket_id    | text        | No       | project           | FK -> storage.buckets.id                     | Uses shared project bucket (public)             |
+| bucket_id    | text        | No       | project           | FK -> storage.buckets.id                    | Uses shared project bucket (public)             |
 | storage_path | text        | No       |                   | UNIQUE (bucket_id, storage_path)            |                                                 |
 | uploaded_by  | uuid        | No       |                   | FK -> users.id ON DELETE CASCADE            |                                                 |
-
+| created_at   | timestamptz | No       | now()             |                                             | Inherits audit fields                           |
+| updated_at   | timestamptz | No       | now()             |                                             | Inherits audit fields                           |
+| created_by   | uuid        | No       | auth.uid()        |                                             | Inherits audit fields                           |
+| updated_by   | uuid        | Yes      | auth.uid()        |                                             | Inherits audit fields                           |
 
 Bucket: `project`
 
 - Inserted in migration with `public = TRUE`.
 - RLS policies allow all actions (`SELECT`, `INSERT`, `UPDATE`, `DELETE`) for the `authenticated` role when `bucket_id = 'project'`.
 - This bucket is shared for both pre-project and project documents.
-| created_at   | timestamptz | No       | now()             |                                             | Inherits audit fields                           |
-| updated_at   | timestamptz | No       | now()             |                                             | Inherits audit fields                           |
-| created_by   | uuid        | No       | auth.uid()        |                                             | Inherits audit fields                           |
-| updated_by   | uuid        | Yes      | auth.uid()        |                                             | Inherits audit fields                           |
 
 ---
 
@@ -224,13 +223,13 @@ Bucket: `project`
 | Attribute                 | Data Type   | Nullable | Default           | Constraints           | Dev Notes             |
 | :------------------------ | :---------- | :------- | :---------------- | :-------------------- | :-------------------- |
 | id                        | uuid        | No       | gen_random_uuid() | PK                    |                       |
-| tutor_id                  | uuid        | Yes      |                   | FK -> users.id        |                       |
-| coordinator_id            | uuid        | Yes      |                   | FK -> users.id        |                       |
-| student_id                | uuid        | Yes      |                   | FK -> users.id        |                       |
-| institution_id            | uuid        | Yes      |                   | FK -> institutions.id |                       |
+| tutor_id                  | uuid        | No       |                   | FK -> users.id        |                       |
+| coordinator_id            | uuid        | No       |                   | FK -> users.id        |                       |
+| student_id                | uuid        | No       |                   | FK -> users.id        |                       |
+| institution_id            | uuid        | No       |                   | FK -> institutions.id |                       |
 | title                     | text        | No       |                   |                       |                       |
 | abstract                  | text        | Yes      |                   |                       |                       |
-| pre_project_document_id   | uuid        | Yes      |                   | FK -> documents.id    |                       |
+| pre_project_document_id   | uuid        | No       |                   | FK -> documents.id    |                       |
 | pre_project_observations  | text        | Yes      |                   |                       |                       |
 | pre_project_approved_at   | timestamptz | Yes      | NULL              |                       |                       |
 | project_document_id       | uuid        | Yes      |                   | FK -> documents.id    |                       |
