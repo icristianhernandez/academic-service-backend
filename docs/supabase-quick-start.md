@@ -14,6 +14,20 @@ Install supabase as a development dependency:
 npm install supabase --save-dev
 ```
 
+## Setup Repo (without starting services)
+
+Run the VS Code task `Setup Repo` to prepare the workspace without starting
+Supabase containers.
+
+This task does the following:
+
+- Installs Node dependencies (`npm install`).
+- Creates a local Python virtual environment at `.venv` (if it does not exist).
+- Installs SQL linting dependencies from `requirements.txt`.
+
+After this, SQL tasks use the repo-local SQLFluff binary at
+`.venv/bin/sqlfluff`.
+
 If updating, clean supabase first to allow a clean update:
 
 ```bash

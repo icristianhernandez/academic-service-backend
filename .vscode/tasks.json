@@ -2,10 +2,13 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Project: Install Dependencies",
+      "label": "Setup Repo",
       "type": "shell",
-      "command": "npm",
-      "args": ["install"],
+      "command": "bash",
+      "args": [
+        "-lc",
+        "set -euo pipefail; npm install; if [ ! -d .venv ]; then python3 -m venv .venv; fi; .venv/bin/python -m pip install -r requirements.txt"
+      ],
       "group": "build",
       "presentation": {
         "reveal": "always",
@@ -33,7 +36,7 @@
     {
       "label": "SQL: Lint",
       "type": "shell",
-      "command": "sqlfluff",
+      "command": "${workspaceFolder}/.venv/bin/sqlfluff",
       "args": ["lint", "supabase/migrations/*.sql"],
       "group": "build",
       "presentation": {
@@ -53,7 +56,7 @@
     {
       "label": "SQL: Fix",
       "type": "shell",
-      "command": "sqlfluff",
+      "command": "${workspaceFolder}/.venv/bin/sqlfluff",
       "args": ["fix", "supabase/migrations/*.sql"],
       "group": "build",
       "presentation": {
