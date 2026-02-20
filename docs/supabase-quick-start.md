@@ -65,7 +65,7 @@ npm run db:docs
 
 Generated files:
 
-- `docs/generated/schema-core.md` (tables, columns, data type, constraints, defaults, nullable)
+- `docs/generated/schema-core.md` (tables, columns, data type, constraints, defaults, nullability)
 - `docs/generated/schema-advanced.md` (views, functions, triggers, RLS tables/policies)
 - `docs/generated/erd.mmd` (Mermaid ERD source generated from FK relationships)
 
