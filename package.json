@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "db:docs": "bash scripts/generate-db-docs.sh"
+  },
   "devDependencies": {
     "supabase": "^2.70.5"
   }

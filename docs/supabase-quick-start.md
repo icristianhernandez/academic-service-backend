@@ -54,6 +54,21 @@ npx supabase start
 npx supabase stop
 ```
 
+## Auto-generate DB docs (ERD + schema text)
+
+With Supabase local running, generate synced docs directly from the live local
+database metadata:
+
+```bash
+npm run db:docs
+```
+
+Generated files:
+
+- `docs/generated/schema-core.md` (tables, columns, data type, constraints, defaults, nullable)
+- `docs/generated/schema-advanced.md` (views, functions, triggers, RLS tables/policies)
+- `docs/generated/erd.mmd` (Mermaid ERD source generated from FK relationships)
+
 ## Migrations (for adding or altering DB objects locally — rules and tables, not rows)
 
 - Diff local changes made through Local Studio (localhost:54323).
