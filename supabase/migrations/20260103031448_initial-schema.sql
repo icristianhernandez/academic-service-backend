@@ -48,7 +48,7 @@ create table roles (
     permission_level integer not null
 );
 
-create table users (
+create table profiles (
     like audit_meta including all,
     id uuid references auth.users not null primary key,
     first_name text not null,
@@ -65,7 +65,7 @@ create table campuses (
     id bigint generated always as identity primary key,
     location_id bigint not null references locations (id),
     campus_name text not null unique,
-    president_id uuid not null references users (id)
+    president_profile_id uuid not null references profiles (id)
 );
 
 create table faculties (
@@ -73,8 +73,8 @@ create table faculties (
     id bigint generated always as identity primary key,
     campus_id bigint not null references campuses (id),
     faculty_name text not null unique,
-    dean_id uuid not null references users (id),
-    coordinator_id uuid not null references users (id)
+    dean_profile_id uuid not null references profiles (id),
+    coordinator_profile_id uuid not null references profiles (id)
 );
 
 create table schools (
@@ -82,13 +82,13 @@ create table schools (
     id bigint generated always as identity primary key,
     faculty_id bigint not null references faculties (id),
     school_name text not null unique,
-    tutor_id uuid not null references users (id)
+    tutor_profile_id uuid not null references profiles (id)
 );
 
 create table students (
     like audit_meta including all,
     id bigint generated always as identity primary key,
-    user_id uuid not null references users (id),
+    profile_id uuid not null references profiles (id),
     faculty_id bigint not null references faculties (id),
     school_id bigint not null references schools (id),
     semester semester_enum,
@@ -100,7 +100,7 @@ create table institutions (
     like audit_meta including all,
     id bigint generated always as identity primary key,
     location_id bigint references locations (id),
-    contact_person_id uuid references users (id),
+    contact_person_profile_id uuid references profiles (id),
     institution_name text not null unique
 );
 
@@ -109,7 +109,9 @@ create table documents (
     id bigint generated always as identity primary key,
     bucket_id text not null default 'project' references storage.buckets (id),
     storage_path text not null,
-    uploaded_by uuid references users (id) on delete cascade not null,
+    uploaded_by_profile_id uuid references profiles (
+        id
+    ) on delete cascade not null,
     unique (bucket_id, storage_path)
 );
 
@@ -144,9 +146,9 @@ using (bucket_id = 'project');
 create table projects (
     like audit_meta including all,
     id bigint generated always as identity primary key,
-    tutor_id uuid not null references users (id),
-    coordinator_id uuid not null references users (id),
-    student_id uuid not null references users (id),
+    tutor_profile_id uuid not null references profiles (id),
+    coordinator_profile_id uuid not null references profiles (id),
+    student_profile_id uuid not null references profiles (id),
     institution_id bigint not null references institutions (id),
     title text not null,
     abstract text,
@@ -165,7 +167,7 @@ create table projects (
 create table invitations (
     like audit_meta including all,
     id bigint generated always as identity primary key,
-    invited_by uuid references users (id),
+    invited_by_profile_id uuid references profiles (id),
     email text not null unique,
     role_id bigint references roles (id),
     token text not null,
@@ -317,7 +319,7 @@ call setup_audit(
     'faculties',
     'schools',
     'roles',
-    'users',
+    'profiles',
     'students',
     'institutions',
     'projects',

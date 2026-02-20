@@ -11,7 +11,7 @@
   - [Table: cities](#table-cities)
   - [Table: locations](#table-locations)
   - [Table: roles](#table-roles)
-  - [Table: users](#table-users)
+  - [Table: profiles](#table-profiles)
   - [Table: campuses](#table-campuses)
   - [Table: faculties](#table-faculties)
   - [Table: schools](#table-schools)
@@ -31,7 +31,7 @@
 | section_enum  | 'A', 'B', 'C', 'D', 'E', 'F'                      | Cohort/section designation |
 | shift_enum    | 'MORNING', 'EVENING'                              | Student shift              |
 
-Primary keys use `bigint generated always as identity` for application tables. The auth boundary remains `users.id uuid` to stay compatible with `auth.users.id`.
+Primary keys use `bigint generated always as identity` for application tables. The auth boundary remains `profiles.id uuid` to stay compatible with `auth.users.id`.
 
 Extensions: `plpgsql_check` (loaded for validation).
 
@@ -42,7 +42,7 @@ Extensions: `plpgsql_check` (loaded for validation).
 - `audit_meta` base columns: `created_at timestamptz NOT NULL DEFAULT now()`, `created_by uuid NOT NULL DEFAULT auth.uid()`, `updated_at timestamptz NOT NULL DEFAULT now()`, `updated_by uuid DEFAULT auth.uid()`.
 - Tables created with `LIKE audit_meta INCLUDING ALL` inherit these columns and defaults.
 - Trigger function `handle_audit_update` sets `updated_at` and `updated_by` on updates.
-- `setup_audit(...)` creates both update audit triggers (`enable_audit_tracking`) and update/add/delete audit triggers (`attach_audit_triggers`) for: countries, states, cities, locations, campuses, faculties, schools, roles, students, users, institutions, projects, documents, invitations.
+- `setup_audit(...)` creates both update audit triggers (`enable_audit_tracking`) and update/add/delete audit triggers (`attach_audit_triggers`) for: countries, states, cities, locations, campuses, faculties, schools, roles, students, profiles, institutions, projects, documents, invitations.
 - `enable_audit_tracking` on a table creates a trigger that updates the `updated_at` and `updated_by` fields on every update to the row.
 - `attach_audit_triggers` on a table creates triggers that log `INSERT`, `UPDATE`, and `DELETE` operations to the `audit_logs` table, capturing the schema name, table name, operation type, user ID, and a JSON payload of the row data.
 
@@ -128,7 +128,7 @@ Extensions: `plpgsql_check` (loaded for validation).
 
 ---
 
-## Table: users
+## Table: profiles
 
 | Attribute         | Data Type   | Nullable | Default    | Constraints    | Dev Notes             |
 | :---------------- | :---------- | :------- | :--------- | :------------- | :-------------------- |
@@ -154,7 +154,7 @@ Extensions: `plpgsql_check` (loaded for validation).
 | id           | bigint      | No       | generated always as identity | PK                 |                       |
 | location_id  | bigint      | No       |                              | FK -> locations.id |                       |
 | campus_name  | text        | No       |                              | UNIQUE             |                       |
-| president_id | uuid        | No       |                              | FK -> users.id     |                       |
+| president_profile_id | uuid        | No       |                              | FK -> profiles.id     |                       |
 | created_at   | timestamptz | No       | now()                        |                    | Inherits audit fields |
 | updated_at   | timestamptz | No       | now()                        |                    | Inherits audit fields |
 | created_by   | uuid        | No       | auth.uid()                   |                    | Inherits audit fields |
@@ -169,8 +169,8 @@ Extensions: `plpgsql_check` (loaded for validation).
 | id             | bigint      | No       | generated always as identity | PK                |                       |
 | campus_id      | bigint      | No       |                              | FK -> campuses.id |                       |
 | faculty_name   | text        | No       |                              | UNIQUE            |                       |
-| dean_id        | uuid        | No       |                              | FK -> users.id    |                       |
-| coordinator_id | uuid        | No       |                              | FK -> users.id    |                       |
+| dean_profile_id        | uuid        | No       |                              | FK -> profiles.id    |                       |
+| coordinator_profile_id | uuid        | No       |                              | FK -> profiles.id    |                       |
 | created_at     | timestamptz | No       | now()                        |                   | Inherits audit fields |
 | updated_at     | timestamptz | No       | now()                        |                   | Inherits audit fields |
 | created_by     | uuid        | No       | auth.uid()                   |                   | Inherits audit fields |
@@ -185,7 +185,7 @@ Extensions: `plpgsql_check` (loaded for validation).
 | id          | bigint      | No       | generated always as identity | PK                 |                       |
 | faculty_id  | bigint      | No       |                              | FK -> faculties.id |                       |
 | school_name | text        | No       |                              | UNIQUE             |                       |
-| tutor_id    | uuid        | No       |                              | FK -> users.id     |                       |
+| tutor_profile_id    | uuid        | No       |                              | FK -> profiles.id     |                       |
 | created_at  | timestamptz | No       | now()                        |                    | Inherits audit fields |
 | updated_at  | timestamptz | No       | now()                        |                    | Inherits audit fields |
 | created_by  | uuid        | No       | auth.uid()                   |                    | Inherits audit fields |
@@ -198,7 +198,7 @@ Extensions: `plpgsql_check` (loaded for validation).
 | Attribute  | Data Type     | Nullable | Default                      | Constraints        | Dev Notes             |
 | :--------- | :------------ | :------- | :--------------------------- | :----------------- | :-------------------- |
 | id         | bigint        | No       | generated always as identity | PK                 |                       |
-| user_id    | uuid          | No       |                              | FK -> users.id     |                       |
+| profile_id    | uuid          | No       |                              | FK -> profiles.id     |                       |
 | faculty_id | bigint        | No       |                              | FK -> faculties.id |                       |
 | school_id  | bigint        | No       |                              | FK -> schools.id   |                       |
 | semester   | semester_enum | Yes      |                              |                    |                       |
@@ -217,7 +217,7 @@ Extensions: `plpgsql_check` (loaded for validation).
 | :---------------- | :---------- | :------- | :--------------------------- | :----------------- | :-------------------- |
 | id                | bigint      | No       | generated always as identity | PK                 |                       |
 | location_id       | bigint      | Yes      |                              | FK -> locations.id |                       |
-| contact_person_id | uuid        | Yes      |                              | FK -> users.id     |                       |
+| contact_person_profile_id | uuid        | Yes      |                              | FK -> profiles.id     |                       |
 | institution_name  | text        | No       |                              | UNIQUE             |                       |
 | created_at        | timestamptz | No       | now()                        |                    | Inherits audit fields |
 | updated_at        | timestamptz | No       | now()                        |                    | Inherits audit fields |
@@ -233,7 +233,7 @@ Extensions: `plpgsql_check` (loaded for validation).
 | id           | bigint      | No       | generated always as identity | PK                               | Can store display/name/size/type metadata later |
 | bucket_id    | text        | No       | project                      | FK -> storage.buckets.id         | Uses shared project bucket (public)             |
 | storage_path | text        | No       |                              | UNIQUE (bucket_id, storage_path) |                                                 |
-| uploaded_by  | uuid        | No       |                              | FK -> users.id ON DELETE CASCADE |                                                 |
+| uploaded_by_profile_id  | uuid        | No       |                              | FK -> profiles.id ON DELETE CASCADE |                                                 |
 | created_at   | timestamptz | No       | now()                        |                                  | Inherits audit fields                           |
 | updated_at   | timestamptz | No       | now()                        |                                  | Inherits audit fields                           |
 | created_by   | uuid        | No       | auth.uid()                   |                                  | Inherits audit fields                           |
@@ -252,9 +252,9 @@ Bucket: `project`
 | Attribute                 | Data Type   | Nullable | Default                      | Constraints           | Dev Notes             |
 | :------------------------ | :---------- | :------- | :--------------------------- | :-------------------- | :-------------------- |
 | id                        | bigint      | No       | generated always as identity | PK                    |                       |
-| tutor_id                  | uuid        | No       |                              | FK -> users.id        |                       |
-| coordinator_id            | uuid        | No       |                              | FK -> users.id        |                       |
-| student_id                | uuid        | No       |                              | FK -> users.id        |                       |
+| tutor_profile_id                  | uuid        | No       |                              | FK -> profiles.id        |                       |
+| coordinator_profile_id            | uuid        | No       |                              | FK -> profiles.id        |                       |
+| student_profile_id                | uuid        | No       |                              | FK -> profiles.id        |                       |
 | institution_id            | bigint      | No       |                              | FK -> institutions.id |                       |
 | title                     | text        | No       |                              |                       |                       |
 | abstract                  | text        | Yes      |                              |                       |                       |
@@ -277,7 +277,7 @@ Bucket: `project`
 | Attribute  | Data Type   | Nullable | Default                      | Constraints    | Dev Notes             |
 | :--------- | :---------- | :------- | :--------------------------- | :------------- | :-------------------- |
 | id         | bigint      | No       | generated always as identity | PK             |                       |
-| invited_by | uuid        | Yes      |                              | FK -> users.id |                       |
+| invited_by_profile_id | uuid        | Yes      |                              | FK -> profiles.id |                       |
 | email      | text        | No       |                              | UNIQUE         |                       |
 | role_id    | bigint      | Yes      |                              | FK -> roles.id |                       |
 | token      | text        | No       |                              |                |                       |
