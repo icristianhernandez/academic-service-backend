@@ -44,7 +44,7 @@ break these guidelines.
   Venezuela.
 - The stack is Node 18+ (for tooling), Supabase CLI, and PostgreSQL 17.
 - Database migrations are located in: `supabase/migrations/`
-- Data dictionary documentation is at: `docs/schema-data-dictionary.md`
+- Generated schema documentation is at: `docs/db/tbls/`
 - Quick start guide is at: `docs/supabase-quick-start.md`
 - Linting configuration is in: `.sqlfluff`
 

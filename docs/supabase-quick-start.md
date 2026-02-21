@@ -133,3 +133,20 @@ Deploy Edge Functions (if used):
 ```bash
 npx supabase functions deploy <function_name>
 ```
+
+## DB docs (tbls + Liam)
+
+- Generated docs are committed under `docs/db/tbls/`.
+- The ERD site is built in CI from `docs/db/tbls/schema.json` and deployed to GitHub Pages using `npx`.
+
+Setup the doc toolchain:
+
+```bash
+# VS Code task: Setup Doc
+```
+
+Generate/refresh docs:
+
+```bash
+# VS Code task: Docs: Sync
+```

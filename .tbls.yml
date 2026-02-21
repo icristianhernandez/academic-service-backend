@@ -1,0 +1,14 @@
+dsn: pg://postgres:postgres@127.0.0.1:54322/postgres?sslmode=disable
+docPath: docs/db/tbls
+include:
+  - public.*
+exclude:
+  - auth.*
+  - storage.*
+  - extensions.*
+  - graphql.*
+  - supabase_.*
+  - realtime.*
+  - vault.*
+  - net.*
+  - cron.*

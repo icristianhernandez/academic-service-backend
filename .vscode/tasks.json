@@ -17,6 +17,21 @@
       "problemMatcher": []
     },
     {
+      "label": "Setup Doc",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-lc",
+        "set -euo pipefail; npm install; bash scripts/setup-tbls.sh"
+      ],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "Dev: Full Setup",
       "type": "shell",
       "command": "npx",
@@ -144,6 +159,22 @@
       "type": "shell",
       "command": "npx",
       "args": ["supabase", "db", "dump", "--local", "--data-only", "-f", "supabase/seed.sql"],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+    ,
+    {
+      "label": "Docs: Sync",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-lc",
+        "set -euo pipefail; npx supabase start -x studio; npx supabase db reset; ./.tools/tbls/bin/tbls doc --rm-dist; ./.tools/tbls/bin/tbls out -t md -o docs/db/tbls/schema.md"
+      ],
       "group": "build",
       "presentation": {
         "reveal": "always",

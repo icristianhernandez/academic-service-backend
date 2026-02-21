@@ -1,0 +1,41 @@
+name: DB Docs Enforcer
+
+on:
+  pull_request:
+    paths:
+      - "supabase/migrations/**"
+      - ".tbls.yml"
+      - "supabase/config.toml"
+
+jobs:
+  db-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start Supabase (no Studio)
+        run: npx supabase start -x studio
+
+      - name: Reset DB from migrations
+        run: npx supabase db reset
+
+      - name: Setup tbls
+        uses: k1low/setup-tbls@v1
+
+      - name: Generate docs
+        run: |
+          tbls doc --rm-dist
+          tbls out -t md -o docs/db/tbls/schema.md
+
+      - name: Verify docs up to date
+        run: git diff --exit-code -- docs/db/tbls
