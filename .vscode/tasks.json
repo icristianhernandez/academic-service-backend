@@ -173,7 +173,7 @@
       "command": "bash",
       "args": [
         "-lc",
-        "set -euo pipefail; ./.tools/tbls/bin/tbls doc --rm-dist; ./.tools/tbls/bin/tbls out -t md -o docs/db/tbls/schema.md; ./.tools/tbls/bin/tbls out -t mermaid -o docs/db/tbls/schema.mmd; node scripts/generate-mermaid-styles.js"
+        "set -euo pipefail; ./.tools/tbls/bin/tbls doc --rm-dist; ./.tools/tbls/bin/tbls out -t md -o docs/db/tbls/schema.md"
       ],
       "group": "build",
       "presentation": {

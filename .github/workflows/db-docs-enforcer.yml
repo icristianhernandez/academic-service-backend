@@ -36,8 +36,6 @@ jobs:
         run: |
           tbls doc --rm-dist
           tbls out -t md -o docs/db/tbls/schema.md
-          tbls out -t mermaid -o docs/db/tbls/schema.mmd
-          node scripts/generate-mermaid-styles.js
 
       - name: Verify docs up to date
         run: git diff --exit-code -- docs/db/tbls
