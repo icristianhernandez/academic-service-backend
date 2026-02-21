@@ -137,7 +137,7 @@ npx supabase functions deploy <function_name>
 ## DB docs (tbls + Liam)
 
 - Generated docs are committed under `docs/db/tbls/`.
-- The ERD site is built in CI from `docs/db/tbls/schema-erd.json` and deployed to GitHub Pages using `npx`.
+- The ERD site is built in CI from a `pg_dump --schema-only` file and deployed to GitHub Pages using `npx`.
 
 Setup the doc toolchain:
 
@@ -148,5 +148,5 @@ Setup the doc toolchain:
 Generate/refresh docs:
 
 ```bash
-# VS Code task: Docs: Sync
+# VS Code task: Docs: Generate
 ```
