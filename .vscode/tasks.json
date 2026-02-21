@@ -168,12 +168,12 @@
     }
     ,
     {
-      "label": "Docs: Sync",
+      "label": "Docs: Generate",
       "type": "shell",
       "command": "bash",
       "args": [
         "-lc",
-        "set -euo pipefail; npx supabase start -x studio; npx supabase db reset; ./.tools/tbls/bin/tbls doc --rm-dist; ./.tools/tbls/bin/tbls out -t md -o docs/db/tbls/schema.md; ./.tools/tbls/bin/tbls out -t json -o docs/db/tbls/schema-erd.json"
+        "set -euo pipefail; ./.tools/tbls/bin/tbls doc --rm-dist; ./.tools/tbls/bin/tbls out -t md -o docs/db/tbls/schema.md; ./.tools/tbls/bin/tbls out -t json -o docs/db/tbls/schema-erd.json"
       ],
       "group": "build",
       "presentation": {
