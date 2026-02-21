@@ -40,7 +40,58 @@
 
 ## Relations
 
-![er](public.campuses.svg)
+```mermaid
+erDiagram
+
+"public.faculties" }o--|| "public.campuses" : "FOREIGN KEY (campus_id) REFERENCES campuses(id)"
+"public.campuses" }o--|| "public.locations" : "FOREIGN KEY (location_id) REFERENCES locations(id)"
+"public.campuses" }o--|| "public.profiles" : "FOREIGN KEY (president_profile_id) REFERENCES profiles(id)"
+
+"public.campuses" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint location_id FK ""
+  text campus_name ""
+  uuid president_profile_id FK ""
+}
+"public.faculties" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint campus_id FK ""
+  text faculty_name ""
+  uuid dean_profile_id FK ""
+  uuid coordinator_profile_id FK ""
+}
+"public.locations" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint city_id FK ""
+  text address ""
+}
+"public.profiles" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  uuid id FK ""
+  text first_name ""
+  text last_name ""
+  text national_id ""
+  text email ""
+  text primary_contact ""
+  text secondary_contact ""
+  bigint role_id FK ""
+}
+```
 
 ---
 

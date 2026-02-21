@@ -37,7 +37,48 @@
 
 ## Relations
 
-![er](public.roles.svg)
+```mermaid
+erDiagram
+
+"public.profiles" }o--o| "public.roles" : "FOREIGN KEY (role_id) REFERENCES roles(id)"
+"public.invitations" }o--o| "public.roles" : "FOREIGN KEY (role_id) REFERENCES roles(id)"
+
+"public.roles" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  text role_name ""
+  integer permission_level ""
+}
+"public.profiles" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  uuid id FK ""
+  text first_name ""
+  text last_name ""
+  text national_id ""
+  text email ""
+  text primary_contact ""
+  text secondary_contact ""
+  bigint role_id FK ""
+}
+"public.invitations" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  uuid invited_by_profile_id FK ""
+  text email ""
+  bigint role_id FK ""
+  text token ""
+  boolean is_active ""
+}
+```
 
 ---
 

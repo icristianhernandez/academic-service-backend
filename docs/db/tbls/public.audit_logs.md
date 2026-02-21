@@ -30,7 +30,20 @@
 
 ## Relations
 
-![er](public.audit_logs.svg)
+```mermaid
+erDiagram
+
+
+"public.audit_logs" {
+  bigint id ""
+  text schema_name ""
+  text table_name ""
+  text operation_name ""
+  uuid auth_uid ""
+  jsonb payload ""
+  timestamp_with_time_zone created_at ""
+}
+```
 
 ---
 

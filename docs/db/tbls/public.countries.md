@@ -36,7 +36,29 @@
 
 ## Relations
 
-![er](public.countries.svg)
+```mermaid
+erDiagram
+
+"public.states" }o--|| "public.countries" : "FOREIGN KEY (country_id) REFERENCES countries(id)"
+
+"public.countries" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  text country_name ""
+}
+"public.states" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint country_id FK ""
+  text state_name ""
+}
+```
 
 ---
 

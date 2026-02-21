@@ -1,0 +1,67 @@
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "primaryColor": "#3b3f51",
+    "primaryTextColor": "#c6d0f5",
+    "primaryBorderColor": "#414559",
+    "lineColor": "#8caaee",
+    "secondaryColor": "#414559",
+    "tertiaryColor": "#303446",
+    "background": "#303446",
+    "mainBkg": "#3b3f51",
+    "nodeBorder": "#414559",
+    "clusterBkg": "#3b3f51",
+    "clusterBorder": "#414559",
+    "titleColor": "#eebebe",
+    "edgeLabelBackground": "#3b3f51"
+  },
+  "themeCSS": ".er.entityBox { fill: #3b3f51; stroke: #414559; } .er.entityBoxTitle { fill: #eebebe; } .er.attributeBoxEven { fill: #3b3f51; } .er.attributeBoxOdd { fill: #303446; } .er.attributeText { fill: #c6d0f5; } .er.attributeTextNPT { fill: #a5adce; } .er.relationshipLine { stroke: #8caaee; } .er.relationshipLabel { fill: #c6d0f5; } .er.relationshipLabelBox { fill: #3b3f51; }"
+}}%%
+erDiagram
+
+"public.campuses" }o--|| "public.locations" : "FOREIGN KEY (location_id) REFERENCES locations(id)"
+"public.institutions" }o--|| "public.locations" : "FOREIGN KEY (location_id) REFERENCES locations(id)"
+"public.locations" }o--|| "public.cities" : "FOREIGN KEY (city_id) REFERENCES cities(id)"
+
+"public.locations" {
+  timestamp with time zone created_at 
+  uuid created_by 
+  timestamp with time zone updated_at 
+  uuid updated_by 
+  bigint id 
+  bigint city_id 
+  text address 
+}
+
+"public.campuses" {
+  timestamp with time zone created_at 
+  uuid created_by 
+  timestamp with time zone updated_at 
+  uuid updated_by 
+  bigint id 
+  bigint location_id 
+  text campus_name 
+  uuid president_profile_id 
+}
+
+"public.institutions" {
+  timestamp with time zone created_at 
+  uuid created_by 
+  timestamp with time zone updated_at 
+  uuid updated_by 
+  bigint id 
+  bigint location_id 
+  uuid contact_person_profile_id 
+  text institution_name 
+}
+
+"public.cities" {
+  timestamp with time zone created_at 
+  uuid created_by 
+  timestamp with time zone updated_at 
+  uuid updated_by 
+  bigint id 
+  bigint state_id 
+  text city_name 
+}
+

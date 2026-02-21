@@ -13,7 +13,17 @@
 
 ## Relations
 
-![er](public.audit_meta.svg)
+```mermaid
+erDiagram
+
+
+"public.audit_meta" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+}
+```
 
 ---
 

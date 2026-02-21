@@ -12,3 +12,7 @@ exclude:
   - vault.*
   - net.*
   - cron.*
+er:
+  format: mermaid
+  comment: true
+  hideDef: false

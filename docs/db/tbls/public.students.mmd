@@ -1,0 +1,77 @@
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "primaryColor": "#3b3f51",
+    "primaryTextColor": "#c6d0f5",
+    "primaryBorderColor": "#414559",
+    "lineColor": "#8caaee",
+    "secondaryColor": "#414559",
+    "tertiaryColor": "#303446",
+    "background": "#303446",
+    "mainBkg": "#3b3f51",
+    "nodeBorder": "#414559",
+    "clusterBkg": "#3b3f51",
+    "clusterBorder": "#414559",
+    "titleColor": "#eebebe",
+    "edgeLabelBackground": "#3b3f51"
+  },
+  "themeCSS": ".er.entityBox { fill: #3b3f51; stroke: #414559; } .er.entityBoxTitle { fill: #eebebe; } .er.attributeBoxEven { fill: #3b3f51; } .er.attributeBoxOdd { fill: #303446; } .er.attributeText { fill: #c6d0f5; } .er.attributeTextNPT { fill: #a5adce; } .er.relationshipLine { stroke: #8caaee; } .er.relationshipLabel { fill: #c6d0f5; } .er.relationshipLabelBox { fill: #3b3f51; }"
+}}%%
+erDiagram
+
+"public.students" }o--|| "public.profiles" : "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
+"public.students" }o--|| "public.faculties" : "FOREIGN KEY (faculty_id) REFERENCES faculties(id)"
+"public.students" }o--|| "public.schools" : "FOREIGN KEY (school_id) REFERENCES schools(id)"
+
+"public.students" {
+  timestamp with time zone created_at 
+  uuid created_by 
+  timestamp with time zone updated_at 
+  uuid updated_by 
+  bigint id 
+  uuid profile_id 
+  bigint faculty_id 
+  bigint school_id 
+  semester_enum semester 
+  shift_enum shift 
+  section_enum section 
+}
+
+"public.profiles" {
+  timestamp with time zone created_at 
+  uuid created_by 
+  timestamp with time zone updated_at 
+  uuid updated_by 
+  uuid id 
+  text first_name 
+  text last_name 
+  text national_id 
+  text email 
+  text primary_contact 
+  text secondary_contact 
+  bigint role_id 
+}
+
+"public.faculties" {
+  timestamp with time zone created_at 
+  uuid created_by 
+  timestamp with time zone updated_at 
+  uuid updated_by 
+  bigint id 
+  bigint campus_id 
+  text faculty_name 
+  uuid dean_profile_id 
+  uuid coordinator_profile_id 
+}
+
+"public.schools" {
+  timestamp with time zone created_at 
+  uuid created_by 
+  timestamp with time zone updated_at 
+  uuid updated_by 
+  bigint id 
+  bigint faculty_id 
+  text school_name 
+  uuid tutor_profile_id 
+}
+

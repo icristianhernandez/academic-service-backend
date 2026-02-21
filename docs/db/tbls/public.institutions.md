@@ -40,7 +40,67 @@
 
 ## Relations
 
-![er](public.institutions.svg)
+```mermaid
+erDiagram
+
+"public.projects" }o--|| "public.institutions" : "FOREIGN KEY (institution_id) REFERENCES institutions(id)"
+"public.institutions" }o--o| "public.locations" : "FOREIGN KEY (location_id) REFERENCES locations(id)"
+"public.institutions" }o--o| "public.profiles" : "FOREIGN KEY (contact_person_profile_id) REFERENCES profiles(id)"
+
+"public.institutions" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint location_id FK ""
+  uuid contact_person_profile_id FK ""
+  text institution_name ""
+}
+"public.projects" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  uuid tutor_profile_id FK ""
+  uuid coordinator_profile_id FK ""
+  uuid student_profile_id FK ""
+  bigint institution_id FK ""
+  text title ""
+  text abstract ""
+  bigint pre_project_document_id FK ""
+  text pre_project_observations ""
+  timestamp_with_time_zone pre_project_approved_at ""
+  bigint project_document_id FK ""
+  text project_observations ""
+  timestamp_with_time_zone project_received_at ""
+  timestamp_with_time_zone final_project_approved_at ""
+}
+"public.locations" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint city_id FK ""
+  text address ""
+}
+"public.profiles" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  uuid id FK ""
+  text first_name ""
+  text last_name ""
+  text national_id ""
+  text email ""
+  text primary_contact ""
+  text secondary_contact ""
+  bigint role_id FK ""
+}
+```
 
 ---
 

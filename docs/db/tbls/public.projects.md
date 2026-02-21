@@ -52,7 +52,71 @@
 
 ## Relations
 
-![er](public.projects.svg)
+```mermaid
+erDiagram
+
+"public.projects" }o--|| "public.profiles" : "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
+"public.projects" }o--|| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
+"public.projects" }o--|| "public.profiles" : "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
+"public.projects" }o--|| "public.institutions" : "FOREIGN KEY (institution_id) REFERENCES institutions(id)"
+"public.projects" }o--|| "public.documents" : "FOREIGN KEY (pre_project_document_id) REFERENCES documents(id)"
+"public.projects" }o--o| "public.documents" : "FOREIGN KEY (project_document_id) REFERENCES documents(id)"
+
+"public.projects" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  uuid tutor_profile_id FK ""
+  uuid coordinator_profile_id FK ""
+  uuid student_profile_id FK ""
+  bigint institution_id FK ""
+  text title ""
+  text abstract ""
+  bigint pre_project_document_id FK ""
+  text pre_project_observations ""
+  timestamp_with_time_zone pre_project_approved_at ""
+  bigint project_document_id FK ""
+  text project_observations ""
+  timestamp_with_time_zone project_received_at ""
+  timestamp_with_time_zone final_project_approved_at ""
+}
+"public.profiles" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  uuid id FK ""
+  text first_name ""
+  text last_name ""
+  text national_id ""
+  text email ""
+  text primary_contact ""
+  text secondary_contact ""
+  bigint role_id FK ""
+}
+"public.institutions" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint location_id FK ""
+  uuid contact_person_profile_id FK ""
+  text institution_name ""
+}
+"public.documents" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  text bucket_id FK ""
+  text storage_path ""
+  uuid uploaded_by_profile_id FK ""
+}
+```
 
 ---
 

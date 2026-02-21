@@ -38,7 +38,39 @@
 
 ## Relations
 
-![er](public.states.svg)
+```mermaid
+erDiagram
+
+"public.cities" }o--|| "public.states" : "FOREIGN KEY (state_id) REFERENCES states(id)"
+"public.states" }o--|| "public.countries" : "FOREIGN KEY (country_id) REFERENCES countries(id)"
+
+"public.states" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint country_id FK ""
+  text state_name ""
+}
+"public.cities" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint state_id FK ""
+  text city_name ""
+}
+"public.countries" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  text country_name ""
+}
+```
 
 ---
 
