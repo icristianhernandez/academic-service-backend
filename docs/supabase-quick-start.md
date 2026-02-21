@@ -137,7 +137,7 @@ npx supabase functions deploy <function_name>
 ## DB docs (tbls + Liam)
 
 - Generated docs are committed under `docs/db/tbls/`.
-- The ERD site is built in CI from `docs/db/tbls/schema.json` and deployed to GitHub Pages using `npx`.
+- The ERD site is built in CI from `docs/db/tbls/schema-erd.json` and deployed to GitHub Pages using `npx`.
 
 Setup the doc toolchain:
 

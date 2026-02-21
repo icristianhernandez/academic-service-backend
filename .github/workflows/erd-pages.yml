@@ -36,7 +36,7 @@ jobs:
         run: npm ci
 
       - name: Build ERD site
-        run: npx -y @liam-hq/cli@0.5.10 erd build --format tbls --input docs/db/tbls/schema.json --output-dir dist
+        run: npx -y @liam-hq/cli@0.5.10 erd build --format tbls --input docs/db/tbls/schema-erd.json --output-dir dist
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
