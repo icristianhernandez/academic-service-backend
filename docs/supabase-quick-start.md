@@ -134,10 +134,9 @@ Deploy Edge Functions (if used):
 npx supabase functions deploy <function_name>
 ```
 
-## DB docs (tbls + Liam)
+## DB docs (tbls)
 
 - Generated docs are committed under `docs/db/tbls/`.
-- The ERD site is built in CI from `supabase db dump --local --schema public` and deployed to GitHub Pages using `npx`.
 
 Setup the doc toolchain:
 
