@@ -1840,6 +1840,11 @@
           "nullable": false
         },
         {
+          "name": "record_id",
+          "type": "text",
+          "nullable": true
+        },
+        {
           "name": "operation_name",
           "type": "text",
           "nullable": false
@@ -1851,7 +1856,12 @@
           "default": "auth.uid()"
         },
         {
-          "name": "payload",
+          "name": "old_data",
+          "type": "jsonb",
+          "nullable": true
+        },
+        {
+          "name": "new_data",
           "type": "jsonb",
           "nullable": true
         },
@@ -1877,6 +1887,16 @@
           "table": "public.audit_logs",
           "columns": [
             "table_name"
+          ]
+        },
+        {
+          "name": "idx_audit_logs_table_record",
+          "def": "CREATE INDEX idx_audit_logs_table_record ON public.audit_logs USING btree (table_name, record_id, created_at DESC)",
+          "table": "public.audit_logs",
+          "columns": [
+            "table_name",
+            "record_id",
+            "created_at"
           ]
         },
         {
@@ -2372,6 +2392,12 @@
       "name": "public.plpgsql_check_tracer",
       "return_type": "bool",
       "arguments": "enable boolean DEFAULT NULL::boolean, verbosity text DEFAULT NULL::text",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.auth_permission_level",
+      "return_type": "int4",
+      "arguments": "",
       "type": "FUNCTION"
     },
     {

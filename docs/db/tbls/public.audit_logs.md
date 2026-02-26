@@ -9,9 +9,11 @@
 | id | bigint |  | false |  |  |  |
 | schema_name | text |  | false |  |  |  |
 | table_name | text |  | false |  |  |  |
+| record_id | text |  | true |  |  |  |
 | operation_name | text |  | false |  |  |  |
 | auth_uid | uuid | auth.uid() | true |  |  |  |
-| payload | jsonb |  | true |  |  |  |
+| old_data | jsonb |  | true |  |  |  |
+| new_data | jsonb |  | true |  |  |  |
 | created_at | timestamp with time zone | now() | true |  |  |  |
 
 ## Constraints
@@ -26,6 +28,7 @@
 | ---- | ---------- |
 | audit_logs_pkey | CREATE UNIQUE INDEX audit_logs_pkey ON public.audit_logs USING btree (id) |
 | idx_audit_logs_table | CREATE INDEX idx_audit_logs_table ON public.audit_logs USING btree (table_name) |
+| idx_audit_logs_table_record | CREATE INDEX idx_audit_logs_table_record ON public.audit_logs USING btree (table_name, record_id, created_at DESC) |
 | idx_audit_logs_created | CREATE INDEX idx_audit_logs_created ON public.audit_logs USING btree (created_at) |
 
 ## Relations
@@ -38,9 +41,11 @@ erDiagram
   bigint id ""
   text schema_name ""
   text table_name ""
+  text record_id ""
   text operation_name ""
   uuid auth_uid ""
-  jsonb payload ""
+  jsonb old_data ""
+  jsonb new_data ""
   timestamp_with_time_zone created_at ""
 }
 ```

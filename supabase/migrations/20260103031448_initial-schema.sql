@@ -179,21 +179,69 @@ create table audit_logs (
     id bigint generated always as identity primary key,
     schema_name text not null,
     table_name text not null,
+    record_id text,
     operation_name text not null,
     auth_uid uuid default auth.uid(),
-    payload jsonb,
+    old_data jsonb,
+    new_data jsonb,
     created_at timestamptz default now()
 );
+
+create or replace function auth_permission_level()
+returns integer
+language sql
+security definer
+stable
+set search_path = pg_catalog, public
+as $$
+    select coalesce(max(role.permission_level), 0)
+    from public.profiles profile
+    join public.roles role on role.id = profile.role_id
+    where profile.id = auth.uid()
+$$;
+
+-- TODO: that's just a mock placeholder
 alter table audit_logs enable row level security;
--- all visible and that's a security risk, at least other operations are blocked
 create policy read_only_audit_logs
 on audit_logs
 for select
 to authenticated
 using (
-    true
+    auth_permission_level() >= (
+        select permission_level
+        from public.roles
+        where role_name = 'dean'
+    )
+    or (
+        table_name = 'profiles'
+        and record_id = auth.uid()::text
+    )
+    or (
+        table_name = 'projects'
+        and (
+            new_data ->> 'student_profile_id' = auth.uid()::text
+            or old_data ->> 'student_profile_id' = auth.uid()::text
+            or (
+                auth_permission_level() > (
+                    select permission_level
+                    from public.roles
+                    where role_name = 'student'
+                )
+                and (
+                    new_data ->> 'tutor_profile_id' = auth.uid()::text
+                    or new_data ->> 'coordinator_profile_id' = auth.uid()::text
+                    or old_data ->> 'tutor_profile_id' = auth.uid()::text
+                    or old_data ->> 'coordinator_profile_id' = auth.uid()::text
+                )
+            )
+        )
+    )
 );
-create index idx_audit_logs_table on audit_logs (table_name);
+create index idx_audit_logs_table_record on audit_logs (
+    table_name,
+    record_id,
+    created_at desc
+);
 create index idx_audit_logs_created on audit_logs (created_at);
 
 create or replace function handle_audit_update()
@@ -244,31 +292,40 @@ security definer
 set search_path = pg_catalog, extensions
 as $$
 declare
-    change_payload jsonb;
+    old_data jsonb;
+    new_data jsonb;
+    record_id_value text;
 begin
     if tg_op = 'DELETE' then
-        change_payload := jsonb_build_object('old_record', to_jsonb(old));
+        old_data := to_jsonb(old);
     elsif tg_op = 'UPDATE' then
-        change_payload := jsonb_build_object(
-            'old_record', to_jsonb(old),
-            'new_record', to_jsonb(new)
-        );
+        old_data := to_jsonb(old);
+        new_data := to_jsonb(new);
     elsif tg_op = 'INSERT' then
-        change_payload := jsonb_build_object('new_record', to_jsonb(new));
+        new_data := to_jsonb(new);
     end if;
+
+    record_id_value := coalesce(
+        new_data ->> 'id',
+        old_data ->> 'id'
+    );
 
     insert into public.audit_logs (
         schema_name,
         table_name,
+        record_id,
         operation_name,
         auth_uid,
-        payload
+        old_data,
+        new_data
     ) values (
         tg_table_schema,
         tg_table_name,
+        record_id_value,
         tg_op,
         auth.uid(),
-        change_payload
+        old_data,
+        new_data
     );
 
     return null;
