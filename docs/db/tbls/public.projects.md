@@ -17,13 +17,10 @@
 | institution_id | bigint |  | false |  | [public.institutions](public.institutions.md) |  |
 | title | text |  | false |  |  |  |
 | abstract | text |  | true |  |  |  |
-| pre_project_document_id | bigint |  | false |  | [public.documents](public.documents.md) |  |
-| pre_project_observations | text |  | true |  |  |  |
-| pre_project_approved_at | timestamp with time zone |  | true |  |  |  |
-| project_document_id | bigint |  | true |  | [public.documents](public.documents.md) |  |
-| project_observations | text |  | true |  |  |  |
-| project_received_at | timestamp with time zone |  | true |  |  |  |
-| final_project_approved_at | timestamp with time zone |  | true |  |  |  |
+| last_normal_state_id | bigint |  | false |  | [public.projects_states](public.projects_states.md) |  |
+| current_state_id | bigint |  | false |  | [public.projects_states](public.projects_states.md) |  |
+| state_doc_id | bigint |  | false |  | [public.documents](public.documents.md) |  |
+| state_metadata | text |  | true |  |  |  |
 
 ## Constraints
 
@@ -33,8 +30,9 @@
 | projects_student_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (student_profile_id) REFERENCES profiles(id) |
 | projects_tutor_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id) |
 | projects_institution_id_fkey | FOREIGN KEY | FOREIGN KEY (institution_id) REFERENCES institutions(id) |
-| projects_pre_project_document_id_fkey | FOREIGN KEY | FOREIGN KEY (pre_project_document_id) REFERENCES documents(id) |
-| projects_project_document_id_fkey | FOREIGN KEY | FOREIGN KEY (project_document_id) REFERENCES documents(id) |
+| projects_state_doc_id_fkey | FOREIGN KEY | FOREIGN KEY (state_doc_id) REFERENCES documents(id) |
+| projects_current_state_id_fkey | FOREIGN KEY | FOREIGN KEY (current_state_id) REFERENCES projects_states(id) |
+| projects_last_normal_state_id_fkey | FOREIGN KEY | FOREIGN KEY (last_normal_state_id) REFERENCES projects_states(id) |
 | projects_pkey | PRIMARY KEY | PRIMARY KEY (id) |
 
 ## Indexes
@@ -59,8 +57,9 @@ erDiagram
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.institutions" : "FOREIGN KEY (institution_id) REFERENCES institutions(id)"
-"public.projects" }o--|| "public.documents" : "FOREIGN KEY (pre_project_document_id) REFERENCES documents(id)"
-"public.projects" }o--o| "public.documents" : "FOREIGN KEY (project_document_id) REFERENCES documents(id)"
+"public.projects" }o--|| "public.projects_states" : "FOREIGN KEY (last_normal_state_id) REFERENCES projects_states(id)"
+"public.projects" }o--|| "public.projects_states" : "FOREIGN KEY (current_state_id) REFERENCES projects_states(id)"
+"public.projects" }o--|| "public.documents" : "FOREIGN KEY (state_doc_id) REFERENCES documents(id)"
 
 "public.projects" {
   timestamp_with_time_zone created_at ""
@@ -74,13 +73,10 @@ erDiagram
   bigint institution_id FK ""
   text title ""
   text abstract ""
-  bigint pre_project_document_id FK ""
-  text pre_project_observations ""
-  timestamp_with_time_zone pre_project_approved_at ""
-  bigint project_document_id FK ""
-  text project_observations ""
-  timestamp_with_time_zone project_received_at ""
-  timestamp_with_time_zone final_project_approved_at ""
+  bigint last_normal_state_id FK ""
+  bigint current_state_id FK ""
+  bigint state_doc_id FK ""
+  text state_metadata ""
 }
 "public.profiles" {
   timestamp_with_time_zone created_at ""
@@ -105,6 +101,14 @@ erDiagram
   bigint location_id FK ""
   uuid contact_person_profile_id FK ""
   text institution_name ""
+}
+"public.projects_states" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  text project_state_name ""
 }
 "public.documents" {
   timestamp_with_time_zone created_at ""

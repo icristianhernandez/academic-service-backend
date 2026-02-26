@@ -957,6 +957,86 @@
       ]
     },
     {
+      "name": "public.degrees",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "nullable": false,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "updated_by",
+          "type": "uuid",
+          "nullable": true,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "degree_name",
+          "type": "text",
+          "nullable": false
+        }
+      ],
+      "indexes": [
+        {
+          "name": "degrees_pkey",
+          "def": "CREATE UNIQUE INDEX degrees_pkey ON public.degrees USING btree (id)",
+          "table": "public.degrees",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "degrees_degree_name_key",
+          "def": "CREATE UNIQUE INDEX degrees_degree_name_key ON public.degrees USING btree (degree_name)",
+          "table": "public.degrees",
+          "columns": [
+            "degree_name"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "degrees_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.degrees",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "degrees_degree_name_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (degree_name)",
+          "table": "public.degrees",
+          "referenced_table": "",
+          "columns": [
+            "degree_name"
+          ]
+        }
+      ]
+    },
+    {
       "name": "public.schools",
       "type": "BASE TABLE",
       "columns": [
@@ -990,13 +1070,13 @@
           "nullable": false
         },
         {
-          "name": "faculty_id",
+          "name": "degree_id",
           "type": "bigint",
           "nullable": false
         },
         {
-          "name": "school_name",
-          "type": "text",
+          "name": "faculty_id",
+          "type": "bigint",
           "nullable": false
         },
         {
@@ -1012,14 +1092,6 @@
           "table": "public.schools",
           "columns": [
             "id"
-          ]
-        },
-        {
-          "name": "schools_school_name_key",
-          "def": "CREATE UNIQUE INDEX schools_school_name_key ON public.schools USING btree (school_name)",
-          "table": "public.schools",
-          "columns": [
-            "school_name"
           ]
         }
       ],
@@ -1051,6 +1123,19 @@
           ]
         },
         {
+          "name": "schools_degree_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (degree_id) REFERENCES degrees(id)",
+          "table": "public.schools",
+          "referenced_table": "degrees",
+          "columns": [
+            "degree_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
           "name": "schools_pkey",
           "type": "PRIMARY KEY",
           "def": "PRIMARY KEY (id)",
@@ -1058,16 +1143,6 @@
           "referenced_table": "",
           "columns": [
             "id"
-          ]
-        },
-        {
-          "name": "schools_school_name_key",
-          "type": "UNIQUE",
-          "def": "UNIQUE (school_name)",
-          "table": "public.schools",
-          "referenced_table": "",
-          "columns": [
-            "school_name"
           ]
         }
       ],
@@ -1121,11 +1196,6 @@
           "nullable": false
         },
         {
-          "name": "faculty_id",
-          "type": "bigint",
-          "nullable": false
-        },
-        {
           "name": "school_id",
           "type": "bigint",
           "nullable": false
@@ -1165,19 +1235,6 @@
           "referenced_table": "profiles",
           "columns": [
             "profile_id"
-          ],
-          "referenced_columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "students_faculty_id_fkey",
-          "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (faculty_id) REFERENCES faculties(id)",
-          "table": "public.students",
-          "referenced_table": "faculties",
-          "columns": [
-            "faculty_id"
           ],
           "referenced_columns": [
             "id"
@@ -1474,6 +1531,161 @@
       ]
     },
     {
+      "name": "public.projects_states",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "nullable": false,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "updated_by",
+          "type": "uuid",
+          "nullable": true,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "project_state_name",
+          "type": "text",
+          "nullable": false
+        }
+      ],
+      "indexes": [
+        {
+          "name": "projects_states_pkey",
+          "def": "CREATE UNIQUE INDEX projects_states_pkey ON public.projects_states USING btree (id)",
+          "table": "public.projects_states",
+          "columns": [
+            "id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "projects_states_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.projects_states",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.projects_states_flow",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "nullable": false,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "updated_by",
+          "type": "uuid",
+          "nullable": true,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "from_state",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "to_state",
+          "type": "bigint",
+          "nullable": false
+        }
+      ],
+      "indexes": [
+        {
+          "name": "projects_states_flow_pkey",
+          "def": "CREATE UNIQUE INDEX projects_states_flow_pkey ON public.projects_states_flow USING btree (id)",
+          "table": "public.projects_states_flow",
+          "columns": [
+            "id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "projects_states_flow_from_state_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (from_state) REFERENCES projects_states(id)",
+          "table": "public.projects_states_flow",
+          "referenced_table": "projects_states",
+          "columns": [
+            "from_state"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "projects_states_flow_to_state_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (to_state) REFERENCES projects_states(id)",
+          "table": "public.projects_states_flow",
+          "referenced_table": "projects_states",
+          "columns": [
+            "to_state"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "projects_states_flow_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.projects_states_flow",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    {
       "name": "public.projects",
       "type": "BASE TABLE",
       "columns": [
@@ -1537,38 +1749,23 @@
           "nullable": true
         },
         {
-          "name": "pre_project_document_id",
+          "name": "last_normal_state_id",
           "type": "bigint",
           "nullable": false
         },
         {
-          "name": "pre_project_observations",
-          "type": "text",
-          "nullable": true
-        },
-        {
-          "name": "pre_project_approved_at",
-          "type": "timestamp with time zone",
-          "nullable": true
-        },
-        {
-          "name": "project_document_id",
+          "name": "current_state_id",
           "type": "bigint",
-          "nullable": true
+          "nullable": false
         },
         {
-          "name": "project_observations",
+          "name": "state_doc_id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "state_metadata",
           "type": "text",
-          "nullable": true
-        },
-        {
-          "name": "project_received_at",
-          "type": "timestamp with time zone",
-          "nullable": true
-        },
-        {
-          "name": "final_project_approved_at",
-          "type": "timestamp with time zone",
           "nullable": true
         }
       ],
@@ -1636,26 +1833,39 @@
           ]
         },
         {
-          "name": "projects_pre_project_document_id_fkey",
+          "name": "projects_state_doc_id_fkey",
           "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (pre_project_document_id) REFERENCES documents(id)",
+          "def": "FOREIGN KEY (state_doc_id) REFERENCES documents(id)",
           "table": "public.projects",
           "referenced_table": "documents",
           "columns": [
-            "pre_project_document_id"
+            "state_doc_id"
           ],
           "referenced_columns": [
             "id"
           ]
         },
         {
-          "name": "projects_project_document_id_fkey",
+          "name": "projects_current_state_id_fkey",
           "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (project_document_id) REFERENCES documents(id)",
+          "def": "FOREIGN KEY (current_state_id) REFERENCES projects_states(id)",
           "table": "public.projects",
-          "referenced_table": "documents",
+          "referenced_table": "projects_states",
           "columns": [
-            "project_document_id"
+            "current_state_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "projects_last_normal_state_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (last_normal_state_id) REFERENCES projects_states(id)",
+          "table": "public.projects",
+          "referenced_table": "projects_states",
+          "columns": [
+            "last_normal_state_id"
           ],
           "referenced_columns": [
             "id"
@@ -1727,7 +1937,7 @@
           "nullable": false
         },
         {
-          "name": "role_id",
+          "name": "role_to_have_id",
           "type": "bigint",
           "nullable": true
         },
@@ -1763,13 +1973,13 @@
       ],
       "constraints": [
         {
-          "name": "invitations_role_id_fkey",
+          "name": "invitations_role_to_have_id_fkey",
           "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (role_id) REFERENCES roles(id)",
+          "def": "FOREIGN KEY (role_to_have_id) REFERENCES roles(id)",
           "table": "public.invitations",
           "referenced_table": "roles",
           "columns": [
-            "role_id"
+            "role_to_have_id"
           ],
           "referenced_columns": [
             "id"
@@ -1879,14 +2089,6 @@
           "table": "public.audit_logs",
           "columns": [
             "id"
-          ]
-        },
-        {
-          "name": "idx_audit_logs_table",
-          "def": "CREATE INDEX idx_audit_logs_table ON public.audit_logs USING btree (table_name)",
-          "table": "public.audit_logs",
-          "columns": [
-            "table_name"
           ]
         },
         {
@@ -2067,6 +2269,19 @@
       "def": "FOREIGN KEY (faculty_id) REFERENCES faculties(id)"
     },
     {
+      "table": "public.schools",
+      "columns": [
+        "degree_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.degrees",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (degree_id) REFERENCES degrees(id)"
+    },
+    {
       "table": "public.students",
       "columns": [
         "profile_id"
@@ -2078,19 +2293,6 @@
       ],
       "parent_cardinality": "exactly_one",
       "def": "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
-    },
-    {
-      "table": "public.students",
-      "columns": [
-        "faculty_id"
-      ],
-      "cardinality": "zero_or_more",
-      "parent_table": "public.faculties",
-      "parent_columns": [
-        "id"
-      ],
-      "parent_cardinality": "exactly_one",
-      "def": "FOREIGN KEY (faculty_id) REFERENCES faculties(id)"
     },
     {
       "table": "public.students",
@@ -2143,6 +2345,32 @@
       ],
       "parent_cardinality": "exactly_one",
       "def": "FOREIGN KEY (uploaded_by_profile_id) REFERENCES profiles(id) ON DELETE CASCADE"
+    },
+    {
+      "table": "public.projects_states_flow",
+      "columns": [
+        "from_state"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.projects_states",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (from_state) REFERENCES projects_states(id)"
+    },
+    {
+      "table": "public.projects_states_flow",
+      "columns": [
+        "to_state"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.projects_states",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (to_state) REFERENCES projects_states(id)"
     },
     {
       "table": "public.projects",
@@ -2199,7 +2427,7 @@
     {
       "table": "public.projects",
       "columns": [
-        "pre_project_document_id"
+        "state_doc_id"
       ],
       "cardinality": "zero_or_more",
       "parent_table": "public.documents",
@@ -2207,25 +2435,38 @@
         "id"
       ],
       "parent_cardinality": "exactly_one",
-      "def": "FOREIGN KEY (pre_project_document_id) REFERENCES documents(id)"
+      "def": "FOREIGN KEY (state_doc_id) REFERENCES documents(id)"
     },
     {
       "table": "public.projects",
       "columns": [
-        "project_document_id"
+        "current_state_id"
       ],
       "cardinality": "zero_or_more",
-      "parent_table": "public.documents",
+      "parent_table": "public.projects_states",
       "parent_columns": [
         "id"
       ],
-      "parent_cardinality": "zero_or_one",
-      "def": "FOREIGN KEY (project_document_id) REFERENCES documents(id)"
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (current_state_id) REFERENCES projects_states(id)"
+    },
+    {
+      "table": "public.projects",
+      "columns": [
+        "last_normal_state_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.projects_states",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (last_normal_state_id) REFERENCES projects_states(id)"
     },
     {
       "table": "public.invitations",
       "columns": [
-        "role_id"
+        "role_to_have_id"
       ],
       "cardinality": "zero_or_more",
       "parent_table": "public.roles",
@@ -2233,7 +2474,7 @@
         "id"
       ],
       "parent_cardinality": "zero_or_one",
-      "def": "FOREIGN KEY (role_id) REFERENCES roles(id)"
+      "def": "FOREIGN KEY (role_to_have_id) REFERENCES roles(id)"
     },
     {
       "table": "public.invitations",

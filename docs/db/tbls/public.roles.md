@@ -41,7 +41,7 @@
 erDiagram
 
 "public.profiles" }o--o| "public.roles" : "FOREIGN KEY (role_id) REFERENCES roles(id)"
-"public.invitations" }o--o| "public.roles" : "FOREIGN KEY (role_id) REFERENCES roles(id)"
+"public.invitations" }o--o| "public.roles" : "FOREIGN KEY (role_to_have_id) REFERENCES roles(id)"
 
 "public.roles" {
   timestamp_with_time_zone created_at ""
@@ -74,7 +74,7 @@ erDiagram
   bigint id ""
   uuid invited_by_profile_id FK ""
   text email ""
-  bigint role_id FK ""
+  bigint role_to_have_id FK ""
   text token ""
   boolean is_active ""
 }

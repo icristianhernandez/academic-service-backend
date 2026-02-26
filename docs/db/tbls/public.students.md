@@ -12,7 +12,6 @@
 | updated_by | uuid | auth.uid() | true |  |  |  |
 | id | bigint |  | false |  |  |  |
 | profile_id | uuid |  | false |  | [public.profiles](public.profiles.md) |  |
-| faculty_id | bigint |  | false |  | [public.faculties](public.faculties.md) |  |
 | school_id | bigint |  | false |  | [public.schools](public.schools.md) |  |
 | semester | semester_enum |  | true |  |  |  |
 | shift | shift_enum |  | true |  |  |  |
@@ -23,7 +22,6 @@
 | Name | Type | Definition |
 | ---- | ---- | ---------- |
 | students_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (profile_id) REFERENCES profiles(id) |
-| students_faculty_id_fkey | FOREIGN KEY | FOREIGN KEY (faculty_id) REFERENCES faculties(id) |
 | students_school_id_fkey | FOREIGN KEY | FOREIGN KEY (school_id) REFERENCES schools(id) |
 | students_pkey | PRIMARY KEY | PRIMARY KEY (id) |
 
@@ -46,7 +44,6 @@
 erDiagram
 
 "public.students" }o--|| "public.profiles" : "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
-"public.students" }o--|| "public.faculties" : "FOREIGN KEY (faculty_id) REFERENCES faculties(id)"
 "public.students" }o--|| "public.schools" : "FOREIGN KEY (school_id) REFERENCES schools(id)"
 
 "public.students" {
@@ -56,7 +53,6 @@ erDiagram
   uuid updated_by ""
   bigint id ""
   uuid profile_id FK ""
-  bigint faculty_id FK ""
   bigint school_id FK ""
   semester_enum semester ""
   shift_enum shift ""
@@ -76,25 +72,14 @@ erDiagram
   text secondary_contact ""
   bigint role_id FK ""
 }
-"public.faculties" {
-  timestamp_with_time_zone created_at ""
-  uuid created_by ""
-  timestamp_with_time_zone updated_at ""
-  uuid updated_by ""
-  bigint id ""
-  bigint campus_id FK ""
-  text faculty_name ""
-  uuid dean_profile_id FK ""
-  uuid coordinator_profile_id FK ""
-}
 "public.schools" {
   timestamp_with_time_zone created_at ""
   uuid created_by ""
   timestamp_with_time_zone updated_at ""
   uuid updated_by ""
   bigint id ""
+  bigint degree_id FK ""
   bigint faculty_id FK ""
-  text school_name ""
   uuid tutor_profile_id FK ""
 }
 ```

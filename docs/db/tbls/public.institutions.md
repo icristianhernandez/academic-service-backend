@@ -69,13 +69,10 @@ erDiagram
   bigint institution_id FK ""
   text title ""
   text abstract ""
-  bigint pre_project_document_id FK ""
-  text pre_project_observations ""
-  timestamp_with_time_zone pre_project_approved_at ""
-  bigint project_document_id FK ""
-  text project_observations ""
-  timestamp_with_time_zone project_received_at ""
-  timestamp_with_time_zone final_project_approved_at ""
+  bigint last_normal_state_id FK ""
+  bigint current_state_id FK ""
+  bigint state_doc_id FK ""
+  text state_metadata ""
 }
 "public.locations" {
   timestamp_with_time_zone created_at ""

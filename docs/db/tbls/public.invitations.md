@@ -13,7 +13,7 @@
 | id | bigint |  | false |  |  |  |
 | invited_by_profile_id | uuid |  | true |  | [public.profiles](public.profiles.md) |  |
 | email | text |  | false |  |  |  |
-| role_id | bigint |  | true |  | [public.roles](public.roles.md) |  |
+| role_to_have_id | bigint |  | true |  | [public.roles](public.roles.md) |  |
 | token | text |  | false |  |  |  |
 | is_active | boolean | true | true |  |  |  |
 
@@ -21,7 +21,7 @@
 
 | Name | Type | Definition |
 | ---- | ---- | ---------- |
-| invitations_role_id_fkey | FOREIGN KEY | FOREIGN KEY (role_id) REFERENCES roles(id) |
+| invitations_role_to_have_id_fkey | FOREIGN KEY | FOREIGN KEY (role_to_have_id) REFERENCES roles(id) |
 | invitations_invited_by_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (invited_by_profile_id) REFERENCES profiles(id) |
 | invitations_pkey | PRIMARY KEY | PRIMARY KEY (id) |
 | invitations_email_key | UNIQUE | UNIQUE (email) |
@@ -46,7 +46,7 @@
 erDiagram
 
 "public.invitations" }o--o| "public.profiles" : "FOREIGN KEY (invited_by_profile_id) REFERENCES profiles(id)"
-"public.invitations" }o--o| "public.roles" : "FOREIGN KEY (role_id) REFERENCES roles(id)"
+"public.invitations" }o--o| "public.roles" : "FOREIGN KEY (role_to_have_id) REFERENCES roles(id)"
 
 "public.invitations" {
   timestamp_with_time_zone created_at ""
@@ -56,7 +56,7 @@ erDiagram
   bigint id ""
   uuid invited_by_profile_id FK ""
   text email ""
-  bigint role_id FK ""
+  bigint role_to_have_id FK ""
   text token ""
   boolean is_active ""
 }

@@ -11,8 +11,8 @@
 | updated_at | timestamp with time zone | now() | false |  |  |  |
 | updated_by | uuid | auth.uid() | true |  |  |  |
 | id | bigint |  | false | [public.students](public.students.md) |  |  |
+| degree_id | bigint |  | false |  | [public.degrees](public.degrees.md) |  |
 | faculty_id | bigint |  | false |  | [public.faculties](public.faculties.md) |  |
-| school_name | text |  | false |  |  |  |
 | tutor_profile_id | uuid |  | false |  | [public.profiles](public.profiles.md) |  |
 
 ## Constraints
@@ -21,15 +21,14 @@
 | ---- | ---- | ---------- |
 | schools_tutor_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id) |
 | schools_faculty_id_fkey | FOREIGN KEY | FOREIGN KEY (faculty_id) REFERENCES faculties(id) |
+| schools_degree_id_fkey | FOREIGN KEY | FOREIGN KEY (degree_id) REFERENCES degrees(id) |
 | schools_pkey | PRIMARY KEY | PRIMARY KEY (id) |
-| schools_school_name_key | UNIQUE | UNIQUE (school_name) |
 
 ## Indexes
 
 | Name | Definition |
 | ---- | ---------- |
 | schools_pkey | CREATE UNIQUE INDEX schools_pkey ON public.schools USING btree (id) |
-| schools_school_name_key | CREATE UNIQUE INDEX schools_school_name_key ON public.schools USING btree (school_name) |
 
 ## Triggers
 
@@ -44,6 +43,7 @@
 erDiagram
 
 "public.students" }o--|| "public.schools" : "FOREIGN KEY (school_id) REFERENCES schools(id)"
+"public.schools" }o--|| "public.degrees" : "FOREIGN KEY (degree_id) REFERENCES degrees(id)"
 "public.schools" }o--|| "public.faculties" : "FOREIGN KEY (faculty_id) REFERENCES faculties(id)"
 "public.schools" }o--|| "public.profiles" : "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
 
@@ -53,8 +53,8 @@ erDiagram
   timestamp_with_time_zone updated_at ""
   uuid updated_by ""
   bigint id ""
+  bigint degree_id FK ""
   bigint faculty_id FK ""
-  text school_name ""
   uuid tutor_profile_id FK ""
 }
 "public.students" {
@@ -64,11 +64,18 @@ erDiagram
   uuid updated_by ""
   bigint id ""
   uuid profile_id FK ""
-  bigint faculty_id FK ""
   bigint school_id FK ""
   semester_enum semester ""
   shift_enum shift ""
   section_enum section ""
+}
+"public.degrees" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  text degree_name ""
 }
 "public.faculties" {
   timestamp_with_time_zone created_at ""

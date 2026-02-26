@@ -13,11 +13,14 @@
 | [public.profiles](public.profiles.md) | 12 |  | BASE TABLE |
 | [public.campuses](public.campuses.md) | 8 |  | BASE TABLE |
 | [public.faculties](public.faculties.md) | 9 |  | BASE TABLE |
+| [public.degrees](public.degrees.md) | 6 |  | BASE TABLE |
 | [public.schools](public.schools.md) | 8 |  | BASE TABLE |
-| [public.students](public.students.md) | 11 |  | BASE TABLE |
+| [public.students](public.students.md) | 10 |  | BASE TABLE |
 | [public.institutions](public.institutions.md) | 8 |  | BASE TABLE |
 | [public.documents](public.documents.md) | 8 |  | BASE TABLE |
-| [public.projects](public.projects.md) | 18 |  | BASE TABLE |
+| [public.projects_states](public.projects_states.md) | 6 |  | BASE TABLE |
+| [public.projects_states_flow](public.projects_states_flow.md) | 7 |  | BASE TABLE |
+| [public.projects](public.projects.md) | 15 |  | BASE TABLE |
 | [public.invitations](public.invitations.md) | 10 |  | BASE TABLE |
 | [public.audit_logs](public.audit_logs.md) | 9 |  | BASE TABLE |
 

@@ -10,7 +10,7 @@
 | created_by | uuid | auth.uid() | false |  |  |  |
 | updated_at | timestamp with time zone | now() | false |  |  |  |
 | updated_by | uuid | auth.uid() | true |  |  |  |
-| id | bigint |  | false | [public.schools](public.schools.md) [public.students](public.students.md) |  |  |
+| id | bigint |  | false | [public.schools](public.schools.md) |  |  |
 | campus_id | bigint |  | false |  | [public.campuses](public.campuses.md) |  |
 | faculty_name | text |  | false |  |  |  |
 | dean_profile_id | uuid |  | false |  | [public.profiles](public.profiles.md) |  |
@@ -46,7 +46,6 @@
 erDiagram
 
 "public.schools" }o--|| "public.faculties" : "FOREIGN KEY (faculty_id) REFERENCES faculties(id)"
-"public.students" }o--|| "public.faculties" : "FOREIGN KEY (faculty_id) REFERENCES faculties(id)"
 "public.faculties" }o--|| "public.campuses" : "FOREIGN KEY (campus_id) REFERENCES campuses(id)"
 "public.faculties" }o--|| "public.profiles" : "FOREIGN KEY (dean_profile_id) REFERENCES profiles(id)"
 "public.faculties" }o--|| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
@@ -68,22 +67,9 @@ erDiagram
   timestamp_with_time_zone updated_at ""
   uuid updated_by ""
   bigint id ""
+  bigint degree_id FK ""
   bigint faculty_id FK ""
-  text school_name ""
   uuid tutor_profile_id FK ""
-}
-"public.students" {
-  timestamp_with_time_zone created_at ""
-  uuid created_by ""
-  timestamp_with_time_zone updated_at ""
-  uuid updated_by ""
-  bigint id ""
-  uuid profile_id FK ""
-  bigint faculty_id FK ""
-  bigint school_id FK ""
-  semester_enum semester ""
-  shift_enum shift ""
-  section_enum section ""
 }
 "public.campuses" {
   timestamp_with_time_zone created_at ""

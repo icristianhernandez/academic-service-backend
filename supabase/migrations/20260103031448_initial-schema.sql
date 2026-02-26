@@ -77,11 +77,17 @@ create table faculties (
     coordinator_profile_id uuid not null references profiles (id)
 );
 
+create table degrees (
+    like audit_meta including all,
+    id bigint generated always as identity primary key,
+    degree_name text not null unique
+);
+
 create table schools (
     like audit_meta including all,
     id bigint generated always as identity primary key,
+    degree_id bigint not null references degrees (id),
     faculty_id bigint not null references faculties (id),
-    school_name text not null unique,
     tutor_profile_id uuid not null references profiles (id)
 );
 
@@ -89,7 +95,6 @@ create table students (
     like audit_meta including all,
     id bigint generated always as identity primary key,
     profile_id uuid not null references profiles (id),
-    faculty_id bigint not null references faculties (id),
     school_id bigint not null references schools (id),
     semester semester_enum,
     shift shift_enum,
@@ -143,6 +148,19 @@ for delete
 to authenticated
 using (bucket_id = 'project');
 
+create table projects_states (
+    like audit_meta including all,
+    id bigint generated always as identity primary key,
+    project_state_name text not null
+);
+
+create table projects_states_flow (
+    like audit_meta including all,
+    id bigint generated always as identity primary key,
+    from_state bigint not null references projects_states (id),
+    to_state bigint not null references projects_states (id)
+);
+
 create table projects (
     like audit_meta including all,
     id bigint generated always as identity primary key,
@@ -153,15 +171,10 @@ create table projects (
     title text not null,
     abstract text,
 
-    pre_project_document_id bigint not null references documents (id),
-    pre_project_observations text,
-    pre_project_approved_at timestamptz,
-
-    project_document_id bigint references documents (id),
-    project_observations text,
-    project_received_at timestamptz,
-
-    final_project_approved_at timestamptz
+    last_normal_state_id bigint not null references projects_states (id),
+    current_state_id bigint not null references projects_states (id),
+    state_doc_id bigint not null references documents (id),
+    state_metadata text
 );
 
 create table invitations (
@@ -169,7 +182,7 @@ create table invitations (
     id bigint generated always as identity primary key,
     invited_by_profile_id uuid references profiles (id),
     email text not null unique,
-    role_id bigint references roles (id),
+    role_to_have_id bigint references roles (id),
     token text not null,
     is_active boolean default true
 );

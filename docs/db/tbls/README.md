@@ -13,11 +13,14 @@
 | [public.profiles](public.profiles.md) | 12 |  | BASE TABLE |
 | [public.campuses](public.campuses.md) | 8 |  | BASE TABLE |
 | [public.faculties](public.faculties.md) | 9 |  | BASE TABLE |
+| [public.degrees](public.degrees.md) | 6 |  | BASE TABLE |
 | [public.schools](public.schools.md) | 8 |  | BASE TABLE |
-| [public.students](public.students.md) | 11 |  | BASE TABLE |
+| [public.students](public.students.md) | 10 |  | BASE TABLE |
 | [public.institutions](public.institutions.md) | 8 |  | BASE TABLE |
 | [public.documents](public.documents.md) | 8 |  | BASE TABLE |
-| [public.projects](public.projects.md) | 18 |  | BASE TABLE |
+| [public.projects_states](public.projects_states.md) | 6 |  | BASE TABLE |
+| [public.projects_states_flow](public.projects_states_flow.md) | 7 |  | BASE TABLE |
+| [public.projects](public.projects.md) | 15 |  | BASE TABLE |
 | [public.invitations](public.invitations.md) | 10 |  | BASE TABLE |
 | [public.audit_logs](public.audit_logs.md) | 9 |  | BASE TABLE |
 
@@ -93,19 +96,22 @@ erDiagram
 "public.faculties" }o--|| "public.campuses" : "FOREIGN KEY (campus_id) REFERENCES campuses(id)"
 "public.schools" }o--|| "public.profiles" : "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
 "public.schools" }o--|| "public.faculties" : "FOREIGN KEY (faculty_id) REFERENCES faculties(id)"
+"public.schools" }o--|| "public.degrees" : "FOREIGN KEY (degree_id) REFERENCES degrees(id)"
 "public.students" }o--|| "public.profiles" : "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
-"public.students" }o--|| "public.faculties" : "FOREIGN KEY (faculty_id) REFERENCES faculties(id)"
 "public.students" }o--|| "public.schools" : "FOREIGN KEY (school_id) REFERENCES schools(id)"
 "public.institutions" }o--o| "public.locations" : "FOREIGN KEY (location_id) REFERENCES locations(id)"
 "public.institutions" }o--o| "public.profiles" : "FOREIGN KEY (contact_person_profile_id) REFERENCES profiles(id)"
 "public.documents" }o--|| "public.profiles" : "FOREIGN KEY (uploaded_by_profile_id) REFERENCES profiles(id) ON DELETE CASCADE"
+"public.projects_states_flow" }o--|| "public.projects_states" : "FOREIGN KEY (from_state) REFERENCES projects_states(id)"
+"public.projects_states_flow" }o--|| "public.projects_states" : "FOREIGN KEY (to_state) REFERENCES projects_states(id)"
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.institutions" : "FOREIGN KEY (institution_id) REFERENCES institutions(id)"
-"public.projects" }o--|| "public.documents" : "FOREIGN KEY (pre_project_document_id) REFERENCES documents(id)"
-"public.projects" }o--o| "public.documents" : "FOREIGN KEY (project_document_id) REFERENCES documents(id)"
-"public.invitations" }o--o| "public.roles" : "FOREIGN KEY (role_id) REFERENCES roles(id)"
+"public.projects" }o--|| "public.documents" : "FOREIGN KEY (state_doc_id) REFERENCES documents(id)"
+"public.projects" }o--|| "public.projects_states" : "FOREIGN KEY (current_state_id) REFERENCES projects_states(id)"
+"public.projects" }o--|| "public.projects_states" : "FOREIGN KEY (last_normal_state_id) REFERENCES projects_states(id)"
+"public.invitations" }o--o| "public.roles" : "FOREIGN KEY (role_to_have_id) REFERENCES roles(id)"
 "public.invitations" }o--o| "public.profiles" : "FOREIGN KEY (invited_by_profile_id) REFERENCES profiles(id)"
 
 "public.audit_meta" {
@@ -193,14 +199,22 @@ erDiagram
   uuid dean_profile_id FK ""
   uuid coordinator_profile_id FK ""
 }
+"public.degrees" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  text degree_name ""
+}
 "public.schools" {
   timestamp_with_time_zone created_at ""
   uuid created_by ""
   timestamp_with_time_zone updated_at ""
   uuid updated_by ""
   bigint id ""
+  bigint degree_id FK ""
   bigint faculty_id FK ""
-  text school_name ""
   uuid tutor_profile_id FK ""
 }
 "public.students" {
@@ -210,7 +224,6 @@ erDiagram
   uuid updated_by ""
   bigint id ""
   uuid profile_id FK ""
-  bigint faculty_id FK ""
   bigint school_id FK ""
   semester_enum semester ""
   shift_enum shift ""
@@ -236,6 +249,23 @@ erDiagram
   text storage_path ""
   uuid uploaded_by_profile_id FK ""
 }
+"public.projects_states" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  text project_state_name ""
+}
+"public.projects_states_flow" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint from_state FK ""
+  bigint to_state FK ""
+}
 "public.projects" {
   timestamp_with_time_zone created_at ""
   uuid created_by ""
@@ -248,13 +278,10 @@ erDiagram
   bigint institution_id FK ""
   text title ""
   text abstract ""
-  bigint pre_project_document_id FK ""
-  text pre_project_observations ""
-  timestamp_with_time_zone pre_project_approved_at ""
-  bigint project_document_id FK ""
-  text project_observations ""
-  timestamp_with_time_zone project_received_at ""
-  timestamp_with_time_zone final_project_approved_at ""
+  bigint last_normal_state_id FK ""
+  bigint current_state_id FK ""
+  bigint state_doc_id FK ""
+  text state_metadata ""
 }
 "public.invitations" {
   timestamp_with_time_zone created_at ""
@@ -264,7 +291,7 @@ erDiagram
   bigint id ""
   uuid invited_by_profile_id FK ""
   text email ""
-  bigint role_id FK ""
+  bigint role_to_have_id FK ""
   text token ""
   boolean is_active ""
 }
