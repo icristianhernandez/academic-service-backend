@@ -10,7 +10,7 @@
 | created_by | uuid | auth.uid() | false |  |  |  |
 | updated_at | timestamp with time zone | now() | false |  |  |  |
 | updated_by | uuid | auth.uid() | true |  |  |  |
-| id | uuid |  | false | [public.campuses](public.campuses.md) [public.faculties](public.faculties.md) [public.schools](public.schools.md) [public.students](public.students.md) [public.institutions](public.institutions.md) [public.documents](public.documents.md) [public.projects](public.projects.md) [public.invitations](public.invitations.md) |  |  |
+| id | uuid |  | false | [public.campuses](public.campuses.md) [public.faculties](public.faculties.md) [public.schools](public.schools.md) [public.students](public.students.md) [public.institutions](public.institutions.md) [public.documents](public.documents.md) [public.projects](public.projects.md) [public.invitations](public.invitations.md) [public.notification_preferences](public.notification_preferences.md) [public.notification_events](public.notification_events.md) [public.notifications](public.notifications.md) |  |  |
 | first_name | text |  | false |  |  |  |
 | last_name | text |  | false |  |  |  |
 | national_id | text |  | false |  |  |  |
@@ -41,8 +41,8 @@
 
 | Name | Definition |
 | ---- | ---------- |
-| trg_audit_update_profiles | CREATE TRIGGER trg_audit_update_profiles BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION handle_audit_update() |
 | audit_profiles_changes | CREATE TRIGGER audit_profiles_changes AFTER INSERT OR DELETE OR UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION log_changes() |
+| trg_audit_update_profiles | CREATE TRIGGER trg_audit_update_profiles BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION handle_audit_update() |
 
 ## Relations
 
@@ -60,6 +60,10 @@ erDiagram
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
 "public.invitations" }o--o| "public.profiles" : "FOREIGN KEY (invited_by_profile_id) REFERENCES profiles(id)"
+"public.notification_preferences" }o--|| "public.profiles" : "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
+"public.notification_events" }o--o| "public.profiles" : "FOREIGN KEY (actor_profile_id) REFERENCES profiles(id)"
+"public.notification_events" }o--|| "public.profiles" : "FOREIGN KEY (recipient_profile_id) REFERENCES profiles(id)"
+"public.notifications" }o--|| "public.profiles" : "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
 "public.profiles" }o--o| "public.roles" : "FOREIGN KEY (role_id) REFERENCES roles(id)"
 
 "public.profiles" {
@@ -167,6 +171,43 @@ erDiagram
   bigint role_to_have_id FK ""
   text token ""
   boolean is_active ""
+}
+"public.notification_preferences" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  uuid id ""
+  uuid profile_id FK ""
+  text event_type ""
+  notification_channel_enum channel ""
+  boolean enabled ""
+}
+"public.notification_events" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  uuid id ""
+  text event_type ""
+  uuid recipient_profile_id FK ""
+  uuid actor_profile_id FK ""
+  jsonb payload ""
+  text dedupe_key ""
+  timestamp_with_time_zone available_at ""
+  timestamp_with_time_zone processed_at ""
+}
+"public.notifications" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  uuid id ""
+  uuid profile_id FK ""
+  uuid event_id FK ""
+  text notification_type ""
+  jsonb payload ""
+  timestamp_with_time_zone read_at ""
 }
 "public.roles" {
   timestamp_with_time_zone created_at ""

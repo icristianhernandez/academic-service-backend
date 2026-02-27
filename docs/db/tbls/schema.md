@@ -23,6 +23,10 @@
 | [public.projects](public.projects.md) | 15 |  | BASE TABLE |
 | [public.invitations](public.invitations.md) | 10 |  | BASE TABLE |
 | [public.audit_logs](public.audit_logs.md) | 9 |  | BASE TABLE |
+| [public.notification_preferences](public.notification_preferences.md) | 9 |  | BASE TABLE |
+| [public.notification_events](public.notification_events.md) | 12 |  | BASE TABLE |
+| [public.notification_deliveries](public.notification_deliveries.md) | 12 |  | BASE TABLE |
+| [public.notifications](public.notifications.md) | 10 |  | BASE TABLE |
 
 ## Functions
 
@@ -73,6 +77,8 @@
 | auth.oauth_response_type | code |
 | auth.one_time_token_type | confirmation_token, email_change_token_current, email_change_token_new, phone_change_token, reauthentication_token, recovery_token |
 | net.request_status | ERROR, PENDING, SUCCESS |
+| public.notification_channel_enum | email, in_app |
+| public.notification_delivery_status_enum | failed, pending, processing, sent, skipped |
 | public.section_enum | A, B, C, D, E, F |
 | public.semester_enum | 1, 10, 2, 3, 4, 5, 6, 7, 8, 9 |
 | public.shift_enum | EVENING, MORNING |

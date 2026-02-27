@@ -112,12 +112,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_countries",
-          "def": "CREATE TRIGGER trg_audit_update_countries BEFORE UPDATE ON public.countries FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_countries_changes",
           "def": "CREATE TRIGGER audit_countries_changes AFTER INSERT OR DELETE OR UPDATE ON public.countries FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_countries",
+          "def": "CREATE TRIGGER trg_audit_update_countries BEFORE UPDATE ON public.countries FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -220,12 +220,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_states",
-          "def": "CREATE TRIGGER trg_audit_update_states BEFORE UPDATE ON public.states FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_states_changes",
           "def": "CREATE TRIGGER audit_states_changes AFTER INSERT OR DELETE OR UPDATE ON public.states FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_states",
+          "def": "CREATE TRIGGER trg_audit_update_states BEFORE UPDATE ON public.states FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -328,12 +328,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_cities",
-          "def": "CREATE TRIGGER trg_audit_update_cities BEFORE UPDATE ON public.cities FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_cities_changes",
           "def": "CREATE TRIGGER audit_cities_changes AFTER INSERT OR DELETE OR UPDATE ON public.cities FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_cities",
+          "def": "CREATE TRIGGER trg_audit_update_cities BEFORE UPDATE ON public.cities FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -418,12 +418,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_locations",
-          "def": "CREATE TRIGGER trg_audit_update_locations BEFORE UPDATE ON public.locations FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_locations_changes",
           "def": "CREATE TRIGGER audit_locations_changes AFTER INSERT OR DELETE OR UPDATE ON public.locations FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_locations",
+          "def": "CREATE TRIGGER trg_audit_update_locations BEFORE UPDATE ON public.locations FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -513,12 +513,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_roles",
-          "def": "CREATE TRIGGER trg_audit_update_roles BEFORE UPDATE ON public.roles FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_roles_changes",
           "def": "CREATE TRIGGER audit_roles_changes AFTER INSERT OR DELETE OR UPDATE ON public.roles FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_roles",
+          "def": "CREATE TRIGGER trg_audit_update_roles BEFORE UPDATE ON public.roles FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -677,12 +677,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_profiles",
-          "def": "CREATE TRIGGER trg_audit_update_profiles BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_profiles_changes",
           "def": "CREATE TRIGGER audit_profiles_changes AFTER INSERT OR DELETE OR UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_profiles",
+          "def": "CREATE TRIGGER trg_audit_update_profiles BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -803,12 +803,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_campuses",
-          "def": "CREATE TRIGGER trg_audit_update_campuses BEFORE UPDATE ON public.campuses FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_campuses_changes",
           "def": "CREATE TRIGGER audit_campuses_changes AFTER INSERT OR DELETE OR UPDATE ON public.campuses FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_campuses",
+          "def": "CREATE TRIGGER trg_audit_update_campuses BEFORE UPDATE ON public.campuses FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -947,12 +947,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_faculties",
-          "def": "CREATE TRIGGER trg_audit_update_faculties BEFORE UPDATE ON public.faculties FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_faculties_changes",
           "def": "CREATE TRIGGER audit_faculties_changes AFTER INSERT OR DELETE OR UPDATE ON public.faculties FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_faculties",
+          "def": "CREATE TRIGGER trg_audit_update_faculties BEFORE UPDATE ON public.faculties FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -1148,12 +1148,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_schools",
-          "def": "CREATE TRIGGER trg_audit_update_schools BEFORE UPDATE ON public.schools FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_schools_changes",
           "def": "CREATE TRIGGER audit_schools_changes AFTER INSERT OR DELETE OR UPDATE ON public.schools FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_schools",
+          "def": "CREATE TRIGGER trg_audit_update_schools BEFORE UPDATE ON public.schools FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -1266,12 +1266,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_students",
-          "def": "CREATE TRIGGER trg_audit_update_students BEFORE UPDATE ON public.students FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_students_changes",
           "def": "CREATE TRIGGER audit_students_changes AFTER INSERT OR DELETE OR UPDATE ON public.students FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_students",
+          "def": "CREATE TRIGGER trg_audit_update_students BEFORE UPDATE ON public.students FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -1392,12 +1392,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_institutions",
-          "def": "CREATE TRIGGER trg_audit_update_institutions BEFORE UPDATE ON public.institutions FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_institutions_changes",
           "def": "CREATE TRIGGER audit_institutions_changes AFTER INSERT OR DELETE OR UPDATE ON public.institutions FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_institutions",
+          "def": "CREATE TRIGGER trg_audit_update_institutions BEFORE UPDATE ON public.institutions FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -1521,12 +1521,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_documents",
-          "def": "CREATE TRIGGER trg_audit_update_documents BEFORE UPDATE ON public.documents FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_documents_changes",
           "def": "CREATE TRIGGER audit_documents_changes AFTER INSERT OR DELETE OR UPDATE ON public.documents FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_documents",
+          "def": "CREATE TRIGGER trg_audit_update_documents BEFORE UPDATE ON public.documents FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -1884,12 +1884,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_projects",
-          "def": "CREATE TRIGGER trg_audit_update_projects BEFORE UPDATE ON public.projects FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_projects_changes",
           "def": "CREATE TRIGGER audit_projects_changes AFTER INSERT OR DELETE OR UPDATE ON public.projects FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_projects",
+          "def": "CREATE TRIGGER trg_audit_update_projects BEFORE UPDATE ON public.projects FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -2021,12 +2021,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_invitations",
-          "def": "CREATE TRIGGER trg_audit_update_invitations BEFORE UPDATE ON public.invitations FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_invitations_changes",
           "def": "CREATE TRIGGER audit_invitations_changes AFTER INSERT OR DELETE OR UPDATE ON public.invitations FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_invitations",
+          "def": "CREATE TRIGGER trg_audit_update_invitations BEFORE UPDATE ON public.invitations FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -2120,6 +2120,519 @@
           "columns": [
             "id"
           ]
+        }
+      ]
+    },
+    {
+      "name": "public.notification_preferences",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "nullable": false,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "updated_by",
+          "type": "uuid",
+          "nullable": true,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()"
+        },
+        {
+          "name": "profile_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "event_type",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "channel",
+          "type": "notification_channel_enum",
+          "nullable": false
+        },
+        {
+          "name": "enabled",
+          "type": "boolean",
+          "nullable": false,
+          "default": "true"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "notification_preferences_pkey",
+          "def": "CREATE UNIQUE INDEX notification_preferences_pkey ON public.notification_preferences USING btree (id)",
+          "table": "public.notification_preferences",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "notification_preferences_profile_id_event_type_channel_key",
+          "def": "CREATE UNIQUE INDEX notification_preferences_profile_id_event_type_channel_key ON public.notification_preferences USING btree (profile_id, event_type, channel)",
+          "table": "public.notification_preferences",
+          "columns": [
+            "profile_id",
+            "event_type",
+            "channel"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "notification_preferences_profile_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (profile_id) REFERENCES profiles(id)",
+          "table": "public.notification_preferences",
+          "referenced_table": "profiles",
+          "columns": [
+            "profile_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "notification_preferences_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.notification_preferences",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "notification_preferences_profile_id_event_type_channel_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (profile_id, event_type, channel)",
+          "table": "public.notification_preferences",
+          "referenced_table": "",
+          "columns": [
+            "profile_id",
+            "event_type",
+            "channel"
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "name": "trg_audit_update_notification_preferences",
+          "def": "CREATE TRIGGER trg_audit_update_notification_preferences BEFORE UPDATE ON public.notification_preferences FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
+        }
+      ]
+    },
+    {
+      "name": "public.notification_events",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "nullable": false,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "updated_by",
+          "type": "uuid",
+          "nullable": true,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()"
+        },
+        {
+          "name": "event_type",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "recipient_profile_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "actor_profile_id",
+          "type": "uuid",
+          "nullable": true
+        },
+        {
+          "name": "payload",
+          "type": "jsonb",
+          "nullable": true
+        },
+        {
+          "name": "dedupe_key",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "available_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "processed_at",
+          "type": "timestamp with time zone",
+          "nullable": true
+        }
+      ],
+      "indexes": [
+        {
+          "name": "notification_events_pkey",
+          "def": "CREATE UNIQUE INDEX notification_events_pkey ON public.notification_events USING btree (id)",
+          "table": "public.notification_events",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "notification_events_dedupe_key_key",
+          "def": "CREATE UNIQUE INDEX notification_events_dedupe_key_key ON public.notification_events USING btree (dedupe_key)",
+          "table": "public.notification_events",
+          "columns": [
+            "dedupe_key"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "notification_events_actor_profile_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (actor_profile_id) REFERENCES profiles(id)",
+          "table": "public.notification_events",
+          "referenced_table": "profiles",
+          "columns": [
+            "actor_profile_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "notification_events_recipient_profile_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (recipient_profile_id) REFERENCES profiles(id)",
+          "table": "public.notification_events",
+          "referenced_table": "profiles",
+          "columns": [
+            "recipient_profile_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "notification_events_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.notification_events",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "notification_events_dedupe_key_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (dedupe_key)",
+          "table": "public.notification_events",
+          "referenced_table": "",
+          "columns": [
+            "dedupe_key"
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "name": "trg_audit_update_notification_events",
+          "def": "CREATE TRIGGER trg_audit_update_notification_events BEFORE UPDATE ON public.notification_events FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
+        }
+      ]
+    },
+    {
+      "name": "public.notification_deliveries",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "nullable": false,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "updated_by",
+          "type": "uuid",
+          "nullable": true,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()"
+        },
+        {
+          "name": "event_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "channel",
+          "type": "notification_channel_enum",
+          "nullable": false
+        },
+        {
+          "name": "status",
+          "type": "notification_delivery_status_enum",
+          "nullable": false,
+          "default": "'pending'::notification_delivery_status_enum"
+        },
+        {
+          "name": "attempt_count",
+          "type": "integer",
+          "nullable": false,
+          "default": "0"
+        },
+        {
+          "name": "last_attempt_at",
+          "type": "timestamp with time zone",
+          "nullable": true
+        },
+        {
+          "name": "sent_at",
+          "type": "timestamp with time zone",
+          "nullable": true
+        },
+        {
+          "name": "error_message",
+          "type": "text",
+          "nullable": true
+        }
+      ],
+      "indexes": [
+        {
+          "name": "notification_deliveries_pkey",
+          "def": "CREATE UNIQUE INDEX notification_deliveries_pkey ON public.notification_deliveries USING btree (id)",
+          "table": "public.notification_deliveries",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "notification_deliveries_event_id_channel_key",
+          "def": "CREATE UNIQUE INDEX notification_deliveries_event_id_channel_key ON public.notification_deliveries USING btree (event_id, channel)",
+          "table": "public.notification_deliveries",
+          "columns": [
+            "event_id",
+            "channel"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "notification_deliveries_event_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (event_id) REFERENCES notification_events(id) ON DELETE CASCADE",
+          "table": "public.notification_deliveries",
+          "referenced_table": "notification_events",
+          "columns": [
+            "event_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "notification_deliveries_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.notification_deliveries",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "notification_deliveries_event_id_channel_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (event_id, channel)",
+          "table": "public.notification_deliveries",
+          "referenced_table": "",
+          "columns": [
+            "event_id",
+            "channel"
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "name": "trg_audit_update_notification_deliveries",
+          "def": "CREATE TRIGGER trg_audit_update_notification_deliveries BEFORE UPDATE ON public.notification_deliveries FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
+        }
+      ]
+    },
+    {
+      "name": "public.notifications",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "nullable": false,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "updated_by",
+          "type": "uuid",
+          "nullable": true,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()"
+        },
+        {
+          "name": "profile_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "event_id",
+          "type": "uuid",
+          "nullable": true
+        },
+        {
+          "name": "notification_type",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "payload",
+          "type": "jsonb",
+          "nullable": true
+        },
+        {
+          "name": "read_at",
+          "type": "timestamp with time zone",
+          "nullable": true
+        }
+      ],
+      "indexes": [
+        {
+          "name": "notifications_pkey",
+          "def": "CREATE UNIQUE INDEX notifications_pkey ON public.notifications USING btree (id)",
+          "table": "public.notifications",
+          "columns": [
+            "id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "notifications_profile_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (profile_id) REFERENCES profiles(id)",
+          "table": "public.notifications",
+          "referenced_table": "profiles",
+          "columns": [
+            "profile_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "notifications_event_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (event_id) REFERENCES notification_events(id)",
+          "table": "public.notifications",
+          "referenced_table": "notification_events",
+          "columns": [
+            "event_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "notifications_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.notifications",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "name": "trg_audit_update_notifications",
+          "def": "CREATE TRIGGER trg_audit_update_notifications BEFORE UPDATE ON public.notifications FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     }
@@ -2488,6 +3001,84 @@
       ],
       "parent_cardinality": "zero_or_one",
       "def": "FOREIGN KEY (invited_by_profile_id) REFERENCES profiles(id)"
+    },
+    {
+      "table": "public.notification_preferences",
+      "columns": [
+        "profile_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.profiles",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
+    },
+    {
+      "table": "public.notification_events",
+      "columns": [
+        "actor_profile_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.profiles",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (actor_profile_id) REFERENCES profiles(id)"
+    },
+    {
+      "table": "public.notification_events",
+      "columns": [
+        "recipient_profile_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.profiles",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (recipient_profile_id) REFERENCES profiles(id)"
+    },
+    {
+      "table": "public.notification_deliveries",
+      "columns": [
+        "event_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.notification_events",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (event_id) REFERENCES notification_events(id) ON DELETE CASCADE"
+    },
+    {
+      "table": "public.notifications",
+      "columns": [
+        "profile_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.profiles",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
+    },
+    {
+      "table": "public.notifications",
+      "columns": [
+        "event_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.notification_events",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (event_id) REFERENCES notification_events(id)"
     }
   ],
   "functions": [
@@ -2749,6 +3340,23 @@
         "ERROR",
         "PENDING",
         "SUCCESS"
+      ]
+    },
+    {
+      "name": "public.notification_channel_enum",
+      "values": [
+        "email",
+        "in_app"
+      ]
+    },
+    {
+      "name": "public.notification_delivery_status_enum",
+      "values": [
+        "failed",
+        "pending",
+        "processing",
+        "sent",
+        "skipped"
       ]
     },
     {
