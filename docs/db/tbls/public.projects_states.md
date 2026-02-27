@@ -25,6 +25,13 @@
 | ---- | ---------- |
 | projects_states_pkey | CREATE UNIQUE INDEX projects_states_pkey ON public.projects_states USING btree (id) |
 
+## Triggers
+
+| Name | Definition |
+| ---- | ---------- |
+| trg_audit_update_projects_states | CREATE TRIGGER trg_audit_update_projects_states BEFORE UPDATE ON public.projects_states FOR EACH ROW EXECUTE FUNCTION handle_audit_update() |
+| audit_projects_states_changes | CREATE TRIGGER audit_projects_states_changes AFTER INSERT OR DELETE OR UPDATE ON public.projects_states FOR EACH ROW EXECUTE FUNCTION log_changes() |
+
 ## Relations
 
 ```mermaid

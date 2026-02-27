@@ -33,8 +33,8 @@
 
 | Name | Definition |
 | ---- | ---------- |
-| audit_cities_changes | CREATE TRIGGER audit_cities_changes AFTER INSERT OR DELETE OR UPDATE ON public.cities FOR EACH ROW EXECUTE FUNCTION log_changes() |
 | trg_audit_update_cities | CREATE TRIGGER trg_audit_update_cities BEFORE UPDATE ON public.cities FOR EACH ROW EXECUTE FUNCTION handle_audit_update() |
+| audit_cities_changes | CREATE TRIGGER audit_cities_changes AFTER INSERT OR DELETE OR UPDATE ON public.cities FOR EACH ROW EXECUTE FUNCTION log_changes() |
 
 ## Relations
 

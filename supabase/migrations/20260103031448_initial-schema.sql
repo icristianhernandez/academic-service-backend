@@ -394,5 +394,7 @@ call setup_audit(
     'institutions',
     'projects',
     'documents',
-    'invitations'
+    'invitations',
+    'projects_states',
+    'projects_states_flow'
 );
