@@ -18,7 +18,7 @@
 | [public.students](public.students.md) | 10 |  | BASE TABLE |
 | [public.institutions](public.institutions.md) | 8 |  | BASE TABLE |
 | [public.documents](public.documents.md) | 8 |  | BASE TABLE |
-| [public.projects_states](public.projects_states.md) | 6 |  | BASE TABLE |
+| [public.projects_states](public.projects_states.md) | 7 |  | BASE TABLE |
 | [public.projects_states_flow](public.projects_states_flow.md) | 7 |  | BASE TABLE |
 | [public.projects](public.projects.md) | 15 |  | BASE TABLE |
 | [public.invitations](public.invitations.md) | 10 |  | BASE TABLE |
@@ -96,11 +96,11 @@ erDiagram
 "public.locations" }o--|| "public.cities" : "FOREIGN KEY (city_id) REFERENCES cities(id)"
 "public.profiles" }o--o| "public.roles" : "FOREIGN KEY (role_id) REFERENCES roles(id)"
 "public.campuses" }o--|| "public.locations" : "FOREIGN KEY (location_id) REFERENCES locations(id)"
-"public.campuses" }o--|| "public.profiles" : "FOREIGN KEY (president_profile_id) REFERENCES profiles(id)"
-"public.faculties" }o--|| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
-"public.faculties" }o--|| "public.profiles" : "FOREIGN KEY (dean_profile_id) REFERENCES profiles(id)"
+"public.campuses" }o--o| "public.profiles" : "FOREIGN KEY (president_profile_id) REFERENCES profiles(id)"
+"public.faculties" }o--o| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
+"public.faculties" }o--o| "public.profiles" : "FOREIGN KEY (dean_profile_id) REFERENCES profiles(id)"
 "public.faculties" }o--|| "public.campuses" : "FOREIGN KEY (campus_id) REFERENCES campuses(id)"
-"public.schools" }o--|| "public.profiles" : "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
+"public.schools" }o--o| "public.profiles" : "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
 "public.schools" }o--|| "public.faculties" : "FOREIGN KEY (faculty_id) REFERENCES faculties(id)"
 "public.schools" }o--|| "public.degrees" : "FOREIGN KEY (degree_id) REFERENCES degrees(id)"
 "public.students" }o--|| "public.profiles" : "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
@@ -268,6 +268,7 @@ erDiagram
   uuid updated_by ""
   bigint id ""
   text project_state_name ""
+  boolean normal_flow_state ""
 }
 "public.projects_states_flow" {
   timestamp_with_time_zone created_at ""

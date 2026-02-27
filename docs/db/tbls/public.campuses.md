@@ -13,7 +13,7 @@
 | id | bigint |  | false | [public.faculties](public.faculties.md) |  |  |
 | location_id | bigint |  | false |  | [public.locations](public.locations.md) |  |
 | campus_name | text |  | false |  |  |  |
-| president_profile_id | uuid |  | false |  | [public.profiles](public.profiles.md) |  |
+| president_profile_id | uuid |  | true |  | [public.profiles](public.profiles.md) |  |
 
 ## Constraints
 
@@ -45,7 +45,7 @@ erDiagram
 
 "public.faculties" }o--|| "public.campuses" : "FOREIGN KEY (campus_id) REFERENCES campuses(id)"
 "public.campuses" }o--|| "public.locations" : "FOREIGN KEY (location_id) REFERENCES locations(id)"
-"public.campuses" }o--|| "public.profiles" : "FOREIGN KEY (president_profile_id) REFERENCES profiles(id)"
+"public.campuses" }o--o| "public.profiles" : "FOREIGN KEY (president_profile_id) REFERENCES profiles(id)"
 
 "public.campuses" {
   timestamp_with_time_zone created_at ""

@@ -109,6 +109,7 @@ erDiagram
   uuid updated_by ""
   bigint id ""
   text project_state_name ""
+  boolean normal_flow_state ""
 }
 "public.documents" {
   timestamp_with_time_zone created_at ""

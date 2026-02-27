@@ -65,7 +65,7 @@ create table campuses (
     id bigint generated always as identity primary key,
     location_id bigint not null references locations (id),
     campus_name text not null unique,
-    president_profile_id uuid not null references profiles (id)
+    president_profile_id uuid references profiles (id)
 );
 
 create table faculties (
@@ -73,8 +73,8 @@ create table faculties (
     id bigint generated always as identity primary key,
     campus_id bigint not null references campuses (id),
     faculty_name text not null unique,
-    dean_profile_id uuid not null references profiles (id),
-    coordinator_profile_id uuid not null references profiles (id)
+    dean_profile_id uuid references profiles (id),
+    coordinator_profile_id uuid references profiles (id)
 );
 
 create table degrees (
@@ -88,7 +88,7 @@ create table schools (
     id bigint generated always as identity primary key,
     degree_id bigint not null references degrees (id),
     faculty_id bigint not null references faculties (id),
-    tutor_profile_id uuid not null references profiles (id)
+    tutor_profile_id uuid references profiles (id)
 );
 
 create table students (
@@ -151,7 +151,8 @@ using (bucket_id = 'project');
 create table projects_states (
     like audit_meta including all,
     id bigint generated always as identity primary key,
-    project_state_name text not null
+    project_state_name text not null,
+    normal_flow_state boolean not null default true
 );
 
 create table projects_states_flow (

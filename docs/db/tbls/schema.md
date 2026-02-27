@@ -18,7 +18,7 @@
 | [public.students](public.students.md) | 10 |  | BASE TABLE |
 | [public.institutions](public.institutions.md) | 8 |  | BASE TABLE |
 | [public.documents](public.documents.md) | 8 |  | BASE TABLE |
-| [public.projects_states](public.projects_states.md) | 6 |  | BASE TABLE |
+| [public.projects_states](public.projects_states.md) | 7 |  | BASE TABLE |
 | [public.projects_states_flow](public.projects_states_flow.md) | 7 |  | BASE TABLE |
 | [public.projects](public.projects.md) | 15 |  | BASE TABLE |
 | [public.invitations](public.invitations.md) | 10 |  | BASE TABLE |

@@ -12,6 +12,7 @@
 | updated_by | uuid | auth.uid() | true |  |  |  |
 | id | bigint |  | false | [public.projects_states_flow](public.projects_states_flow.md) [public.projects](public.projects.md) |  |  |
 | project_state_name | text |  | false |  |  |  |
+| normal_flow_state | boolean | true | false |  |  |  |
 
 ## Constraints
 
@@ -49,6 +50,7 @@ erDiagram
   uuid updated_by ""
   bigint id ""
   text project_state_name ""
+  boolean normal_flow_state ""
 }
 "public.projects_states_flow" {
   timestamp_with_time_zone created_at ""

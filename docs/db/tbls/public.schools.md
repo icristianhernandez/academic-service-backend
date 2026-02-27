@@ -13,7 +13,7 @@
 | id | bigint |  | false | [public.students](public.students.md) |  |  |
 | degree_id | bigint |  | false |  | [public.degrees](public.degrees.md) |  |
 | faculty_id | bigint |  | false |  | [public.faculties](public.faculties.md) |  |
-| tutor_profile_id | uuid |  | false |  | [public.profiles](public.profiles.md) |  |
+| tutor_profile_id | uuid |  | true |  | [public.profiles](public.profiles.md) |  |
 
 ## Constraints
 
@@ -45,7 +45,7 @@ erDiagram
 "public.students" }o--|| "public.schools" : "FOREIGN KEY (school_id) REFERENCES schools(id)"
 "public.schools" }o--|| "public.degrees" : "FOREIGN KEY (degree_id) REFERENCES degrees(id)"
 "public.schools" }o--|| "public.faculties" : "FOREIGN KEY (faculty_id) REFERENCES faculties(id)"
-"public.schools" }o--|| "public.profiles" : "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
+"public.schools" }o--o| "public.profiles" : "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
 
 "public.schools" {
   timestamp_with_time_zone created_at ""

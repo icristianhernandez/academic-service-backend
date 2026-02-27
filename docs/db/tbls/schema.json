@@ -732,7 +732,7 @@
         {
           "name": "president_profile_id",
           "type": "uuid",
-          "nullable": false
+          "nullable": true
         }
       ],
       "indexes": [
@@ -858,12 +858,12 @@
         {
           "name": "dean_profile_id",
           "type": "uuid",
-          "nullable": false
+          "nullable": true
         },
         {
           "name": "coordinator_profile_id",
           "type": "uuid",
-          "nullable": false
+          "nullable": true
         }
       ],
       "indexes": [
@@ -1082,7 +1082,7 @@
         {
           "name": "tutor_profile_id",
           "type": "uuid",
-          "nullable": false
+          "nullable": true
         }
       ],
       "indexes": [
@@ -1567,6 +1567,12 @@
           "name": "project_state_name",
           "type": "text",
           "nullable": false
+        },
+        {
+          "name": "normal_flow_state",
+          "type": "boolean",
+          "nullable": false,
+          "default": "true"
         }
       ],
       "indexes": [
@@ -2733,7 +2739,7 @@
       "parent_columns": [
         "id"
       ],
-      "parent_cardinality": "exactly_one",
+      "parent_cardinality": "zero_or_one",
       "def": "FOREIGN KEY (president_profile_id) REFERENCES profiles(id)"
     },
     {
@@ -2746,7 +2752,7 @@
       "parent_columns": [
         "id"
       ],
-      "parent_cardinality": "exactly_one",
+      "parent_cardinality": "zero_or_one",
       "def": "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
     },
     {
@@ -2759,7 +2765,7 @@
       "parent_columns": [
         "id"
       ],
-      "parent_cardinality": "exactly_one",
+      "parent_cardinality": "zero_or_one",
       "def": "FOREIGN KEY (dean_profile_id) REFERENCES profiles(id)"
     },
     {
@@ -2785,7 +2791,7 @@
       "parent_columns": [
         "id"
       ],
-      "parent_cardinality": "exactly_one",
+      "parent_cardinality": "zero_or_one",
       "def": "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
     },
     {

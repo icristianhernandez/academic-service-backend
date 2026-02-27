@@ -13,8 +13,8 @@
 | id | bigint |  | false | [public.schools](public.schools.md) |  |  |
 | campus_id | bigint |  | false |  | [public.campuses](public.campuses.md) |  |
 | faculty_name | text |  | false |  |  |  |
-| dean_profile_id | uuid |  | false |  | [public.profiles](public.profiles.md) |  |
-| coordinator_profile_id | uuid |  | false |  | [public.profiles](public.profiles.md) |  |
+| dean_profile_id | uuid |  | true |  | [public.profiles](public.profiles.md) |  |
+| coordinator_profile_id | uuid |  | true |  | [public.profiles](public.profiles.md) |  |
 
 ## Constraints
 
@@ -47,8 +47,8 @@ erDiagram
 
 "public.schools" }o--|| "public.faculties" : "FOREIGN KEY (faculty_id) REFERENCES faculties(id)"
 "public.faculties" }o--|| "public.campuses" : "FOREIGN KEY (campus_id) REFERENCES campuses(id)"
-"public.faculties" }o--|| "public.profiles" : "FOREIGN KEY (dean_profile_id) REFERENCES profiles(id)"
-"public.faculties" }o--|| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
+"public.faculties" }o--o| "public.profiles" : "FOREIGN KEY (dean_profile_id) REFERENCES profiles(id)"
+"public.faculties" }o--o| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
 
 "public.faculties" {
   timestamp_with_time_zone created_at ""
