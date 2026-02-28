@@ -19,6 +19,7 @@ select set_config(
 );
 
 insert into auth.users (
+    instance_id,
     id,
     aud,
     role,
@@ -31,6 +32,7 @@ insert into auth.users (
     updated_at
 )
 select
+    '00000000-0000-0000-0000-000000000000'::uuid as instance_id,
     seed_accounts.user_id,
     'authenticated' as aud,
     'authenticated' as role_name_value,
@@ -109,6 +111,7 @@ from (
     )
 on conflict (id) do update
     set
+        instance_id = excluded.instance_id,
         email = excluded.email,
         encrypted_password = excluded.encrypted_password,
         email_confirmed_at = excluded.email_confirmed_at,
@@ -123,7 +126,7 @@ insert into auth.identities (
     updated_at
 )
 select
-    seed_accounts.email,
+    seed_accounts.user_id::text,
     seed_accounts.user_id,
     jsonb_build_object(
         'sub',
