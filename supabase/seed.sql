@@ -269,3 +269,34 @@ on conflict (id) do update
         secondary_contact = excluded.secondary_contact,
         role_id = excluded.role_id,
         updated_at = now();
+
+insert into students (
+    profile_id,
+    school_id,
+    semester,
+    shift,
+    section
+)
+select
+    profile.id as profile_id,
+    school.id as school_id,
+    '1'::semester_enum as semester,
+    'MORNING'::shift_enum as shift,
+    'A'::section_enum as section
+from profiles as profile
+inner join schools as school
+    on true
+inner join degrees as degree
+    on school.degree_id = degree.id
+inner join faculties as faculty
+    on school.faculty_id = faculty.id
+where
+    profile.email = 'student@test.local'
+    and degree.degree_name = 'Ingenieria de Sistemas'
+    and faculty.faculty_name = 'Facultad de Ingenieria'
+    and school.tutor_profile_id is null
+    and not exists (
+        select 1
+        from students
+        where students.profile_id = profile.id
+    );
