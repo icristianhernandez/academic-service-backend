@@ -3229,6 +3229,12 @@
       "type": "FUNCTION"
     },
     {
+      "name": "public.get_invitation_rol",
+      "return_type": "text",
+      "arguments": "p_email text, p_token text",
+      "type": "FUNCTION"
+    },
+    {
       "name": "public.set_invited_by_profile_id",
       "return_type": "trigger",
       "arguments": "",

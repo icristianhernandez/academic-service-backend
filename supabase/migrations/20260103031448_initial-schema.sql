@@ -403,6 +403,16 @@ create table invitations (
     token text not null,
     is_active boolean default true
 );
+create or replace function get_invitation_rol(p_email text, p_token text)
+returns text as $$
+    select role.role_name
+    from public.invitations invitation
+    join public.roles role on role.id = invitation.role_to_have_id
+    where invitation.email = p_email
+        -- and invitation.token = p_token
+        and invitation.is_active = true
+    limit 1;
+$$ language sql;
 
 create or replace function set_invited_by_profile_id()
 returns trigger

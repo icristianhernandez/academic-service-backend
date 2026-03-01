@@ -59,6 +59,7 @@
 | public.validate_invitation_on_signup | trigger |  | FUNCTION |
 | public.handle_new_user | trigger |  | FUNCTION |
 | public.deactivate_invitation_on_signup | trigger |  | FUNCTION |
+| public.get_invitation_rol | text | p_email text, p_token text | FUNCTION |
 | public.set_invited_by_profile_id | trigger |  | FUNCTION |
 | public.auth_permission_level | int4 |  | FUNCTION |
 | public.handle_audit_update | trigger |  | FUNCTION |
