@@ -10,7 +10,7 @@
 | [public.cities](public.cities.md) | 7 |  | BASE TABLE |
 | [public.locations](public.locations.md) | 7 |  | BASE TABLE |
 | [public.roles](public.roles.md) | 7 |  | BASE TABLE |
-| [public.profiles](public.profiles.md) | 12 |  | BASE TABLE |
+| [public.profiles](public.profiles.md) | 10 |  | BASE TABLE |
 | [public.campuses](public.campuses.md) | 8 |  | BASE TABLE |
 | [public.faculties](public.faculties.md) | 9 |  | BASE TABLE |
 | [public.degrees](public.degrees.md) | 6 |  | BASE TABLE |
@@ -56,6 +56,10 @@
 | public.plpgsql_profiler_functions_all | record |  | FUNCTION |
 | public.plpgsql_check_profiler | bool | enable boolean DEFAULT NULL::boolean | FUNCTION |
 | public.plpgsql_check_tracer | bool | enable boolean DEFAULT NULL::boolean, verbosity text DEFAULT NULL::text | FUNCTION |
+| public.validate_invitation_on_signup | trigger |  | FUNCTION |
+| public.handle_new_user | trigger |  | FUNCTION |
+| public.deactivate_invitation_on_signup | trigger |  | FUNCTION |
+| public.set_invited_by_profile_id | trigger |  | FUNCTION |
 | public.auth_permission_level | int4 |  | FUNCTION |
 | public.handle_audit_update | trigger |  | FUNCTION |
 | public.enable_audit_tracking | void | VARIADIC target_table_names text[] | PROCEDURE |

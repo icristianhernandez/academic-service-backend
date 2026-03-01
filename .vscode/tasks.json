@@ -119,8 +119,11 @@
     {
       "label": "DB: Reset",
       "type": "shell",
-      "command": "npx",
-      "args": ["supabase", "db", "reset"],
+      "command": "bash",
+      "args": [
+        "-lc",
+        "set -euo pipefail; npx supabase db reset; node scripts/seed-tests-accounts.js"
+      ],
       "group": "build",
       "dependsOn": "SQL: Lint",
       "dependsOrder": "sequence",

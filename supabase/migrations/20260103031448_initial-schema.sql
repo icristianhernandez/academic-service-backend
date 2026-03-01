@@ -53,12 +53,225 @@ create table profiles (
     id uuid references auth.users not null primary key,
     first_name text not null,
     last_name text not null,
-    national_id text not null unique,
-    email text not null unique,
     primary_contact text not null,
     secondary_contact text,
     role_id bigint references roles (id)
 );
+
+do $$
+declare
+    seed_user_id constant uuid := '00000000-0000-0000-0000-000000000001';
+begin
+    perform set_config(
+        'request.jwt.claims',
+        json_build_object(
+            'role', 'authenticated',
+            'sub', seed_user_id,
+            'email', 'seed-worker@usm.local'
+        )::text,
+        true
+    );
+
+    insert into auth.users (
+        id,
+        email,
+        instance_id,
+        aud,
+        role,
+        encrypted_password,
+        email_confirmed_at,
+        raw_app_meta_data,
+        raw_user_meta_data,
+        confirmation_token,
+        recovery_token,
+        email_change_token_new,
+        email_change,
+        created_at,
+        updated_at
+    )
+    values (
+        seed_user_id,
+        'seed-worker@usm.local',
+        '00000000-0000-0000-0000-000000000000',
+        'authenticated',
+        'authenticated',
+        crypt(gen_random_uuid()::text, gen_salt('bf')),
+        now(),
+        '{"provider":"email","providers":["email"]}'::jsonb,
+        jsonb_build_object(
+            'display_name', 'Seed Service Worker',
+            'first_name', 'Seed',
+            'last_name', 'Worker',
+            'primary_contact', '04241111111',
+            'secondary_contact', '04241111111'
+        ),
+        '',
+        '',
+        '',
+        '',
+        now(),
+        now()
+    )
+    on conflict (id) do update
+    set
+        email = excluded.email,
+        instance_id = excluded.instance_id,
+        raw_app_meta_data = excluded.raw_app_meta_data,
+        raw_user_meta_data = excluded.raw_user_meta_data,
+        confirmation_token = excluded.confirmation_token,
+        recovery_token = excluded.recovery_token,
+        email_change_token_new = excluded.email_change_token_new,
+        email_change = excluded.email_change,
+        updated_at = now();
+
+    insert into public.profiles (
+        id,
+        first_name,
+        last_name,
+        primary_contact,
+        secondary_contact,
+        role_id
+    )
+    values (
+        seed_user_id,
+        'Seed',
+        'Worker',
+        '04241111111',
+        '04241111111',
+        null
+    )
+    on conflict (id) do update
+    set
+        first_name = excluded.first_name,
+        last_name = excluded.last_name,
+        primary_contact = excluded.primary_contact,
+        secondary_contact = excluded.secondary_contact,
+        role_id = excluded.role_id;
+
+    insert into auth.identities (
+        provider_id,
+        user_id,
+        identity_data,
+        provider,
+        last_sign_in_at,
+        created_at,
+        updated_at
+    )
+    values (
+        seed_user_id::text,
+        seed_user_id,
+        jsonb_build_object(
+            'sub', seed_user_id::text,
+            'email', 'seed-worker@usm.local',
+            'email_verified', false,
+            'phone_verified', false
+        ),
+        'email',
+        now(),
+        now(),
+        now()
+    )
+    on conflict (provider_id, provider) do update
+    set
+        user_id = excluded.user_id,
+        identity_data = excluded.identity_data,
+        last_sign_in_at = excluded.last_sign_in_at,
+        updated_at = excluded.updated_at;
+end;
+$$;
+
+create or replace function public.validate_invitation_on_signup()
+returns trigger
+language plpgsql
+security definer set search_path = ''
+as $$
+begin
+    perform 1
+    from public.invitations
+    where email = new.email 
+      and is_active = true
+    limit 1;
+
+    if not found then
+        raise exception 'Signup failed. No active invitation found for email: %', new.email 
+            using errcode = 'P0001';
+    end if;
+
+    return new;
+end;
+$$;
+
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer set search_path = ''
+as $$
+declare
+    invitation_role_id bigint;
+    actor_id uuid;
+begin
+    select role_to_have_id
+    into invitation_role_id
+    from public.invitations
+    where email = new.email
+      and is_active = true
+    limit 1;
+
+    actor_id := coalesce(auth.uid(), new.id);
+
+    insert into public.profiles (
+        id,
+        first_name,
+        last_name,
+        primary_contact,
+        secondary_contact,
+        role_id,
+        created_by,
+        updated_by
+    )
+    values (
+        new.id,
+        new.raw_user_meta_data ->> 'first_name',
+        new.raw_user_meta_data ->> 'last_name',
+        new.raw_user_meta_data ->> 'primary_contact',
+        new.raw_user_meta_data ->> 'secondary_contact',
+        invitation_role_id,
+        actor_id,
+        actor_id
+    );
+
+    return new;
+end;
+$$;
+
+create function public.deactivate_invitation_on_signup()
+returns trigger
+language plpgsql
+security definer set search_path = ''
+as $$
+begin
+    update public.invitations
+    set is_active = false
+    where email = new.email;
+
+    return new;
+end;
+$$;
+
+create trigger a_validate_invitation_on_signup
+before insert on auth.users
+for each row
+execute procedure public.validate_invitation_on_signup();
+
+create trigger b_handle_new_user
+after insert on auth.users
+for each row
+execute procedure public.handle_new_user();
+
+create trigger c_deactivate_invitation_on_signup
+after insert on auth.users
+for each row
+execute procedure public.deactivate_invitation_on_signup();
 
 create table campuses (
     like audit_meta including all,
@@ -181,12 +394,31 @@ create table projects (
 create table invitations (
     like audit_meta including all,
     id bigint generated always as identity primary key,
+    -- why I don't do, to the following: default auth.uid() ? I do that with
+    -- audit logs, but is not a reference. Why audit_logs is not a reference?
+    -- mmm
     invited_by_profile_id uuid references profiles (id),
     email text not null unique,
     role_to_have_id bigint references roles (id),
     token text not null,
     is_active boolean default true
 );
+
+create or replace function set_invited_by_profile_id()
+returns trigger
+language plpgsql
+security definer set search_path = ''
+as $$
+begin
+    new.invited_by_profile_id := auth.uid();
+    return new;
+end;
+$$;
+
+create trigger a_set_invited_by_profile_id
+before insert on invitations
+for each row
+execute function set_invited_by_profile_id();
 
 -- https://wiki.postgresql.org/wiki/Audit_trigger
 create table audit_logs (

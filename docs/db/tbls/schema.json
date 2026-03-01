@@ -566,16 +566,6 @@
           "nullable": false
         },
         {
-          "name": "national_id",
-          "type": "text",
-          "nullable": false
-        },
-        {
-          "name": "email",
-          "type": "text",
-          "nullable": false
-        },
-        {
           "name": "primary_contact",
           "type": "text",
           "nullable": false
@@ -598,22 +588,6 @@
           "table": "public.profiles",
           "columns": [
             "id"
-          ]
-        },
-        {
-          "name": "profiles_national_id_key",
-          "def": "CREATE UNIQUE INDEX profiles_national_id_key ON public.profiles USING btree (national_id)",
-          "table": "public.profiles",
-          "columns": [
-            "national_id"
-          ]
-        },
-        {
-          "name": "profiles_email_key",
-          "def": "CREATE UNIQUE INDEX profiles_email_key ON public.profiles USING btree (email)",
-          "table": "public.profiles",
-          "columns": [
-            "email"
           ]
         }
       ],
@@ -652,26 +626,6 @@
           "referenced_table": "",
           "columns": [
             "id"
-          ]
-        },
-        {
-          "name": "profiles_national_id_key",
-          "type": "UNIQUE",
-          "def": "UNIQUE (national_id)",
-          "table": "public.profiles",
-          "referenced_table": "",
-          "columns": [
-            "national_id"
-          ]
-        },
-        {
-          "name": "profiles_email_key",
-          "type": "UNIQUE",
-          "def": "UNIQUE (email)",
-          "table": "public.profiles",
-          "referenced_table": "",
-          "columns": [
-            "email"
           ]
         }
       ],
@@ -2047,6 +2001,10 @@
       ],
       "triggers": [
         {
+          "name": "a_set_invited_by_profile_id",
+          "def": "CREATE TRIGGER a_set_invited_by_profile_id BEFORE INSERT ON public.invitations FOR EACH ROW EXECUTE FUNCTION set_invited_by_profile_id()"
+        },
+        {
           "name": "trg_audit_update_invitations",
           "def": "CREATE TRIGGER trg_audit_update_invitations BEFORE UPDATE ON public.invitations FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         },
@@ -3250,6 +3208,30 @@
       "name": "public.plpgsql_check_tracer",
       "return_type": "bool",
       "arguments": "enable boolean DEFAULT NULL::boolean, verbosity text DEFAULT NULL::text",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.validate_invitation_on_signup",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.handle_new_user",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.deactivate_invitation_on_signup",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.set_invited_by_profile_id",
+      "return_type": "trigger",
+      "arguments": "",
       "type": "FUNCTION"
     },
     {

@@ -85,8 +85,6 @@ erDiagram
   uuid id FK ""
   text first_name ""
   text last_name ""
-  text national_id ""
-  text email ""
   text primary_contact ""
   text secondary_contact ""
   bigint role_id FK ""

@@ -37,6 +37,7 @@
 
 | Name | Definition |
 | ---- | ---------- |
+| a_set_invited_by_profile_id | CREATE TRIGGER a_set_invited_by_profile_id BEFORE INSERT ON public.invitations FOR EACH ROW EXECUTE FUNCTION set_invited_by_profile_id() |
 | trg_audit_update_invitations | CREATE TRIGGER trg_audit_update_invitations BEFORE UPDATE ON public.invitations FOR EACH ROW EXECUTE FUNCTION handle_audit_update() |
 | audit_invitations_changes | CREATE TRIGGER audit_invitations_changes AFTER INSERT OR DELETE OR UPDATE ON public.invitations FOR EACH ROW EXECUTE FUNCTION log_changes() |
 
@@ -68,8 +69,6 @@ erDiagram
   uuid id FK ""
   text first_name ""
   text last_name ""
-  text national_id ""
-  text email ""
   text primary_contact ""
   text secondary_contact ""
   bigint role_id FK ""

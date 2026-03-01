@@ -13,8 +13,6 @@
 | id | uuid |  | false | [public.campuses](public.campuses.md) [public.faculties](public.faculties.md) [public.schools](public.schools.md) [public.students](public.students.md) [public.institutions](public.institutions.md) [public.documents](public.documents.md) [public.projects](public.projects.md) [public.invitations](public.invitations.md) [public.notification_preferences](public.notification_preferences.md) [public.notification_events](public.notification_events.md) [public.notifications](public.notifications.md) |  |  |
 | first_name | text |  | false |  |  |  |
 | last_name | text |  | false |  |  |  |
-| national_id | text |  | false |  |  |  |
-| email | text |  | false |  |  |  |
 | primary_contact | text |  | false |  |  |  |
 | secondary_contact | text |  | true |  |  |  |
 | role_id | bigint |  | true |  | [public.roles](public.roles.md) |  |
@@ -26,16 +24,12 @@
 | profiles_id_fkey | FOREIGN KEY | FOREIGN KEY (id) REFERENCES auth.users(id) |
 | profiles_role_id_fkey | FOREIGN KEY | FOREIGN KEY (role_id) REFERENCES roles(id) |
 | profiles_pkey | PRIMARY KEY | PRIMARY KEY (id) |
-| profiles_national_id_key | UNIQUE | UNIQUE (national_id) |
-| profiles_email_key | UNIQUE | UNIQUE (email) |
 
 ## Indexes
 
 | Name | Definition |
 | ---- | ---------- |
 | profiles_pkey | CREATE UNIQUE INDEX profiles_pkey ON public.profiles USING btree (id) |
-| profiles_national_id_key | CREATE UNIQUE INDEX profiles_national_id_key ON public.profiles USING btree (national_id) |
-| profiles_email_key | CREATE UNIQUE INDEX profiles_email_key ON public.profiles USING btree (email) |
 
 ## Triggers
 
@@ -74,8 +68,6 @@ erDiagram
   uuid id FK ""
   text first_name ""
   text last_name ""
-  text national_id ""
-  text email ""
   text primary_contact ""
   text secondary_contact ""
   bigint role_id FK ""
