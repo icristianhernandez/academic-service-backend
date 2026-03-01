@@ -1,11 +1,16 @@
+---
 name: DB Docs Enforcer
 
-on:
-  pull_request:
-    paths:
+"on":
+  push:
+    branches:
+      - main
+    paths: &db_paths
       - "supabase/migrations/**"
       - ".tbls.yml"
       - "supabase/config.toml"
+  pull_request:
+    paths: *db_paths
 
 jobs:
   db-docs:
