@@ -561,7 +561,22 @@
           "nullable": false
         },
         {
+          "name": "second_name",
+          "type": "text",
+          "nullable": true
+        },
+        {
           "name": "last_name",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "second_last_name",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "national_id",
           "type": "text",
           "nullable": false
         },
@@ -588,6 +603,14 @@
           "table": "public.profiles",
           "columns": [
             "id"
+          ]
+        },
+        {
+          "name": "profiles_national_id_key",
+          "def": "CREATE UNIQUE INDEX profiles_national_id_key ON public.profiles USING btree (national_id)",
+          "table": "public.profiles",
+          "columns": [
+            "national_id"
           ]
         }
       ],
@@ -626,6 +649,16 @@
           "referenced_table": "",
           "columns": [
             "id"
+          ]
+        },
+        {
+          "name": "profiles_national_id_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (national_id)",
+          "table": "public.profiles",
+          "referenced_table": "",
+          "columns": [
+            "national_id"
           ]
         }
       ],

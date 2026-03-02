@@ -52,7 +52,10 @@ create table profiles (
     like audit_meta including all,
     id uuid references auth.users not null primary key,
     first_name text not null,
+    second_name text,
     last_name text not null,
+    second_last_name text not null,
+    national_id text not null unique,
     primary_contact text not null,
     secondary_contact text,
     role_id bigint references roles (id)
@@ -127,7 +130,10 @@ begin
     insert into public.profiles (
         id,
         first_name,
+        second_name,
         last_name,
+        second_last_name,
+        national_id,
         primary_contact,
         secondary_contact,
         role_id
@@ -135,7 +141,10 @@ begin
     values (
         seed_user_id,
         'Seed',
+        null,
         'Worker',
+        'Initial',
+        'V-00000001',
         '04241111111',
         '04241111111',
         null
@@ -143,7 +152,10 @@ begin
     on conflict (id) do update
     set
         first_name = excluded.first_name,
+        second_name = excluded.second_name,
         last_name = excluded.last_name,
+        second_last_name = excluded.second_last_name,
+        national_id = excluded.national_id,
         primary_contact = excluded.primary_contact,
         secondary_contact = excluded.secondary_contact,
         role_id = excluded.role_id;
@@ -222,7 +234,10 @@ begin
     insert into public.profiles (
         id,
         first_name,
+        second_name,
         last_name,
+        second_last_name,
+        national_id,
         primary_contact,
         secondary_contact,
         role_id,
@@ -232,7 +247,10 @@ begin
     values (
         new.id,
         new.raw_user_meta_data ->> 'first_name',
+        new.raw_user_meta_data ->> 'second_name',
         new.raw_user_meta_data ->> 'last_name',
+        new.raw_user_meta_data ->> 'second_last_name',
+        new.raw_user_meta_data ->> 'national_id',
         new.raw_user_meta_data ->> 'primary_contact',
         new.raw_user_meta_data ->> 'secondary_contact',
         invitation_role_id,
