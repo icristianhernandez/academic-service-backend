@@ -201,7 +201,7 @@ begin
 end;
 $$;
 
-create or replace function public.handle_new_user()
+create or replace function public.handle_new_profile()
 returns trigger
 language plpgsql
 security definer set search_path = ''
@@ -244,6 +244,82 @@ begin
 end;
 $$;
 
+create function public.handle_new_student_profile()
+returns trigger
+language plpgsql
+security definer set search_path = ''
+as $$
+declare
+    actor_id uuid;
+    is_student_role boolean;
+    school_id bigint;
+    v_degree_name text;
+    v_faculty_name text;
+    v_campus_name text;
+begin
+    select exists(
+        select 1
+        from public.invitations invitation
+        join public.roles role on role.id = invitation.role_to_have_id
+        where invitation.email = new.email
+          and invitation.is_active = true
+          and role.role_name = 'student'
+    )
+    into is_student_role;
+
+    if not is_student_role then
+        return new;
+    end if;
+
+    v_degree_name := new.raw_user_meta_data ->> 'degree_name';
+    v_faculty_name := new.raw_user_meta_data ->> 'faculty_name';
+    v_campus_name := new.raw_user_meta_data ->> 'campus_name';
+
+    select school.id
+    into school_id
+    from public.schools school
+    join public.degrees degree on degree.id = school.degree_id
+    join public.faculties faculty on faculty.id = school.faculty_id
+    join public.campuses campus on campus.id = faculty.campus_id
+    where degree.degree_name = v_degree_name
+      and faculty.faculty_name = v_faculty_name
+      and campus.campus_name = v_campus_name
+    limit 1;
+
+    if not found then
+        raise exception
+            'Signup failed. No school found for degree_name %, faculty_name %, campus_name %',
+            v_degree_name,
+            v_faculty_name,
+            v_campus_name
+            using errcode = 'P0001';
+    end if;
+
+    actor_id := coalesce(auth.uid(), new.id);
+
+    insert into public.students (
+        profile_id,
+        school_id,
+        semester,
+        shift,
+        section,
+        created_by,
+        updated_by
+    )
+    values (
+        new.id,
+        school_id,
+        (new.raw_user_meta_data ->> 'semester')::public.semester_enum,
+        (new.raw_user_meta_data ->> 'shift')::public.shift_enum,
+        (new.raw_user_meta_data ->> 'section')::public.section_enum,
+        actor_id,
+        actor_id
+    );
+
+    return new;
+end;
+$$;
+
 create function public.deactivate_invitation_on_signup()
 returns trigger
 language plpgsql
@@ -263,12 +339,17 @@ before insert on auth.users
 for each row
 execute procedure public.validate_invitation_on_signup();
 
-create trigger b_handle_new_user
+create trigger b_handle_new_profile
 after insert on auth.users
 for each row
-execute procedure public.handle_new_user();
+execute procedure public.handle_new_profile();
 
-create trigger c_deactivate_invitation_on_signup
+create trigger c_handle_new_student_profile
+after insert on auth.users
+for each row
+execute procedure public.handle_new_student_profile();
+
+create trigger z_deactivate_invitation_on_signup
 after insert on auth.users
 for each row
 execute procedure public.deactivate_invitation_on_signup();
@@ -301,7 +382,8 @@ create table schools (
     id bigint generated always as identity primary key,
     degree_id bigint not null references degrees (id),
     faculty_id bigint not null references faculties (id),
-    tutor_profile_id uuid references profiles (id)
+    tutor_profile_id uuid references profiles (id),
+    unique (degree_id, faculty_id)
 );
 
 create table students (

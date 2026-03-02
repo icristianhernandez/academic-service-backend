@@ -23,12 +23,14 @@
 | schools_faculty_id_fkey | FOREIGN KEY | FOREIGN KEY (faculty_id) REFERENCES faculties(id) |
 | schools_degree_id_fkey | FOREIGN KEY | FOREIGN KEY (degree_id) REFERENCES degrees(id) |
 | schools_pkey | PRIMARY KEY | PRIMARY KEY (id) |
+| schools_degree_id_faculty_id_key | UNIQUE | UNIQUE (degree_id, faculty_id) |
 
 ## Indexes
 
 | Name | Definition |
 | ---- | ---------- |
 | schools_pkey | CREATE UNIQUE INDEX schools_pkey ON public.schools USING btree (id) |
+| schools_degree_id_faculty_id_key | CREATE UNIQUE INDEX schools_degree_id_faculty_id_key ON public.schools USING btree (degree_id, faculty_id) |
 
 ## Triggers
 

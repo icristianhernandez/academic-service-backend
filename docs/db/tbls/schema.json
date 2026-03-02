@@ -1047,6 +1047,15 @@
           "columns": [
             "id"
           ]
+        },
+        {
+          "name": "schools_degree_id_faculty_id_key",
+          "def": "CREATE UNIQUE INDEX schools_degree_id_faculty_id_key ON public.schools USING btree (degree_id, faculty_id)",
+          "table": "public.schools",
+          "columns": [
+            "degree_id",
+            "faculty_id"
+          ]
         }
       ],
       "constraints": [
@@ -1097,6 +1106,17 @@
           "referenced_table": "",
           "columns": [
             "id"
+          ]
+        },
+        {
+          "name": "schools_degree_id_faculty_id_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (degree_id, faculty_id)",
+          "table": "public.schools",
+          "referenced_table": "",
+          "columns": [
+            "degree_id",
+            "faculty_id"
           ]
         }
       ],
@@ -3217,7 +3237,13 @@
       "type": "FUNCTION"
     },
     {
-      "name": "public.handle_new_user",
+      "name": "public.handle_new_profile",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.handle_new_student_profile",
       "return_type": "trigger",
       "arguments": "",
       "type": "FUNCTION"

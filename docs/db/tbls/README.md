@@ -57,7 +57,8 @@
 | public.plpgsql_check_profiler | bool | enable boolean DEFAULT NULL::boolean | FUNCTION |
 | public.plpgsql_check_tracer | bool | enable boolean DEFAULT NULL::boolean, verbosity text DEFAULT NULL::text | FUNCTION |
 | public.validate_invitation_on_signup | trigger |  | FUNCTION |
-| public.handle_new_user | trigger |  | FUNCTION |
+| public.handle_new_profile | trigger |  | FUNCTION |
+| public.handle_new_student_profile | trigger |  | FUNCTION |
 | public.deactivate_invitation_on_signup | trigger |  | FUNCTION |
 | public.get_invitation_rol | text | p_email text, p_token text | FUNCTION |
 | public.set_invited_by_profile_id | trigger |  | FUNCTION |
