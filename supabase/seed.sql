@@ -19,16 +19,25 @@ select set_config(
     true
 );
 
-insert into invitations (email, role_to_have_id, token, is_active)
+insert into invitations (
+    email,
+    role_to_have_id,
+    token,
+    is_active,
+    faculty_to_be_coordinator,
+    school_to_be_tutor
+)
 values
-('student@test.local', 1, '1', true),
-('administrative@test.local', 2, '1', true),
-('tutor@test.local', 3, '1', true),
-('coordinator@test.local', 4, '1', true),
-('dean@test.local', 5, '1', true),
-('sysadmin@test.local', 6, '1', true)
+('student@test.local', 1, '1', true, null, null),
+('administrative@test.local', 2, '1', true, null, null),
+('tutor@test.local', 3, '1', true, null, 1),
+('coordinator@test.local', 4, '1', true, 1, null),
+('dean@test.local', 5, '1', true, null, null),
+('sysadmin@test.local', 6, '1', true, null, null)
 on conflict (email) do update
     set
         role_to_have_id = excluded.role_to_have_id,
         token = excluded.token,
-        is_active = excluded.is_active;
+        is_active = excluded.is_active,
+        faculty_to_be_coordinator = excluded.faculty_to_be_coordinator,
+        school_to_be_tutor = excluded.school_to_be_tutor;
