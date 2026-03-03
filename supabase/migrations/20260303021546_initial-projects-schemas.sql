@@ -75,6 +75,62 @@ create table projects (
     state_metadata text
 );
 
+create function public.set_project_staff_on_insert()
+returns trigger
+language plpgsql
+security definer set search_path = ''
+as $$
+declare
+    school_id bigint;
+    faculty_id bigint;
+    tutor_id uuid;
+    coordinator_id uuid;
+begin
+    select
+        school.id,
+        faculty.id,
+        school.tutor_profile_id,
+        faculty.coordinator_profile_id
+    into school_id, faculty_id, tutor_id, coordinator_id
+    from public.students student
+    join public.schools school on school.id = student.school_id
+    join public.faculties faculty on faculty.id = school.faculty_id
+    where student.profile_id = new.student_profile_id
+    limit 1;
+
+    if not found then
+        raise exception
+            'Project creation failed. No student found for profile_id %',
+            new.student_profile_id
+            using errcode = 'P0001';
+    end if;
+
+    if tutor_id is null then
+        raise exception
+            'Project creation failed. School % has no tutor assigned',
+            school_id
+            using errcode = 'P0001';
+    end if;
+
+    if coordinator_id is null then
+        raise exception
+            'Project creation failed. Faculty % has no coordinator assigned',
+            faculty_id
+            using errcode = 'P0001';
+    end if;
+
+    new.tutor_profile_id := tutor_id;
+    new.coordinator_profile_id := coordinator_id;
+
+    return new;
+end;
+$$;
+
+create trigger a_set_project_staff_on_insert
+before insert on projects
+for each row
+execute procedure public.set_project_staff_on_insert();
+
 call setup_audit(
     'institutions',
     'documents',
