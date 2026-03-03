@@ -10,7 +10,7 @@
 | [public.cities](public.cities.md) | 7 |  | BASE TABLE |
 | [public.locations](public.locations.md) | 7 |  | BASE TABLE |
 | [public.roles](public.roles.md) | 7 |  | BASE TABLE |
-| [public.profiles](public.profiles.md) | 13 |  | BASE TABLE |
+| [public.profiles](public.profiles.md) | 11 |  | BASE TABLE |
 | [public.campuses](public.campuses.md) | 8 |  | BASE TABLE |
 | [public.faculties](public.faculties.md) | 9 |  | BASE TABLE |
 | [public.degrees](public.degrees.md) | 6 |  | BASE TABLE |
@@ -188,10 +188,8 @@ erDiagram
   timestamp_with_time_zone updated_at ""
   uuid updated_by ""
   uuid id FK ""
-  text first_name ""
-  text second_name ""
-  text last_name ""
-  text second_last_name ""
+  text user_names ""
+  text user_last_names ""
   text national_id ""
   text primary_contact ""
   text secondary_contact ""

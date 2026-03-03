@@ -556,22 +556,12 @@
           "nullable": false
         },
         {
-          "name": "first_name",
+          "name": "user_names",
           "type": "text",
           "nullable": false
         },
         {
-          "name": "second_name",
-          "type": "text",
-          "nullable": true
-        },
-        {
-          "name": "last_name",
-          "type": "text",
-          "nullable": false
-        },
-        {
-          "name": "second_last_name",
+          "name": "user_last_names",
           "type": "text",
           "nullable": false
         },

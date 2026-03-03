@@ -11,10 +11,8 @@
 | updated_at | timestamp with time zone | now() | false |  |  |  |
 | updated_by | uuid | auth.uid() | true |  |  |  |
 | id | uuid |  | false | [public.campuses](public.campuses.md) [public.faculties](public.faculties.md) [public.schools](public.schools.md) [public.students](public.students.md) [public.institutions](public.institutions.md) [public.documents](public.documents.md) [public.projects](public.projects.md) [public.invitations](public.invitations.md) [public.notification_preferences](public.notification_preferences.md) [public.notification_events](public.notification_events.md) [public.notifications](public.notifications.md) |  |  |
-| first_name | text |  | false |  |  |  |
-| second_name | text |  | true |  |  |  |
-| last_name | text |  | false |  |  |  |
-| second_last_name | text |  | false |  |  |  |
+| user_names | text |  | false |  |  |  |
+| user_last_names | text |  | false |  |  |  |
 | national_id | text |  | false |  |  |  |
 | primary_contact | text |  | false |  |  |  |
 | secondary_contact | text |  | true |  |  |  |
@@ -71,10 +69,8 @@ erDiagram
   timestamp_with_time_zone updated_at ""
   uuid updated_by ""
   uuid id FK ""
-  text first_name ""
-  text second_name ""
-  text last_name ""
-  text second_last_name ""
+  text user_names ""
+  text user_last_names ""
   text national_id ""
   text primary_contact ""
   text secondary_contact ""
