@@ -45,6 +45,7 @@
 
 | Name | Definition |
 | ---- | ---------- |
+| a_set_project_staff_on_insert | CREATE TRIGGER a_set_project_staff_on_insert BEFORE INSERT ON public.projects FOR EACH ROW EXECUTE FUNCTION set_project_staff_on_insert() |
 | trg_audit_update_projects | CREATE TRIGGER trg_audit_update_projects BEFORE UPDATE ON public.projects FOR EACH ROW EXECUTE FUNCTION handle_audit_update() |
 | audit_projects_changes | CREATE TRIGGER audit_projects_changes AFTER INSERT OR DELETE OR UPDATE ON public.projects FOR EACH ROW EXECUTE FUNCTION log_changes() |
 

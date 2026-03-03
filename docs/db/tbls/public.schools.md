@@ -10,7 +10,7 @@
 | created_by | uuid | auth.uid() | false |  |  |  |
 | updated_at | timestamp with time zone | now() | false |  |  |  |
 | updated_by | uuid | auth.uid() | true |  |  |  |
-| id | bigint |  | false | [public.students](public.students.md) |  |  |
+| id | bigint |  | false | [public.invitations](public.invitations.md) [public.students](public.students.md) |  |  |
 | degree_id | bigint |  | false |  | [public.degrees](public.degrees.md) |  |
 | faculty_id | bigint |  | false |  | [public.faculties](public.faculties.md) |  |
 | tutor_profile_id | uuid |  | true |  | [public.profiles](public.profiles.md) |  |
@@ -44,6 +44,7 @@
 ```mermaid
 erDiagram
 
+"public.invitations" }o--o| "public.schools" : "FOREIGN KEY (school_to_be_tutor) REFERENCES schools(id)"
 "public.students" }o--|| "public.schools" : "FOREIGN KEY (school_id) REFERENCES schools(id)"
 "public.schools" }o--|| "public.degrees" : "FOREIGN KEY (degree_id) REFERENCES degrees(id)"
 "public.schools" }o--|| "public.faculties" : "FOREIGN KEY (faculty_id) REFERENCES faculties(id)"
@@ -58,6 +59,20 @@ erDiagram
   bigint degree_id FK ""
   bigint faculty_id FK ""
   uuid tutor_profile_id FK ""
+}
+"public.invitations" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  uuid invited_by_profile_id FK ""
+  bigint faculty_to_be_coordinator FK ""
+  bigint school_to_be_tutor FK ""
+  bigint role_to_have_id FK ""
+  text email ""
+  text token ""
+  boolean is_active ""
 }
 "public.students" {
   timestamp_with_time_zone created_at ""

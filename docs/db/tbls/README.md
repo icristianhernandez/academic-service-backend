@@ -5,24 +5,24 @@
 | Name | Columns | Comment | Type |
 | ---- | ------- | ------- | ---- |
 | [public.audit_meta](public.audit_meta.md) | 4 |  | BASE TABLE |
+| [public.audit_logs](public.audit_logs.md) | 9 |  | BASE TABLE |
+| [public.roles](public.roles.md) | 7 |  | BASE TABLE |
+| [public.profiles](public.profiles.md) | 11 |  | BASE TABLE |
 | [public.countries](public.countries.md) | 6 |  | BASE TABLE |
 | [public.states](public.states.md) | 7 |  | BASE TABLE |
 | [public.cities](public.cities.md) | 7 |  | BASE TABLE |
 | [public.locations](public.locations.md) | 7 |  | BASE TABLE |
-| [public.roles](public.roles.md) | 7 |  | BASE TABLE |
-| [public.profiles](public.profiles.md) | 11 |  | BASE TABLE |
 | [public.campuses](public.campuses.md) | 8 |  | BASE TABLE |
 | [public.faculties](public.faculties.md) | 9 |  | BASE TABLE |
 | [public.degrees](public.degrees.md) | 6 |  | BASE TABLE |
 | [public.schools](public.schools.md) | 8 |  | BASE TABLE |
+| [public.invitations](public.invitations.md) | 12 |  | BASE TABLE |
 | [public.students](public.students.md) | 10 |  | BASE TABLE |
 | [public.institutions](public.institutions.md) | 8 |  | BASE TABLE |
 | [public.documents](public.documents.md) | 8 |  | BASE TABLE |
 | [public.projects_states](public.projects_states.md) | 7 |  | BASE TABLE |
 | [public.projects_states_flow](public.projects_states_flow.md) | 7 |  | BASE TABLE |
 | [public.projects](public.projects.md) | 15 |  | BASE TABLE |
-| [public.invitations](public.invitations.md) | 10 |  | BASE TABLE |
-| [public.audit_logs](public.audit_logs.md) | 9 |  | BASE TABLE |
 | [public.notification_preferences](public.notification_preferences.md) | 9 |  | BASE TABLE |
 | [public.notification_events](public.notification_events.md) | 12 |  | BASE TABLE |
 | [public.notification_deliveries](public.notification_deliveries.md) | 12 |  | BASE TABLE |
@@ -56,18 +56,20 @@
 | public.plpgsql_profiler_functions_all | record |  | FUNCTION |
 | public.plpgsql_check_profiler | bool | enable boolean DEFAULT NULL::boolean | FUNCTION |
 | public.plpgsql_check_tracer | bool | enable boolean DEFAULT NULL::boolean, verbosity text DEFAULT NULL::text | FUNCTION |
-| public.validate_invitation_on_signup | trigger |  | FUNCTION |
-| public.handle_new_profile | trigger |  | FUNCTION |
-| public.handle_new_student_profile | trigger |  | FUNCTION |
-| public.deactivate_invitation_on_signup | trigger |  | FUNCTION |
-| public.get_invitation_rol | text | p_email text, p_token text | FUNCTION |
-| public.set_invited_by_profile_id | trigger |  | FUNCTION |
-| public.auth_permission_level | int4 |  | FUNCTION |
 | public.handle_audit_update | trigger |  | FUNCTION |
 | public.enable_audit_tracking | void | VARIADIC target_table_names text[] | PROCEDURE |
 | public.log_changes | trigger |  | FUNCTION |
 | public.attach_audit_triggers | void | VARIADIC table_names text[] | PROCEDURE |
 | public.setup_audit | void | VARIADIC table_names text[] | PROCEDURE |
+| public.validate_invitation_on_signup | trigger |  | FUNCTION |
+| public.handle_new_profile | trigger |  | FUNCTION |
+| public.handle_new_student_profile | trigger |  | FUNCTION |
+| public.assign_faculty_to_coordinator_on_signup | trigger |  | FUNCTION |
+| public.assign_school_to_teacher_on_signup | trigger |  | FUNCTION |
+| public.deactivate_invitation_on_signup | trigger |  | FUNCTION |
+| public.get_invitation_rol | text | p_email text, p_token text | FUNCTION |
+| public.set_invited_by_profile_id | trigger |  | FUNCTION |
+| public.set_project_staff_on_insert | trigger |  | FUNCTION |
 
 ## Enums
 
@@ -97,22 +99,26 @@
 ```mermaid
 erDiagram
 
+"public.profiles" }o--o| "public.roles" : "FOREIGN KEY (role_id) REFERENCES roles(id)"
 "public.states" }o--|| "public.countries" : "FOREIGN KEY (country_id) REFERENCES countries(id)"
 "public.cities" }o--|| "public.states" : "FOREIGN KEY (state_id) REFERENCES states(id)"
 "public.locations" }o--|| "public.cities" : "FOREIGN KEY (city_id) REFERENCES cities(id)"
-"public.profiles" }o--o| "public.roles" : "FOREIGN KEY (role_id) REFERENCES roles(id)"
-"public.campuses" }o--|| "public.locations" : "FOREIGN KEY (location_id) REFERENCES locations(id)"
 "public.campuses" }o--o| "public.profiles" : "FOREIGN KEY (president_profile_id) REFERENCES profiles(id)"
+"public.campuses" }o--|| "public.locations" : "FOREIGN KEY (location_id) REFERENCES locations(id)"
 "public.faculties" }o--o| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
 "public.faculties" }o--o| "public.profiles" : "FOREIGN KEY (dean_profile_id) REFERENCES profiles(id)"
 "public.faculties" }o--|| "public.campuses" : "FOREIGN KEY (campus_id) REFERENCES campuses(id)"
 "public.schools" }o--o| "public.profiles" : "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
 "public.schools" }o--|| "public.faculties" : "FOREIGN KEY (faculty_id) REFERENCES faculties(id)"
 "public.schools" }o--|| "public.degrees" : "FOREIGN KEY (degree_id) REFERENCES degrees(id)"
+"public.invitations" }o--o| "public.roles" : "FOREIGN KEY (role_to_have_id) REFERENCES roles(id)"
+"public.invitations" }o--o| "public.profiles" : "FOREIGN KEY (invited_by_profile_id) REFERENCES profiles(id)"
+"public.invitations" }o--o| "public.faculties" : "FOREIGN KEY (faculty_to_be_coordinator) REFERENCES faculties(id)"
+"public.invitations" }o--o| "public.schools" : "FOREIGN KEY (school_to_be_tutor) REFERENCES schools(id)"
 "public.students" }o--|| "public.profiles" : "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
 "public.students" }o--|| "public.schools" : "FOREIGN KEY (school_id) REFERENCES schools(id)"
-"public.institutions" }o--o| "public.locations" : "FOREIGN KEY (location_id) REFERENCES locations(id)"
 "public.institutions" }o--o| "public.profiles" : "FOREIGN KEY (contact_person_profile_id) REFERENCES profiles(id)"
+"public.institutions" }o--o| "public.locations" : "FOREIGN KEY (location_id) REFERENCES locations(id)"
 "public.documents" }o--|| "public.profiles" : "FOREIGN KEY (uploaded_by_profile_id) REFERENCES profiles(id) ON DELETE CASCADE"
 "public.projects_states_flow" }o--|| "public.projects_states" : "FOREIGN KEY (from_state) REFERENCES projects_states(id)"
 "public.projects_states_flow" }o--|| "public.projects_states" : "FOREIGN KEY (to_state) REFERENCES projects_states(id)"
@@ -123,8 +129,6 @@ erDiagram
 "public.projects" }o--|| "public.documents" : "FOREIGN KEY (state_doc_id) REFERENCES documents(id)"
 "public.projects" }o--|| "public.projects_states" : "FOREIGN KEY (current_state_id) REFERENCES projects_states(id)"
 "public.projects" }o--|| "public.projects_states" : "FOREIGN KEY (last_normal_state_id) REFERENCES projects_states(id)"
-"public.invitations" }o--o| "public.roles" : "FOREIGN KEY (role_to_have_id) REFERENCES roles(id)"
-"public.invitations" }o--o| "public.profiles" : "FOREIGN KEY (invited_by_profile_id) REFERENCES profiles(id)"
 "public.notification_preferences" }o--|| "public.profiles" : "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
 "public.notification_events" }o--o| "public.profiles" : "FOREIGN KEY (actor_profile_id) REFERENCES profiles(id)"
 "public.notification_events" }o--|| "public.profiles" : "FOREIGN KEY (recipient_profile_id) REFERENCES profiles(id)"
@@ -137,6 +141,39 @@ erDiagram
   uuid created_by ""
   timestamp_with_time_zone updated_at ""
   uuid updated_by ""
+}
+"public.audit_logs" {
+  bigint id ""
+  text schema_name ""
+  text table_name ""
+  text record_id ""
+  text operation_name ""
+  uuid auth_uid ""
+  jsonb old_data ""
+  jsonb new_data ""
+  timestamp_with_time_zone created_at ""
+}
+"public.roles" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  text role_name ""
+  integer permission_level ""
+}
+"public.profiles" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  uuid id FK ""
+  text user_names ""
+  text user_last_names ""
+  text national_id ""
+  text primary_contact ""
+  text secondary_contact ""
+  bigint role_id FK ""
 }
 "public.countries" {
   timestamp_with_time_zone created_at ""
@@ -172,28 +209,6 @@ erDiagram
   bigint id ""
   bigint city_id FK ""
   text address ""
-}
-"public.roles" {
-  timestamp_with_time_zone created_at ""
-  uuid created_by ""
-  timestamp_with_time_zone updated_at ""
-  uuid updated_by ""
-  bigint id ""
-  text role_name ""
-  integer permission_level ""
-}
-"public.profiles" {
-  timestamp_with_time_zone created_at ""
-  uuid created_by ""
-  timestamp_with_time_zone updated_at ""
-  uuid updated_by ""
-  uuid id FK ""
-  text user_names ""
-  text user_last_names ""
-  text national_id ""
-  text primary_contact ""
-  text secondary_contact ""
-  bigint role_id FK ""
 }
 "public.campuses" {
   timestamp_with_time_zone created_at ""
@@ -233,6 +248,20 @@ erDiagram
   bigint degree_id FK ""
   bigint faculty_id FK ""
   uuid tutor_profile_id FK ""
+}
+"public.invitations" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  uuid invited_by_profile_id FK ""
+  bigint faculty_to_be_coordinator FK ""
+  bigint school_to_be_tutor FK ""
+  bigint role_to_have_id FK ""
+  text email ""
+  text token ""
+  boolean is_active ""
 }
 "public.students" {
   timestamp_with_time_zone created_at ""
@@ -300,29 +329,6 @@ erDiagram
   bigint current_state_id FK ""
   bigint state_doc_id FK ""
   text state_metadata ""
-}
-"public.invitations" {
-  timestamp_with_time_zone created_at ""
-  uuid created_by ""
-  timestamp_with_time_zone updated_at ""
-  uuid updated_by ""
-  bigint id ""
-  uuid invited_by_profile_id FK ""
-  text email ""
-  bigint role_to_have_id FK ""
-  text token ""
-  boolean is_active ""
-}
-"public.audit_logs" {
-  bigint id ""
-  text schema_name ""
-  text table_name ""
-  text record_id ""
-  text operation_name ""
-  uuid auth_uid ""
-  jsonb old_data ""
-  jsonb new_data ""
-  timestamp_with_time_zone created_at ""
 }
 "public.notification_preferences" {
   timestamp_with_time_zone created_at ""

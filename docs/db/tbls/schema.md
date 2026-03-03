@@ -5,24 +5,24 @@
 | Name | Columns | Comment | Type |
 | ---- | ------- | ------- | ---- |
 | [public.audit_meta](public.audit_meta.md) | 4 |  | BASE TABLE |
+| [public.audit_logs](public.audit_logs.md) | 9 |  | BASE TABLE |
+| [public.roles](public.roles.md) | 7 |  | BASE TABLE |
+| [public.profiles](public.profiles.md) | 11 |  | BASE TABLE |
 | [public.countries](public.countries.md) | 6 |  | BASE TABLE |
 | [public.states](public.states.md) | 7 |  | BASE TABLE |
 | [public.cities](public.cities.md) | 7 |  | BASE TABLE |
 | [public.locations](public.locations.md) | 7 |  | BASE TABLE |
-| [public.roles](public.roles.md) | 7 |  | BASE TABLE |
-| [public.profiles](public.profiles.md) | 11 |  | BASE TABLE |
 | [public.campuses](public.campuses.md) | 8 |  | BASE TABLE |
 | [public.faculties](public.faculties.md) | 9 |  | BASE TABLE |
 | [public.degrees](public.degrees.md) | 6 |  | BASE TABLE |
 | [public.schools](public.schools.md) | 8 |  | BASE TABLE |
+| [public.invitations](public.invitations.md) | 12 |  | BASE TABLE |
 | [public.students](public.students.md) | 10 |  | BASE TABLE |
 | [public.institutions](public.institutions.md) | 8 |  | BASE TABLE |
 | [public.documents](public.documents.md) | 8 |  | BASE TABLE |
 | [public.projects_states](public.projects_states.md) | 7 |  | BASE TABLE |
 | [public.projects_states_flow](public.projects_states_flow.md) | 7 |  | BASE TABLE |
 | [public.projects](public.projects.md) | 15 |  | BASE TABLE |
-| [public.invitations](public.invitations.md) | 10 |  | BASE TABLE |
-| [public.audit_logs](public.audit_logs.md) | 9 |  | BASE TABLE |
 | [public.notification_preferences](public.notification_preferences.md) | 9 |  | BASE TABLE |
 | [public.notification_events](public.notification_events.md) | 12 |  | BASE TABLE |
 | [public.notification_deliveries](public.notification_deliveries.md) | 12 |  | BASE TABLE |
@@ -56,18 +56,20 @@
 | public.plpgsql_profiler_functions_all | record |  | FUNCTION |
 | public.plpgsql_check_profiler | bool | enable boolean DEFAULT NULL::boolean | FUNCTION |
 | public.plpgsql_check_tracer | bool | enable boolean DEFAULT NULL::boolean, verbosity text DEFAULT NULL::text | FUNCTION |
-| public.validate_invitation_on_signup | trigger |  | FUNCTION |
-| public.handle_new_profile | trigger |  | FUNCTION |
-| public.handle_new_student_profile | trigger |  | FUNCTION |
-| public.deactivate_invitation_on_signup | trigger |  | FUNCTION |
-| public.get_invitation_rol | text | p_email text, p_token text | FUNCTION |
-| public.set_invited_by_profile_id | trigger |  | FUNCTION |
-| public.auth_permission_level | int4 |  | FUNCTION |
 | public.handle_audit_update | trigger |  | FUNCTION |
 | public.enable_audit_tracking | void | VARIADIC target_table_names text[] | PROCEDURE |
 | public.log_changes | trigger |  | FUNCTION |
 | public.attach_audit_triggers | void | VARIADIC table_names text[] | PROCEDURE |
 | public.setup_audit | void | VARIADIC table_names text[] | PROCEDURE |
+| public.validate_invitation_on_signup | trigger |  | FUNCTION |
+| public.handle_new_profile | trigger |  | FUNCTION |
+| public.handle_new_student_profile | trigger |  | FUNCTION |
+| public.assign_faculty_to_coordinator_on_signup | trigger |  | FUNCTION |
+| public.assign_school_to_teacher_on_signup | trigger |  | FUNCTION |
+| public.deactivate_invitation_on_signup | trigger |  | FUNCTION |
+| public.get_invitation_rol | text | p_email text, p_token text | FUNCTION |
+| public.set_invited_by_profile_id | trigger |  | FUNCTION |
+| public.set_project_staff_on_insert | trigger |  | FUNCTION |
 
 ## Enums
 

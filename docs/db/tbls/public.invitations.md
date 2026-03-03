@@ -12,8 +12,10 @@
 | updated_by | uuid | auth.uid() | true |  |  |  |
 | id | bigint |  | false |  |  |  |
 | invited_by_profile_id | uuid |  | true |  | [public.profiles](public.profiles.md) |  |
-| email | text |  | false |  |  |  |
+| faculty_to_be_coordinator | bigint |  | true |  | [public.faculties](public.faculties.md) |  |
+| school_to_be_tutor | bigint |  | true |  | [public.schools](public.schools.md) |  |
 | role_to_have_id | bigint |  | true |  | [public.roles](public.roles.md) |  |
+| email | text |  | false |  |  |  |
 | token | text |  | false |  |  |  |
 | is_active | boolean | true | true |  |  |  |
 
@@ -23,6 +25,8 @@
 | ---- | ---- | ---------- |
 | invitations_role_to_have_id_fkey | FOREIGN KEY | FOREIGN KEY (role_to_have_id) REFERENCES roles(id) |
 | invitations_invited_by_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (invited_by_profile_id) REFERENCES profiles(id) |
+| invitations_faculty_to_be_coordinator_fkey | FOREIGN KEY | FOREIGN KEY (faculty_to_be_coordinator) REFERENCES faculties(id) |
+| invitations_school_to_be_tutor_fkey | FOREIGN KEY | FOREIGN KEY (school_to_be_tutor) REFERENCES schools(id) |
 | invitations_pkey | PRIMARY KEY | PRIMARY KEY (id) |
 | invitations_email_key | UNIQUE | UNIQUE (email) |
 
@@ -47,6 +51,8 @@
 erDiagram
 
 "public.invitations" }o--o| "public.profiles" : "FOREIGN KEY (invited_by_profile_id) REFERENCES profiles(id)"
+"public.invitations" }o--o| "public.faculties" : "FOREIGN KEY (faculty_to_be_coordinator) REFERENCES faculties(id)"
+"public.invitations" }o--o| "public.schools" : "FOREIGN KEY (school_to_be_tutor) REFERENCES schools(id)"
 "public.invitations" }o--o| "public.roles" : "FOREIGN KEY (role_to_have_id) REFERENCES roles(id)"
 
 "public.invitations" {
@@ -56,8 +62,10 @@ erDiagram
   uuid updated_by ""
   bigint id ""
   uuid invited_by_profile_id FK ""
-  text email ""
+  bigint faculty_to_be_coordinator FK ""
+  bigint school_to_be_tutor FK ""
   bigint role_to_have_id FK ""
+  text email ""
   text token ""
   boolean is_active ""
 }
@@ -73,6 +81,27 @@ erDiagram
   text primary_contact ""
   text secondary_contact ""
   bigint role_id FK ""
+}
+"public.faculties" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint campus_id FK ""
+  text faculty_name ""
+  uuid dean_profile_id FK ""
+  uuid coordinator_profile_id FK ""
+}
+"public.schools" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint degree_id FK ""
+  bigint faculty_id FK ""
+  uuid tutor_profile_id FK ""
 }
 "public.roles" {
   timestamp_with_time_zone created_at ""

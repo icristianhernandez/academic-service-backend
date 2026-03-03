@@ -72,8 +72,10 @@ erDiagram
   uuid updated_by ""
   bigint id ""
   uuid invited_by_profile_id FK ""
-  text email ""
+  bigint faculty_to_be_coordinator FK ""
+  bigint school_to_be_tutor FK ""
   bigint role_to_have_id FK ""
+  text email ""
   text token ""
   boolean is_active ""
 }

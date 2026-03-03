@@ -19,8 +19,8 @@
 
 | Name | Type | Definition |
 | ---- | ---- | ---------- |
-| institutions_location_id_fkey | FOREIGN KEY | FOREIGN KEY (location_id) REFERENCES locations(id) |
 | institutions_contact_person_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (contact_person_profile_id) REFERENCES profiles(id) |
+| institutions_location_id_fkey | FOREIGN KEY | FOREIGN KEY (location_id) REFERENCES locations(id) |
 | institutions_pkey | PRIMARY KEY | PRIMARY KEY (id) |
 | institutions_institution_name_key | UNIQUE | UNIQUE (institution_name) |
 

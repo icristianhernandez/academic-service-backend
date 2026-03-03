@@ -10,7 +10,7 @@
 | created_by | uuid | auth.uid() | false |  |  |  |
 | updated_at | timestamp with time zone | now() | false |  |  |  |
 | updated_by | uuid | auth.uid() | true |  |  |  |
-| id | bigint |  | false | [public.schools](public.schools.md) |  |  |
+| id | bigint |  | false | [public.schools](public.schools.md) [public.invitations](public.invitations.md) |  |  |
 | campus_id | bigint |  | false |  | [public.campuses](public.campuses.md) |  |
 | faculty_name | text |  | false |  |  |  |
 | dean_profile_id | uuid |  | true |  | [public.profiles](public.profiles.md) |  |
@@ -46,6 +46,7 @@
 erDiagram
 
 "public.schools" }o--|| "public.faculties" : "FOREIGN KEY (faculty_id) REFERENCES faculties(id)"
+"public.invitations" }o--o| "public.faculties" : "FOREIGN KEY (faculty_to_be_coordinator) REFERENCES faculties(id)"
 "public.faculties" }o--|| "public.campuses" : "FOREIGN KEY (campus_id) REFERENCES campuses(id)"
 "public.faculties" }o--o| "public.profiles" : "FOREIGN KEY (dean_profile_id) REFERENCES profiles(id)"
 "public.faculties" }o--o| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
@@ -70,6 +71,20 @@ erDiagram
   bigint degree_id FK ""
   bigint faculty_id FK ""
   uuid tutor_profile_id FK ""
+}
+"public.invitations" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  uuid invited_by_profile_id FK ""
+  bigint faculty_to_be_coordinator FK ""
+  bigint school_to_be_tutor FK ""
+  bigint role_to_have_id FK ""
+  text email ""
+  text token ""
+  boolean is_active ""
 }
 "public.campuses" {
   timestamp_with_time_zone created_at ""

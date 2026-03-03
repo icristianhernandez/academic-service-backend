@@ -27,6 +27,13 @@
 | degrees_pkey | CREATE UNIQUE INDEX degrees_pkey ON public.degrees USING btree (id) |
 | degrees_degree_name_key | CREATE UNIQUE INDEX degrees_degree_name_key ON public.degrees USING btree (degree_name) |
 
+## Triggers
+
+| Name | Definition |
+| ---- | ---------- |
+| trg_audit_update_degrees | CREATE TRIGGER trg_audit_update_degrees BEFORE UPDATE ON public.degrees FOR EACH ROW EXECUTE FUNCTION handle_audit_update() |
+| audit_degrees_changes | CREATE TRIGGER audit_degrees_changes AFTER INSERT OR DELETE OR UPDATE ON public.degrees FOR EACH ROW EXECUTE FUNCTION log_changes() |
+
 ## Relations
 
 ```mermaid

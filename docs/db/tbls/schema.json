@@ -32,6 +32,317 @@
       ]
     },
     {
+      "name": "public.audit_logs",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "schema_name",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "table_name",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "record_id",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "operation_name",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "auth_uid",
+          "type": "uuid",
+          "nullable": true,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "old_data",
+          "type": "jsonb",
+          "nullable": true
+        },
+        {
+          "name": "new_data",
+          "type": "jsonb",
+          "nullable": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "default": "now()"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "audit_logs_pkey",
+          "def": "CREATE UNIQUE INDEX audit_logs_pkey ON public.audit_logs USING btree (id)",
+          "table": "public.audit_logs",
+          "columns": [
+            "id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "audit_logs_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.audit_logs",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.roles",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "nullable": false,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "updated_by",
+          "type": "uuid",
+          "nullable": true,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "role_name",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "permission_level",
+          "type": "integer",
+          "nullable": false
+        }
+      ],
+      "indexes": [
+        {
+          "name": "roles_pkey",
+          "def": "CREATE UNIQUE INDEX roles_pkey ON public.roles USING btree (id)",
+          "table": "public.roles",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "roles_role_name_key",
+          "def": "CREATE UNIQUE INDEX roles_role_name_key ON public.roles USING btree (role_name)",
+          "table": "public.roles",
+          "columns": [
+            "role_name"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "roles_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.roles",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "roles_role_name_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (role_name)",
+          "table": "public.roles",
+          "referenced_table": "",
+          "columns": [
+            "role_name"
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "name": "trg_audit_update_roles",
+          "def": "CREATE TRIGGER trg_audit_update_roles BEFORE UPDATE ON public.roles FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
+        },
+        {
+          "name": "audit_roles_changes",
+          "def": "CREATE TRIGGER audit_roles_changes AFTER INSERT OR DELETE OR UPDATE ON public.roles FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        }
+      ]
+    },
+    {
+      "name": "public.profiles",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "nullable": false,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "updated_by",
+          "type": "uuid",
+          "nullable": true,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "user_names",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "user_last_names",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "national_id",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "primary_contact",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "secondary_contact",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "role_id",
+          "type": "bigint",
+          "nullable": true
+        }
+      ],
+      "indexes": [
+        {
+          "name": "profiles_pkey",
+          "def": "CREATE UNIQUE INDEX profiles_pkey ON public.profiles USING btree (id)",
+          "table": "public.profiles",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "profiles_national_id_key",
+          "def": "CREATE UNIQUE INDEX profiles_national_id_key ON public.profiles USING btree (national_id)",
+          "table": "public.profiles",
+          "columns": [
+            "national_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "profiles_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (id) REFERENCES auth.users(id)",
+          "table": "public.profiles",
+          "referenced_table": "users",
+          "columns": [
+            "id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "profiles_role_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (role_id) REFERENCES roles(id)",
+          "table": "public.profiles",
+          "referenced_table": "roles",
+          "columns": [
+            "role_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "profiles_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.profiles",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "profiles_national_id_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (national_id)",
+          "table": "public.profiles",
+          "referenced_table": "",
+          "columns": [
+            "national_id"
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "name": "trg_audit_update_profiles",
+          "def": "CREATE TRIGGER trg_audit_update_profiles BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
+        },
+        {
+          "name": "audit_profiles_changes",
+          "def": "CREATE TRIGGER audit_profiles_changes AFTER INSERT OR DELETE OR UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        }
+      ]
+    },
+    {
       "name": "public.countries",
       "type": "BASE TABLE",
       "columns": [
@@ -428,242 +739,6 @@
       ]
     },
     {
-      "name": "public.roles",
-      "type": "BASE TABLE",
-      "columns": [
-        {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "nullable": false,
-          "default": "now()"
-        },
-        {
-          "name": "created_by",
-          "type": "uuid",
-          "nullable": false,
-          "default": "auth.uid()"
-        },
-        {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "nullable": false,
-          "default": "now()"
-        },
-        {
-          "name": "updated_by",
-          "type": "uuid",
-          "nullable": true,
-          "default": "auth.uid()"
-        },
-        {
-          "name": "id",
-          "type": "bigint",
-          "nullable": false
-        },
-        {
-          "name": "role_name",
-          "type": "text",
-          "nullable": false
-        },
-        {
-          "name": "permission_level",
-          "type": "integer",
-          "nullable": false
-        }
-      ],
-      "indexes": [
-        {
-          "name": "roles_pkey",
-          "def": "CREATE UNIQUE INDEX roles_pkey ON public.roles USING btree (id)",
-          "table": "public.roles",
-          "columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "roles_role_name_key",
-          "def": "CREATE UNIQUE INDEX roles_role_name_key ON public.roles USING btree (role_name)",
-          "table": "public.roles",
-          "columns": [
-            "role_name"
-          ]
-        }
-      ],
-      "constraints": [
-        {
-          "name": "roles_pkey",
-          "type": "PRIMARY KEY",
-          "def": "PRIMARY KEY (id)",
-          "table": "public.roles",
-          "referenced_table": "",
-          "columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "roles_role_name_key",
-          "type": "UNIQUE",
-          "def": "UNIQUE (role_name)",
-          "table": "public.roles",
-          "referenced_table": "",
-          "columns": [
-            "role_name"
-          ]
-        }
-      ],
-      "triggers": [
-        {
-          "name": "trg_audit_update_roles",
-          "def": "CREATE TRIGGER trg_audit_update_roles BEFORE UPDATE ON public.roles FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
-          "name": "audit_roles_changes",
-          "def": "CREATE TRIGGER audit_roles_changes AFTER INSERT OR DELETE OR UPDATE ON public.roles FOR EACH ROW EXECUTE FUNCTION log_changes()"
-        }
-      ]
-    },
-    {
-      "name": "public.profiles",
-      "type": "BASE TABLE",
-      "columns": [
-        {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "nullable": false,
-          "default": "now()"
-        },
-        {
-          "name": "created_by",
-          "type": "uuid",
-          "nullable": false,
-          "default": "auth.uid()"
-        },
-        {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "nullable": false,
-          "default": "now()"
-        },
-        {
-          "name": "updated_by",
-          "type": "uuid",
-          "nullable": true,
-          "default": "auth.uid()"
-        },
-        {
-          "name": "id",
-          "type": "uuid",
-          "nullable": false
-        },
-        {
-          "name": "user_names",
-          "type": "text",
-          "nullable": false
-        },
-        {
-          "name": "user_last_names",
-          "type": "text",
-          "nullable": false
-        },
-        {
-          "name": "national_id",
-          "type": "text",
-          "nullable": false
-        },
-        {
-          "name": "primary_contact",
-          "type": "text",
-          "nullable": false
-        },
-        {
-          "name": "secondary_contact",
-          "type": "text",
-          "nullable": true
-        },
-        {
-          "name": "role_id",
-          "type": "bigint",
-          "nullable": true
-        }
-      ],
-      "indexes": [
-        {
-          "name": "profiles_pkey",
-          "def": "CREATE UNIQUE INDEX profiles_pkey ON public.profiles USING btree (id)",
-          "table": "public.profiles",
-          "columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "profiles_national_id_key",
-          "def": "CREATE UNIQUE INDEX profiles_national_id_key ON public.profiles USING btree (national_id)",
-          "table": "public.profiles",
-          "columns": [
-            "national_id"
-          ]
-        }
-      ],
-      "constraints": [
-        {
-          "name": "profiles_id_fkey",
-          "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (id) REFERENCES auth.users(id)",
-          "table": "public.profiles",
-          "referenced_table": "users",
-          "columns": [
-            "id"
-          ],
-          "referenced_columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "profiles_role_id_fkey",
-          "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (role_id) REFERENCES roles(id)",
-          "table": "public.profiles",
-          "referenced_table": "roles",
-          "columns": [
-            "role_id"
-          ],
-          "referenced_columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "profiles_pkey",
-          "type": "PRIMARY KEY",
-          "def": "PRIMARY KEY (id)",
-          "table": "public.profiles",
-          "referenced_table": "",
-          "columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "profiles_national_id_key",
-          "type": "UNIQUE",
-          "def": "UNIQUE (national_id)",
-          "table": "public.profiles",
-          "referenced_table": "",
-          "columns": [
-            "national_id"
-          ]
-        }
-      ],
-      "triggers": [
-        {
-          "name": "trg_audit_update_profiles",
-          "def": "CREATE TRIGGER trg_audit_update_profiles BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
-          "name": "audit_profiles_changes",
-          "def": "CREATE TRIGGER audit_profiles_changes AFTER INSERT OR DELETE OR UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION log_changes()"
-        }
-      ]
-    },
-    {
       "name": "public.campuses",
       "type": "BASE TABLE",
       "columns": [
@@ -732,19 +807,6 @@
       ],
       "constraints": [
         {
-          "name": "campuses_location_id_fkey",
-          "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (location_id) REFERENCES locations(id)",
-          "table": "public.campuses",
-          "referenced_table": "locations",
-          "columns": [
-            "location_id"
-          ],
-          "referenced_columns": [
-            "id"
-          ]
-        },
-        {
           "name": "campuses_president_profile_id_fkey",
           "type": "FOREIGN KEY",
           "def": "FOREIGN KEY (president_profile_id) REFERENCES profiles(id)",
@@ -752,6 +814,19 @@
           "referenced_table": "profiles",
           "columns": [
             "president_profile_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "campuses_location_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (location_id) REFERENCES locations(id)",
+          "table": "public.campuses",
+          "referenced_table": "locations",
+          "columns": [
+            "location_id"
           ],
           "referenced_columns": [
             "id"
@@ -1011,6 +1086,16 @@
             "degree_name"
           ]
         }
+      ],
+      "triggers": [
+        {
+          "name": "trg_audit_update_degrees",
+          "def": "CREATE TRIGGER trg_audit_update_degrees BEFORE UPDATE ON public.degrees FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
+        },
+        {
+          "name": "audit_degrees_changes",
+          "def": "CREATE TRIGGER audit_degrees_changes AFTER INSERT OR DELETE OR UPDATE ON public.degrees FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        }
       ]
     },
     {
@@ -1151,6 +1236,183 @@
         {
           "name": "audit_schools_changes",
           "def": "CREATE TRIGGER audit_schools_changes AFTER INSERT OR DELETE OR UPDATE ON public.schools FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        }
+      ]
+    },
+    {
+      "name": "public.invitations",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "nullable": false,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "updated_by",
+          "type": "uuid",
+          "nullable": true,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "invited_by_profile_id",
+          "type": "uuid",
+          "nullable": true
+        },
+        {
+          "name": "faculty_to_be_coordinator",
+          "type": "bigint",
+          "nullable": true
+        },
+        {
+          "name": "school_to_be_tutor",
+          "type": "bigint",
+          "nullable": true
+        },
+        {
+          "name": "role_to_have_id",
+          "type": "bigint",
+          "nullable": true
+        },
+        {
+          "name": "email",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "token",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "nullable": true,
+          "default": "true"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "invitations_pkey",
+          "def": "CREATE UNIQUE INDEX invitations_pkey ON public.invitations USING btree (id)",
+          "table": "public.invitations",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "invitations_email_key",
+          "def": "CREATE UNIQUE INDEX invitations_email_key ON public.invitations USING btree (email)",
+          "table": "public.invitations",
+          "columns": [
+            "email"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "invitations_role_to_have_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (role_to_have_id) REFERENCES roles(id)",
+          "table": "public.invitations",
+          "referenced_table": "roles",
+          "columns": [
+            "role_to_have_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "invitations_invited_by_profile_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (invited_by_profile_id) REFERENCES profiles(id)",
+          "table": "public.invitations",
+          "referenced_table": "profiles",
+          "columns": [
+            "invited_by_profile_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "invitations_faculty_to_be_coordinator_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (faculty_to_be_coordinator) REFERENCES faculties(id)",
+          "table": "public.invitations",
+          "referenced_table": "faculties",
+          "columns": [
+            "faculty_to_be_coordinator"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "invitations_school_to_be_tutor_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (school_to_be_tutor) REFERENCES schools(id)",
+          "table": "public.invitations",
+          "referenced_table": "schools",
+          "columns": [
+            "school_to_be_tutor"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "invitations_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.invitations",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "invitations_email_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (email)",
+          "table": "public.invitations",
+          "referenced_table": "",
+          "columns": [
+            "email"
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "name": "a_set_invited_by_profile_id",
+          "def": "CREATE TRIGGER a_set_invited_by_profile_id BEFORE INSERT ON public.invitations FOR EACH ROW EXECUTE FUNCTION set_invited_by_profile_id()"
+        },
+        {
+          "name": "trg_audit_update_invitations",
+          "def": "CREATE TRIGGER trg_audit_update_invitations BEFORE UPDATE ON public.invitations FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
+        },
+        {
+          "name": "audit_invitations_changes",
+          "def": "CREATE TRIGGER audit_invitations_changes AFTER INSERT OR DELETE OR UPDATE ON public.invitations FOR EACH ROW EXECUTE FUNCTION log_changes()"
         }
       ]
     },
@@ -1341,19 +1603,6 @@
       ],
       "constraints": [
         {
-          "name": "institutions_location_id_fkey",
-          "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (location_id) REFERENCES locations(id)",
-          "table": "public.institutions",
-          "referenced_table": "locations",
-          "columns": [
-            "location_id"
-          ],
-          "referenced_columns": [
-            "id"
-          ]
-        },
-        {
           "name": "institutions_contact_person_profile_id_fkey",
           "type": "FOREIGN KEY",
           "def": "FOREIGN KEY (contact_person_profile_id) REFERENCES profiles(id)",
@@ -1361,6 +1610,19 @@
           "referenced_table": "profiles",
           "columns": [
             "contact_person_profile_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "institutions_location_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (location_id) REFERENCES locations(id)",
+          "table": "public.institutions",
+          "referenced_table": "locations",
+          "columns": [
+            "location_id"
           ],
           "referenced_columns": [
             "id"
@@ -1907,246 +2169,16 @@
       ],
       "triggers": [
         {
+          "name": "a_set_project_staff_on_insert",
+          "def": "CREATE TRIGGER a_set_project_staff_on_insert BEFORE INSERT ON public.projects FOR EACH ROW EXECUTE FUNCTION set_project_staff_on_insert()"
+        },
+        {
           "name": "trg_audit_update_projects",
           "def": "CREATE TRIGGER trg_audit_update_projects BEFORE UPDATE ON public.projects FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         },
         {
           "name": "audit_projects_changes",
           "def": "CREATE TRIGGER audit_projects_changes AFTER INSERT OR DELETE OR UPDATE ON public.projects FOR EACH ROW EXECUTE FUNCTION log_changes()"
-        }
-      ]
-    },
-    {
-      "name": "public.invitations",
-      "type": "BASE TABLE",
-      "columns": [
-        {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "nullable": false,
-          "default": "now()"
-        },
-        {
-          "name": "created_by",
-          "type": "uuid",
-          "nullable": false,
-          "default": "auth.uid()"
-        },
-        {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "nullable": false,
-          "default": "now()"
-        },
-        {
-          "name": "updated_by",
-          "type": "uuid",
-          "nullable": true,
-          "default": "auth.uid()"
-        },
-        {
-          "name": "id",
-          "type": "bigint",
-          "nullable": false
-        },
-        {
-          "name": "invited_by_profile_id",
-          "type": "uuid",
-          "nullable": true
-        },
-        {
-          "name": "email",
-          "type": "text",
-          "nullable": false
-        },
-        {
-          "name": "role_to_have_id",
-          "type": "bigint",
-          "nullable": true
-        },
-        {
-          "name": "token",
-          "type": "text",
-          "nullable": false
-        },
-        {
-          "name": "is_active",
-          "type": "boolean",
-          "nullable": true,
-          "default": "true"
-        }
-      ],
-      "indexes": [
-        {
-          "name": "invitations_pkey",
-          "def": "CREATE UNIQUE INDEX invitations_pkey ON public.invitations USING btree (id)",
-          "table": "public.invitations",
-          "columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "invitations_email_key",
-          "def": "CREATE UNIQUE INDEX invitations_email_key ON public.invitations USING btree (email)",
-          "table": "public.invitations",
-          "columns": [
-            "email"
-          ]
-        }
-      ],
-      "constraints": [
-        {
-          "name": "invitations_role_to_have_id_fkey",
-          "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (role_to_have_id) REFERENCES roles(id)",
-          "table": "public.invitations",
-          "referenced_table": "roles",
-          "columns": [
-            "role_to_have_id"
-          ],
-          "referenced_columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "invitations_invited_by_profile_id_fkey",
-          "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (invited_by_profile_id) REFERENCES profiles(id)",
-          "table": "public.invitations",
-          "referenced_table": "profiles",
-          "columns": [
-            "invited_by_profile_id"
-          ],
-          "referenced_columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "invitations_pkey",
-          "type": "PRIMARY KEY",
-          "def": "PRIMARY KEY (id)",
-          "table": "public.invitations",
-          "referenced_table": "",
-          "columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "invitations_email_key",
-          "type": "UNIQUE",
-          "def": "UNIQUE (email)",
-          "table": "public.invitations",
-          "referenced_table": "",
-          "columns": [
-            "email"
-          ]
-        }
-      ],
-      "triggers": [
-        {
-          "name": "a_set_invited_by_profile_id",
-          "def": "CREATE TRIGGER a_set_invited_by_profile_id BEFORE INSERT ON public.invitations FOR EACH ROW EXECUTE FUNCTION set_invited_by_profile_id()"
-        },
-        {
-          "name": "trg_audit_update_invitations",
-          "def": "CREATE TRIGGER trg_audit_update_invitations BEFORE UPDATE ON public.invitations FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
-          "name": "audit_invitations_changes",
-          "def": "CREATE TRIGGER audit_invitations_changes AFTER INSERT OR DELETE OR UPDATE ON public.invitations FOR EACH ROW EXECUTE FUNCTION log_changes()"
-        }
-      ]
-    },
-    {
-      "name": "public.audit_logs",
-      "type": "BASE TABLE",
-      "columns": [
-        {
-          "name": "id",
-          "type": "bigint",
-          "nullable": false
-        },
-        {
-          "name": "schema_name",
-          "type": "text",
-          "nullable": false
-        },
-        {
-          "name": "table_name",
-          "type": "text",
-          "nullable": false
-        },
-        {
-          "name": "record_id",
-          "type": "text",
-          "nullable": true
-        },
-        {
-          "name": "operation_name",
-          "type": "text",
-          "nullable": false
-        },
-        {
-          "name": "auth_uid",
-          "type": "uuid",
-          "nullable": true,
-          "default": "auth.uid()"
-        },
-        {
-          "name": "old_data",
-          "type": "jsonb",
-          "nullable": true
-        },
-        {
-          "name": "new_data",
-          "type": "jsonb",
-          "nullable": true
-        },
-        {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "nullable": true,
-          "default": "now()"
-        }
-      ],
-      "indexes": [
-        {
-          "name": "audit_logs_pkey",
-          "def": "CREATE UNIQUE INDEX audit_logs_pkey ON public.audit_logs USING btree (id)",
-          "table": "public.audit_logs",
-          "columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "idx_audit_logs_table_record",
-          "def": "CREATE INDEX idx_audit_logs_table_record ON public.audit_logs USING btree (table_name, record_id, created_at DESC)",
-          "table": "public.audit_logs",
-          "columns": [
-            "table_name",
-            "record_id",
-            "created_at"
-          ]
-        },
-        {
-          "name": "idx_audit_logs_created",
-          "def": "CREATE INDEX idx_audit_logs_created ON public.audit_logs USING btree (created_at)",
-          "table": "public.audit_logs",
-          "columns": [
-            "created_at"
-          ]
-        }
-      ],
-      "constraints": [
-        {
-          "name": "audit_logs_pkey",
-          "type": "PRIMARY KEY",
-          "def": "PRIMARY KEY (id)",
-          "table": "public.audit_logs",
-          "referenced_table": "",
-          "columns": [
-            "id"
-          ]
         }
       ]
     },
@@ -2666,6 +2698,19 @@
   ],
   "relations": [
     {
+      "table": "public.profiles",
+      "columns": [
+        "role_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.roles",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (role_id) REFERENCES roles(id)"
+    },
+    {
       "table": "public.states",
       "columns": [
         "country_id"
@@ -2705,17 +2750,17 @@
       "def": "FOREIGN KEY (city_id) REFERENCES cities(id)"
     },
     {
-      "table": "public.profiles",
+      "table": "public.campuses",
       "columns": [
-        "role_id"
+        "president_profile_id"
       ],
       "cardinality": "zero_or_more",
-      "parent_table": "public.roles",
+      "parent_table": "public.profiles",
       "parent_columns": [
         "id"
       ],
       "parent_cardinality": "zero_or_one",
-      "def": "FOREIGN KEY (role_id) REFERENCES roles(id)"
+      "def": "FOREIGN KEY (president_profile_id) REFERENCES profiles(id)"
     },
     {
       "table": "public.campuses",
@@ -2729,19 +2774,6 @@
       ],
       "parent_cardinality": "exactly_one",
       "def": "FOREIGN KEY (location_id) REFERENCES locations(id)"
-    },
-    {
-      "table": "public.campuses",
-      "columns": [
-        "president_profile_id"
-      ],
-      "cardinality": "zero_or_more",
-      "parent_table": "public.profiles",
-      "parent_columns": [
-        "id"
-      ],
-      "parent_cardinality": "zero_or_one",
-      "def": "FOREIGN KEY (president_profile_id) REFERENCES profiles(id)"
     },
     {
       "table": "public.faculties",
@@ -2822,6 +2854,58 @@
       "def": "FOREIGN KEY (degree_id) REFERENCES degrees(id)"
     },
     {
+      "table": "public.invitations",
+      "columns": [
+        "role_to_have_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.roles",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (role_to_have_id) REFERENCES roles(id)"
+    },
+    {
+      "table": "public.invitations",
+      "columns": [
+        "invited_by_profile_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.profiles",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (invited_by_profile_id) REFERENCES profiles(id)"
+    },
+    {
+      "table": "public.invitations",
+      "columns": [
+        "faculty_to_be_coordinator"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.faculties",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (faculty_to_be_coordinator) REFERENCES faculties(id)"
+    },
+    {
+      "table": "public.invitations",
+      "columns": [
+        "school_to_be_tutor"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.schools",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (school_to_be_tutor) REFERENCES schools(id)"
+    },
+    {
       "table": "public.students",
       "columns": [
         "profile_id"
@@ -2850,19 +2934,6 @@
     {
       "table": "public.institutions",
       "columns": [
-        "location_id"
-      ],
-      "cardinality": "zero_or_more",
-      "parent_table": "public.locations",
-      "parent_columns": [
-        "id"
-      ],
-      "parent_cardinality": "zero_or_one",
-      "def": "FOREIGN KEY (location_id) REFERENCES locations(id)"
-    },
-    {
-      "table": "public.institutions",
-      "columns": [
         "contact_person_profile_id"
       ],
       "cardinality": "zero_or_more",
@@ -2872,6 +2943,19 @@
       ],
       "parent_cardinality": "zero_or_one",
       "def": "FOREIGN KEY (contact_person_profile_id) REFERENCES profiles(id)"
+    },
+    {
+      "table": "public.institutions",
+      "columns": [
+        "location_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.locations",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (location_id) REFERENCES locations(id)"
     },
     {
       "table": "public.documents",
@@ -3002,32 +3086,6 @@
       ],
       "parent_cardinality": "exactly_one",
       "def": "FOREIGN KEY (last_normal_state_id) REFERENCES projects_states(id)"
-    },
-    {
-      "table": "public.invitations",
-      "columns": [
-        "role_to_have_id"
-      ],
-      "cardinality": "zero_or_more",
-      "parent_table": "public.roles",
-      "parent_columns": [
-        "id"
-      ],
-      "parent_cardinality": "zero_or_one",
-      "def": "FOREIGN KEY (role_to_have_id) REFERENCES roles(id)"
-    },
-    {
-      "table": "public.invitations",
-      "columns": [
-        "invited_by_profile_id"
-      ],
-      "cardinality": "zero_or_more",
-      "parent_table": "public.profiles",
-      "parent_columns": [
-        "id"
-      ],
-      "parent_cardinality": "zero_or_one",
-      "def": "FOREIGN KEY (invited_by_profile_id) REFERENCES profiles(id)"
     },
     {
       "table": "public.notification_preferences",
@@ -3254,48 +3312,6 @@
       "type": "FUNCTION"
     },
     {
-      "name": "public.validate_invitation_on_signup",
-      "return_type": "trigger",
-      "arguments": "",
-      "type": "FUNCTION"
-    },
-    {
-      "name": "public.handle_new_profile",
-      "return_type": "trigger",
-      "arguments": "",
-      "type": "FUNCTION"
-    },
-    {
-      "name": "public.handle_new_student_profile",
-      "return_type": "trigger",
-      "arguments": "",
-      "type": "FUNCTION"
-    },
-    {
-      "name": "public.deactivate_invitation_on_signup",
-      "return_type": "trigger",
-      "arguments": "",
-      "type": "FUNCTION"
-    },
-    {
-      "name": "public.get_invitation_rol",
-      "return_type": "text",
-      "arguments": "p_email text, p_token text",
-      "type": "FUNCTION"
-    },
-    {
-      "name": "public.set_invited_by_profile_id",
-      "return_type": "trigger",
-      "arguments": "",
-      "type": "FUNCTION"
-    },
-    {
-      "name": "public.auth_permission_level",
-      "return_type": "int4",
-      "arguments": "",
-      "type": "FUNCTION"
-    },
-    {
       "name": "public.handle_audit_update",
       "return_type": "trigger",
       "arguments": "",
@@ -3324,6 +3340,60 @@
       "return_type": "void",
       "arguments": "VARIADIC table_names text[]",
       "type": "PROCEDURE"
+    },
+    {
+      "name": "public.validate_invitation_on_signup",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.handle_new_profile",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.handle_new_student_profile",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.assign_faculty_to_coordinator_on_signup",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.assign_school_to_teacher_on_signup",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.deactivate_invitation_on_signup",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.get_invitation_rol",
+      "return_type": "text",
+      "arguments": "p_email text, p_token text",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.set_invited_by_profile_id",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.set_project_staff_on_insert",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
     }
   ],
   "enums": [

@@ -19,8 +19,8 @@
 
 | Name | Type | Definition |
 | ---- | ---- | ---------- |
-| campuses_location_id_fkey | FOREIGN KEY | FOREIGN KEY (location_id) REFERENCES locations(id) |
 | campuses_president_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (president_profile_id) REFERENCES profiles(id) |
+| campuses_location_id_fkey | FOREIGN KEY | FOREIGN KEY (location_id) REFERENCES locations(id) |
 | campuses_pkey | PRIMARY KEY | PRIMARY KEY (id) |
 | campuses_campus_name_key | UNIQUE | UNIQUE (campus_name) |
 
