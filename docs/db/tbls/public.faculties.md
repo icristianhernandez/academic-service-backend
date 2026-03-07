@@ -107,6 +107,7 @@ erDiagram
   text national_id ""
   text primary_contact ""
   text secondary_contact ""
+  text email ""
   bigint role_id FK ""
 }
 ```

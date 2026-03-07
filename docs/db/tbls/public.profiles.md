@@ -16,6 +16,7 @@
 | national_id | text |  | false |  |  |  |
 | primary_contact | text |  | false |  |  |  |
 | secondary_contact | text |  | true |  |  |  |
+| email | text |  | false |  |  |  |
 | role_id | bigint |  | true |  | [public.roles](public.roles.md) |  |
 
 ## Constraints
@@ -26,6 +27,7 @@
 | profiles_role_id_fkey | FOREIGN KEY | FOREIGN KEY (role_id) REFERENCES roles(id) |
 | profiles_pkey | PRIMARY KEY | PRIMARY KEY (id) |
 | profiles_national_id_key | UNIQUE | UNIQUE (national_id) |
+| profiles_email_key | UNIQUE | UNIQUE (email) |
 
 ## Indexes
 
@@ -33,6 +35,7 @@
 | ---- | ---------- |
 | profiles_pkey | CREATE UNIQUE INDEX profiles_pkey ON public.profiles USING btree (id) |
 | profiles_national_id_key | CREATE UNIQUE INDEX profiles_national_id_key ON public.profiles USING btree (national_id) |
+| profiles_email_key | CREATE UNIQUE INDEX profiles_email_key ON public.profiles USING btree (email) |
 
 ## Triggers
 
@@ -74,6 +77,7 @@ erDiagram
   text national_id ""
   text primary_contact ""
   text secondary_contact ""
+  text email ""
   bigint role_id FK ""
 }
 "public.campuses" {

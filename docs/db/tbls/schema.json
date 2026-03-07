@@ -260,6 +260,11 @@
           "nullable": true
         },
         {
+          "name": "email",
+          "type": "text",
+          "nullable": false
+        },
+        {
           "name": "role_id",
           "type": "bigint",
           "nullable": true
@@ -280,6 +285,14 @@
           "table": "public.profiles",
           "columns": [
             "national_id"
+          ]
+        },
+        {
+          "name": "profiles_email_key",
+          "def": "CREATE UNIQUE INDEX profiles_email_key ON public.profiles USING btree (email)",
+          "table": "public.profiles",
+          "columns": [
+            "email"
           ]
         }
       ],
@@ -328,6 +341,16 @@
           "referenced_table": "",
           "columns": [
             "national_id"
+          ]
+        },
+        {
+          "name": "profiles_email_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (email)",
+          "table": "public.profiles",
+          "referenced_table": "",
+          "columns": [
+            "email"
           ]
         }
       ],

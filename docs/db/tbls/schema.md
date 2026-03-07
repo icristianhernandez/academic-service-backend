@@ -7,7 +7,7 @@
 | [public.audit_meta](public.audit_meta.md) | 4 |  | BASE TABLE |
 | [public.audit_logs](public.audit_logs.md) | 9 |  | BASE TABLE |
 | [public.roles](public.roles.md) | 7 |  | BASE TABLE |
-| [public.profiles](public.profiles.md) | 11 |  | BASE TABLE |
+| [public.profiles](public.profiles.md) | 12 |  | BASE TABLE |
 | [public.countries](public.countries.md) | 6 |  | BASE TABLE |
 | [public.states](public.states.md) | 7 |  | BASE TABLE |
 | [public.cities](public.cities.md) | 7 |  | BASE TABLE |

@@ -13,6 +13,7 @@ create table profiles (
     national_id text not null unique,
     primary_contact text not null,
     secondary_contact text,
+    email text not null unique,
     role_id bigint references roles (id)
 );
 
@@ -102,6 +103,7 @@ begin
         national_id,
         primary_contact,
         secondary_contact,
+        email,
         role_id
     )
     values (
@@ -111,6 +113,7 @@ begin
         'V-00000001',
         '04241111111',
         '04241111111',
+        'seed-worker@usm.local',
         null
     );
 end;
@@ -162,6 +165,7 @@ begin
         national_id,
         primary_contact,
         secondary_contact,
+        email,
         role_id,
         created_by,
         updated_by
@@ -173,6 +177,7 @@ begin
         new.raw_user_meta_data ->> 'national_id',
         new.raw_user_meta_data ->> 'primary_contact',
         new.raw_user_meta_data ->> 'secondary_contact',
+        new.email,
         invitation_role_id,
         actor_id,
         actor_id
