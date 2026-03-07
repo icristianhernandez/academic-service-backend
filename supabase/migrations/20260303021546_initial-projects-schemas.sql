@@ -20,6 +20,10 @@ create table documents (
 insert into storage.buckets (id, name, public)
 values ('project', 'project', true);
 
+-- TODO: I need a better location to add documentations xd
+insert into storage.buckets (id, name, public)
+values ('guides', 'guides', true);
+
 create policy project_documents_read
 on storage.objects
 for select
