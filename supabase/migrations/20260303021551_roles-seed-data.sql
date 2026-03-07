@@ -15,9 +15,9 @@ insert into roles (role_name, permission_level)
 values
 ('student', 1),
 ('administrative', 2),
-('tutor', 3),
-('coordinator', 4),
-('dean', 5),
+('dean', 3),
+('tutor', 4),
+('coordinator', 5),
 ('sysadmin', 6)
 on conflict (role_name) do update
     set permission_level = excluded.permission_level;
