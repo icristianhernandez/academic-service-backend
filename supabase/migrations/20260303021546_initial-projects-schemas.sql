@@ -24,6 +24,9 @@ values ('project', 'project', true);
 insert into storage.buckets (id, name, public)
 values ('guides', 'guides', true);
 
+insert into storage.buckets (id, name, public)
+values ('pfps', 'pfps', true);
+
 create policy project_documents_read
 on storage.objects
 for select
