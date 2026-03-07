@@ -69,10 +69,6 @@ erDiagram
   bigint institution_id FK ""
   text title ""
   text abstract ""
-  bigint last_normal_state_id FK ""
-  bigint current_state_id FK ""
-  bigint state_doc_id FK ""
-  text state_metadata ""
 }
 "public.locations" {
   timestamp_with_time_zone created_at ""

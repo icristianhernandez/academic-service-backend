@@ -10,17 +10,13 @@
 | created_by | uuid | auth.uid() | false |  |  |  |
 | updated_at | timestamp with time zone | now() | false |  |  |  |
 | updated_by | uuid | auth.uid() | true |  |  |  |
-| id | bigint |  | false |  |  |  |
+| id | bigint |  | false | [public.project_progress](public.project_progress.md) |  |  |
 | tutor_profile_id | uuid |  | false |  | [public.profiles](public.profiles.md) |  |
 | coordinator_profile_id | uuid |  | false |  | [public.profiles](public.profiles.md) |  |
 | student_profile_id | uuid |  | false |  | [public.profiles](public.profiles.md) |  |
 | institution_id | bigint |  | false |  | [public.institutions](public.institutions.md) |  |
 | title | text |  | false |  |  |  |
 | abstract | text |  | true |  |  |  |
-| last_normal_state_id | bigint |  | false |  | [public.projects_states](public.projects_states.md) |  |
-| current_state_id | bigint |  | false |  | [public.projects_states](public.projects_states.md) |  |
-| state_doc_id | bigint |  | false |  | [public.documents](public.documents.md) |  |
-| state_metadata | text |  | true |  |  |  |
 
 ## Constraints
 
@@ -30,9 +26,6 @@
 | projects_student_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (student_profile_id) REFERENCES profiles(id) |
 | projects_tutor_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id) |
 | projects_institution_id_fkey | FOREIGN KEY | FOREIGN KEY (institution_id) REFERENCES institutions(id) |
-| projects_state_doc_id_fkey | FOREIGN KEY | FOREIGN KEY (state_doc_id) REFERENCES documents(id) |
-| projects_current_state_id_fkey | FOREIGN KEY | FOREIGN KEY (current_state_id) REFERENCES projects_states(id) |
-| projects_last_normal_state_id_fkey | FOREIGN KEY | FOREIGN KEY (last_normal_state_id) REFERENCES projects_states(id) |
 | projects_pkey | PRIMARY KEY | PRIMARY KEY (id) |
 
 ## Indexes
@@ -54,13 +47,11 @@
 ```mermaid
 erDiagram
 
+"public.project_progress" }o--|| "public.projects" : "FOREIGN KEY (project_id) REFERENCES projects(id)"
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.institutions" : "FOREIGN KEY (institution_id) REFERENCES institutions(id)"
-"public.projects" }o--|| "public.projects_states" : "FOREIGN KEY (last_normal_state_id) REFERENCES projects_states(id)"
-"public.projects" }o--|| "public.projects_states" : "FOREIGN KEY (current_state_id) REFERENCES projects_states(id)"
-"public.projects" }o--|| "public.documents" : "FOREIGN KEY (state_doc_id) REFERENCES documents(id)"
 
 "public.projects" {
   timestamp_with_time_zone created_at ""
@@ -74,10 +65,19 @@ erDiagram
   bigint institution_id FK ""
   text title ""
   text abstract ""
-  bigint last_normal_state_id FK ""
-  bigint current_state_id FK ""
-  bigint state_doc_id FK ""
-  text state_metadata ""
+}
+"public.project_progress" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint project_id FK ""
+  bigint project_phase_id FK ""
+  bigint project_state_id FK ""
+  uuid author_profile_id FK ""
+  bigint document_id FK ""
+  text observations ""
 }
 "public.profiles" {
   timestamp_with_time_zone created_at ""
@@ -102,25 +102,6 @@ erDiagram
   bigint location_id FK ""
   uuid contact_person_profile_id FK ""
   text institution_name ""
-}
-"public.projects_states" {
-  timestamp_with_time_zone created_at ""
-  uuid created_by ""
-  timestamp_with_time_zone updated_at ""
-  uuid updated_by ""
-  bigint id ""
-  text project_state_name ""
-  boolean normal_flow_state ""
-}
-"public.documents" {
-  timestamp_with_time_zone created_at ""
-  uuid created_by ""
-  timestamp_with_time_zone updated_at ""
-  uuid updated_by ""
-  bigint id ""
-  text bucket_id FK ""
-  text storage_path ""
-  uuid uploaded_by_profile_id FK ""
 }
 ```
 

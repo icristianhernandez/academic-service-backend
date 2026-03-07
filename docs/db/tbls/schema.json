@@ -1813,7 +1813,79 @@
       ]
     },
     {
-      "name": "public.projects_states",
+      "name": "public.project_phases",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "nullable": false,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "updated_by",
+          "type": "uuid",
+          "nullable": true,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "project_phase_name",
+          "type": "text",
+          "nullable": false
+        }
+      ],
+      "indexes": [
+        {
+          "name": "project_phases_pkey",
+          "def": "CREATE UNIQUE INDEX project_phases_pkey ON public.project_phases USING btree (id)",
+          "table": "public.project_phases",
+          "columns": [
+            "id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "project_phases_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.project_phases",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "name": "trg_audit_update_project_phases",
+          "def": "CREATE TRIGGER trg_audit_update_project_phases BEFORE UPDATE ON public.project_phases FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
+        },
+        {
+          "name": "audit_project_phases_changes",
+          "def": "CREATE TRIGGER audit_project_phases_changes AFTER INSERT OR DELETE OR UPDATE ON public.project_phases FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        }
+      ]
+    },
+    {
+      "name": "public.project_states",
       "type": "BASE TABLE",
       "columns": [
         {
@@ -1849,19 +1921,13 @@
           "name": "project_state_name",
           "type": "text",
           "nullable": false
-        },
-        {
-          "name": "normal_flow_state",
-          "type": "boolean",
-          "nullable": false,
-          "default": "true"
         }
       ],
       "indexes": [
         {
-          "name": "projects_states_pkey",
-          "def": "CREATE UNIQUE INDEX projects_states_pkey ON public.projects_states USING btree (id)",
-          "table": "public.projects_states",
+          "name": "project_states_pkey",
+          "def": "CREATE UNIQUE INDEX project_states_pkey ON public.project_states USING btree (id)",
+          "table": "public.project_states",
           "columns": [
             "id"
           ]
@@ -1869,10 +1935,10 @@
       ],
       "constraints": [
         {
-          "name": "projects_states_pkey",
+          "name": "project_states_pkey",
           "type": "PRIMARY KEY",
           "def": "PRIMARY KEY (id)",
-          "table": "public.projects_states",
+          "table": "public.project_states",
           "referenced_table": "",
           "columns": [
             "id"
@@ -1881,115 +1947,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_projects_states",
-          "def": "CREATE TRIGGER trg_audit_update_projects_states BEFORE UPDATE ON public.projects_states FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
+          "name": "trg_audit_update_project_states",
+          "def": "CREATE TRIGGER trg_audit_update_project_states BEFORE UPDATE ON public.project_states FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         },
         {
-          "name": "audit_projects_states_changes",
-          "def": "CREATE TRIGGER audit_projects_states_changes AFTER INSERT OR DELETE OR UPDATE ON public.projects_states FOR EACH ROW EXECUTE FUNCTION log_changes()"
-        }
-      ]
-    },
-    {
-      "name": "public.projects_states_flow",
-      "type": "BASE TABLE",
-      "columns": [
-        {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "nullable": false,
-          "default": "now()"
-        },
-        {
-          "name": "created_by",
-          "type": "uuid",
-          "nullable": false,
-          "default": "auth.uid()"
-        },
-        {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "nullable": false,
-          "default": "now()"
-        },
-        {
-          "name": "updated_by",
-          "type": "uuid",
-          "nullable": true,
-          "default": "auth.uid()"
-        },
-        {
-          "name": "id",
-          "type": "bigint",
-          "nullable": false
-        },
-        {
-          "name": "from_state",
-          "type": "bigint",
-          "nullable": false
-        },
-        {
-          "name": "to_state",
-          "type": "bigint",
-          "nullable": false
-        }
-      ],
-      "indexes": [
-        {
-          "name": "projects_states_flow_pkey",
-          "def": "CREATE UNIQUE INDEX projects_states_flow_pkey ON public.projects_states_flow USING btree (id)",
-          "table": "public.projects_states_flow",
-          "columns": [
-            "id"
-          ]
-        }
-      ],
-      "constraints": [
-        {
-          "name": "projects_states_flow_from_state_fkey",
-          "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (from_state) REFERENCES projects_states(id)",
-          "table": "public.projects_states_flow",
-          "referenced_table": "projects_states",
-          "columns": [
-            "from_state"
-          ],
-          "referenced_columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "projects_states_flow_to_state_fkey",
-          "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (to_state) REFERENCES projects_states(id)",
-          "table": "public.projects_states_flow",
-          "referenced_table": "projects_states",
-          "columns": [
-            "to_state"
-          ],
-          "referenced_columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "projects_states_flow_pkey",
-          "type": "PRIMARY KEY",
-          "def": "PRIMARY KEY (id)",
-          "table": "public.projects_states_flow",
-          "referenced_table": "",
-          "columns": [
-            "id"
-          ]
-        }
-      ],
-      "triggers": [
-        {
-          "name": "trg_audit_update_projects_states_flow",
-          "def": "CREATE TRIGGER trg_audit_update_projects_states_flow BEFORE UPDATE ON public.projects_states_flow FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
-          "name": "audit_projects_states_flow_changes",
-          "def": "CREATE TRIGGER audit_projects_states_flow_changes AFTER INSERT OR DELETE OR UPDATE ON public.projects_states_flow FOR EACH ROW EXECUTE FUNCTION log_changes()"
+          "name": "audit_project_states_changes",
+          "def": "CREATE TRIGGER audit_project_states_changes AFTER INSERT OR DELETE OR UPDATE ON public.project_states FOR EACH ROW EXECUTE FUNCTION log_changes()"
         }
       ]
     },
@@ -2053,26 +2016,6 @@
         },
         {
           "name": "abstract",
-          "type": "text",
-          "nullable": true
-        },
-        {
-          "name": "last_normal_state_id",
-          "type": "bigint",
-          "nullable": false
-        },
-        {
-          "name": "current_state_id",
-          "type": "bigint",
-          "nullable": false
-        },
-        {
-          "name": "state_doc_id",
-          "type": "bigint",
-          "nullable": false
-        },
-        {
-          "name": "state_metadata",
           "type": "text",
           "nullable": true
         }
@@ -2141,45 +2084,6 @@
           ]
         },
         {
-          "name": "projects_state_doc_id_fkey",
-          "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (state_doc_id) REFERENCES documents(id)",
-          "table": "public.projects",
-          "referenced_table": "documents",
-          "columns": [
-            "state_doc_id"
-          ],
-          "referenced_columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "projects_current_state_id_fkey",
-          "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (current_state_id) REFERENCES projects_states(id)",
-          "table": "public.projects",
-          "referenced_table": "projects_states",
-          "columns": [
-            "current_state_id"
-          ],
-          "referenced_columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "projects_last_normal_state_id_fkey",
-          "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (last_normal_state_id) REFERENCES projects_states(id)",
-          "table": "public.projects",
-          "referenced_table": "projects_states",
-          "columns": [
-            "last_normal_state_id"
-          ],
-          "referenced_columns": [
-            "id"
-          ]
-        },
-        {
           "name": "projects_pkey",
           "type": "PRIMARY KEY",
           "def": "PRIMARY KEY (id)",
@@ -2202,6 +2106,168 @@
         {
           "name": "audit_projects_changes",
           "def": "CREATE TRIGGER audit_projects_changes AFTER INSERT OR DELETE OR UPDATE ON public.projects FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        }
+      ]
+    },
+    {
+      "name": "public.project_progress",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "nullable": false,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "updated_by",
+          "type": "uuid",
+          "nullable": true,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "project_id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "project_phase_id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "project_state_id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "author_profile_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "document_id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "observations",
+          "type": "text",
+          "nullable": true
+        }
+      ],
+      "indexes": [
+        {
+          "name": "project_progress_pkey",
+          "def": "CREATE UNIQUE INDEX project_progress_pkey ON public.project_progress USING btree (id)",
+          "table": "public.project_progress",
+          "columns": [
+            "id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "project_progress_author_profile_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (author_profile_id) REFERENCES profiles(id)",
+          "table": "public.project_progress",
+          "referenced_table": "profiles",
+          "columns": [
+            "author_profile_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "project_progress_document_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (document_id) REFERENCES documents(id)",
+          "table": "public.project_progress",
+          "referenced_table": "documents",
+          "columns": [
+            "document_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "project_progress_project_phase_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (project_phase_id) REFERENCES project_phases(id)",
+          "table": "public.project_progress",
+          "referenced_table": "project_phases",
+          "columns": [
+            "project_phase_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "project_progress_project_state_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (project_state_id) REFERENCES project_states(id)",
+          "table": "public.project_progress",
+          "referenced_table": "project_states",
+          "columns": [
+            "project_state_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "project_progress_project_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (project_id) REFERENCES projects(id)",
+          "table": "public.project_progress",
+          "referenced_table": "projects",
+          "columns": [
+            "project_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "project_progress_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.project_progress",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "name": "trg_audit_update_project_progress",
+          "def": "CREATE TRIGGER trg_audit_update_project_progress BEFORE UPDATE ON public.project_progress FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
+        },
+        {
+          "name": "audit_project_progress_changes",
+          "def": "CREATE TRIGGER audit_project_progress_changes AFTER INSERT OR DELETE OR UPDATE ON public.project_progress FOR EACH ROW EXECUTE FUNCTION log_changes()"
         }
       ]
     },
@@ -2994,32 +3060,6 @@
       "def": "FOREIGN KEY (uploaded_by_profile_id) REFERENCES profiles(id) ON DELETE CASCADE"
     },
     {
-      "table": "public.projects_states_flow",
-      "columns": [
-        "from_state"
-      ],
-      "cardinality": "zero_or_more",
-      "parent_table": "public.projects_states",
-      "parent_columns": [
-        "id"
-      ],
-      "parent_cardinality": "exactly_one",
-      "def": "FOREIGN KEY (from_state) REFERENCES projects_states(id)"
-    },
-    {
-      "table": "public.projects_states_flow",
-      "columns": [
-        "to_state"
-      ],
-      "cardinality": "zero_or_more",
-      "parent_table": "public.projects_states",
-      "parent_columns": [
-        "id"
-      ],
-      "parent_cardinality": "exactly_one",
-      "def": "FOREIGN KEY (to_state) REFERENCES projects_states(id)"
-    },
-    {
       "table": "public.projects",
       "columns": [
         "coordinator_profile_id"
@@ -3072,9 +3112,22 @@
       "def": "FOREIGN KEY (institution_id) REFERENCES institutions(id)"
     },
     {
-      "table": "public.projects",
+      "table": "public.project_progress",
       "columns": [
-        "state_doc_id"
+        "author_profile_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.profiles",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (author_profile_id) REFERENCES profiles(id)"
+    },
+    {
+      "table": "public.project_progress",
+      "columns": [
+        "document_id"
       ],
       "cardinality": "zero_or_more",
       "parent_table": "public.documents",
@@ -3082,33 +3135,46 @@
         "id"
       ],
       "parent_cardinality": "exactly_one",
-      "def": "FOREIGN KEY (state_doc_id) REFERENCES documents(id)"
+      "def": "FOREIGN KEY (document_id) REFERENCES documents(id)"
     },
     {
-      "table": "public.projects",
+      "table": "public.project_progress",
       "columns": [
-        "current_state_id"
+        "project_phase_id"
       ],
       "cardinality": "zero_or_more",
-      "parent_table": "public.projects_states",
+      "parent_table": "public.project_phases",
       "parent_columns": [
         "id"
       ],
       "parent_cardinality": "exactly_one",
-      "def": "FOREIGN KEY (current_state_id) REFERENCES projects_states(id)"
+      "def": "FOREIGN KEY (project_phase_id) REFERENCES project_phases(id)"
     },
     {
-      "table": "public.projects",
+      "table": "public.project_progress",
       "columns": [
-        "last_normal_state_id"
+        "project_state_id"
       ],
       "cardinality": "zero_or_more",
-      "parent_table": "public.projects_states",
+      "parent_table": "public.project_states",
       "parent_columns": [
         "id"
       ],
       "parent_cardinality": "exactly_one",
-      "def": "FOREIGN KEY (last_normal_state_id) REFERENCES projects_states(id)"
+      "def": "FOREIGN KEY (project_state_id) REFERENCES project_states(id)"
+    },
+    {
+      "table": "public.project_progress",
+      "columns": [
+        "project_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.projects",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (project_id) REFERENCES projects(id)"
     },
     {
       "table": "public.notification_preferences",

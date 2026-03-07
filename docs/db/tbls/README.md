@@ -20,9 +20,10 @@
 | [public.students](public.students.md) | 10 |  | BASE TABLE |
 | [public.institutions](public.institutions.md) | 8 |  | BASE TABLE |
 | [public.documents](public.documents.md) | 8 |  | BASE TABLE |
-| [public.projects_states](public.projects_states.md) | 7 |  | BASE TABLE |
-| [public.projects_states_flow](public.projects_states_flow.md) | 7 |  | BASE TABLE |
-| [public.projects](public.projects.md) | 15 |  | BASE TABLE |
+| [public.project_phases](public.project_phases.md) | 6 |  | BASE TABLE |
+| [public.project_states](public.project_states.md) | 6 |  | BASE TABLE |
+| [public.projects](public.projects.md) | 11 |  | BASE TABLE |
+| [public.project_progress](public.project_progress.md) | 11 |  | BASE TABLE |
 | [public.notification_preferences](public.notification_preferences.md) | 9 |  | BASE TABLE |
 | [public.notification_events](public.notification_events.md) | 12 |  | BASE TABLE |
 | [public.notification_deliveries](public.notification_deliveries.md) | 12 |  | BASE TABLE |
@@ -120,15 +121,15 @@ erDiagram
 "public.institutions" }o--o| "public.profiles" : "FOREIGN KEY (contact_person_profile_id) REFERENCES profiles(id)"
 "public.institutions" }o--o| "public.locations" : "FOREIGN KEY (location_id) REFERENCES locations(id)"
 "public.documents" }o--|| "public.profiles" : "FOREIGN KEY (uploaded_by_profile_id) REFERENCES profiles(id) ON DELETE CASCADE"
-"public.projects_states_flow" }o--|| "public.projects_states" : "FOREIGN KEY (from_state) REFERENCES projects_states(id)"
-"public.projects_states_flow" }o--|| "public.projects_states" : "FOREIGN KEY (to_state) REFERENCES projects_states(id)"
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.institutions" : "FOREIGN KEY (institution_id) REFERENCES institutions(id)"
-"public.projects" }o--|| "public.documents" : "FOREIGN KEY (state_doc_id) REFERENCES documents(id)"
-"public.projects" }o--|| "public.projects_states" : "FOREIGN KEY (current_state_id) REFERENCES projects_states(id)"
-"public.projects" }o--|| "public.projects_states" : "FOREIGN KEY (last_normal_state_id) REFERENCES projects_states(id)"
+"public.project_progress" }o--|| "public.profiles" : "FOREIGN KEY (author_profile_id) REFERENCES profiles(id)"
+"public.project_progress" }o--|| "public.documents" : "FOREIGN KEY (document_id) REFERENCES documents(id)"
+"public.project_progress" }o--|| "public.project_phases" : "FOREIGN KEY (project_phase_id) REFERENCES project_phases(id)"
+"public.project_progress" }o--|| "public.project_states" : "FOREIGN KEY (project_state_id) REFERENCES project_states(id)"
+"public.project_progress" }o--|| "public.projects" : "FOREIGN KEY (project_id) REFERENCES projects(id)"
 "public.notification_preferences" }o--|| "public.profiles" : "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
 "public.notification_events" }o--o| "public.profiles" : "FOREIGN KEY (actor_profile_id) REFERENCES profiles(id)"
 "public.notification_events" }o--|| "public.profiles" : "FOREIGN KEY (recipient_profile_id) REFERENCES profiles(id)"
@@ -296,23 +297,21 @@ erDiagram
   text storage_path ""
   uuid uploaded_by_profile_id FK ""
 }
-"public.projects_states" {
+"public.project_phases" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  text project_phase_name ""
+}
+"public.project_states" {
   timestamp_with_time_zone created_at ""
   uuid created_by ""
   timestamp_with_time_zone updated_at ""
   uuid updated_by ""
   bigint id ""
   text project_state_name ""
-  boolean normal_flow_state ""
-}
-"public.projects_states_flow" {
-  timestamp_with_time_zone created_at ""
-  uuid created_by ""
-  timestamp_with_time_zone updated_at ""
-  uuid updated_by ""
-  bigint id ""
-  bigint from_state FK ""
-  bigint to_state FK ""
 }
 "public.projects" {
   timestamp_with_time_zone created_at ""
@@ -326,10 +325,19 @@ erDiagram
   bigint institution_id FK ""
   text title ""
   text abstract ""
-  bigint last_normal_state_id FK ""
-  bigint current_state_id FK ""
-  bigint state_doc_id FK ""
-  text state_metadata ""
+}
+"public.project_progress" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint project_id FK ""
+  bigint project_phase_id FK ""
+  bigint project_state_id FK ""
+  uuid author_profile_id FK ""
+  bigint document_id FK ""
+  text observations ""
 }
 "public.notification_preferences" {
   timestamp_with_time_zone created_at ""

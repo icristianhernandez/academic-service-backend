@@ -10,7 +10,7 @@
 | created_by | uuid | auth.uid() | false |  |  |  |
 | updated_at | timestamp with time zone | now() | false |  |  |  |
 | updated_by | uuid | auth.uid() | true |  |  |  |
-| id | uuid |  | false | [public.campuses](public.campuses.md) [public.faculties](public.faculties.md) [public.schools](public.schools.md) [public.invitations](public.invitations.md) [public.students](public.students.md) [public.institutions](public.institutions.md) [public.documents](public.documents.md) [public.projects](public.projects.md) [public.notification_preferences](public.notification_preferences.md) [public.notification_events](public.notification_events.md) [public.notifications](public.notifications.md) |  |  |
+| id | uuid |  | false | [public.campuses](public.campuses.md) [public.faculties](public.faculties.md) [public.schools](public.schools.md) [public.invitations](public.invitations.md) [public.students](public.students.md) [public.institutions](public.institutions.md) [public.documents](public.documents.md) [public.projects](public.projects.md) [public.project_progress](public.project_progress.md) [public.notification_preferences](public.notification_preferences.md) [public.notification_events](public.notification_events.md) [public.notifications](public.notifications.md) |  |  |
 | user_names | text |  | false |  |  |  |
 | user_last_names | text |  | false |  |  |  |
 | national_id | text |  | false |  |  |  |
@@ -60,6 +60,7 @@ erDiagram
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
+"public.project_progress" }o--|| "public.profiles" : "FOREIGN KEY (author_profile_id) REFERENCES profiles(id)"
 "public.notification_preferences" }o--|| "public.profiles" : "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
 "public.notification_events" }o--o| "public.profiles" : "FOREIGN KEY (actor_profile_id) REFERENCES profiles(id)"
 "public.notification_events" }o--|| "public.profiles" : "FOREIGN KEY (recipient_profile_id) REFERENCES profiles(id)"
@@ -169,10 +170,19 @@ erDiagram
   bigint institution_id FK ""
   text title ""
   text abstract ""
-  bigint last_normal_state_id FK ""
-  bigint current_state_id FK ""
-  bigint state_doc_id FK ""
-  text state_metadata ""
+}
+"public.project_progress" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint project_id FK ""
+  bigint project_phase_id FK ""
+  bigint project_state_id FK ""
+  uuid author_profile_id FK ""
+  bigint document_id FK ""
+  text observations ""
 }
 "public.notification_preferences" {
   timestamp_with_time_zone created_at ""

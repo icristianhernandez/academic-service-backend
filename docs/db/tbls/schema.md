@@ -20,9 +20,10 @@
 | [public.students](public.students.md) | 10 |  | BASE TABLE |
 | [public.institutions](public.institutions.md) | 8 |  | BASE TABLE |
 | [public.documents](public.documents.md) | 8 |  | BASE TABLE |
-| [public.projects_states](public.projects_states.md) | 7 |  | BASE TABLE |
-| [public.projects_states_flow](public.projects_states_flow.md) | 7 |  | BASE TABLE |
-| [public.projects](public.projects.md) | 15 |  | BASE TABLE |
+| [public.project_phases](public.project_phases.md) | 6 |  | BASE TABLE |
+| [public.project_states](public.project_states.md) | 6 |  | BASE TABLE |
+| [public.projects](public.projects.md) | 11 |  | BASE TABLE |
+| [public.project_progress](public.project_progress.md) | 11 |  | BASE TABLE |
 | [public.notification_preferences](public.notification_preferences.md) | 9 |  | BASE TABLE |
 | [public.notification_events](public.notification_events.md) | 12 |  | BASE TABLE |
 | [public.notification_deliveries](public.notification_deliveries.md) | 12 |  | BASE TABLE |

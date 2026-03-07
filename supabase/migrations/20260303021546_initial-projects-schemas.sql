@@ -45,18 +45,16 @@ for delete
 to authenticated
 using (bucket_id = 'project');
 
-create table projects_states (
+create table project_phases (
     like audit_meta including all,
     id bigint generated always as identity primary key,
-    project_state_name text not null,
-    normal_flow_state boolean not null default true
+    project_phase_name text not null
 );
 
-create table projects_states_flow (
+create table project_states (
     like audit_meta including all,
     id bigint generated always as identity primary key,
-    from_state bigint not null references projects_states (id),
-    to_state bigint not null references projects_states (id)
+    project_state_name text not null
 );
 
 create table projects (
@@ -67,12 +65,18 @@ create table projects (
     student_profile_id uuid not null references profiles (id),
     institution_id bigint not null references institutions (id),
     title text not null,
-    abstract text,
+    abstract text
+);
 
-    last_normal_state_id bigint not null references projects_states (id),
-    current_state_id bigint not null references projects_states (id),
-    state_doc_id bigint not null references documents (id),
-    state_metadata text
+create table project_progress (
+    like audit_meta including all,
+    id bigint generated always as identity primary key,
+    project_id bigint not null references projects (id),
+    project_phase_id bigint not null references project_phases (id),
+    project_state_id bigint not null references project_states (id),
+    author_profile_id uuid not null references profiles (id),
+    document_id bigint not null references documents (id),
+    observations text
 );
 
 create function public.set_project_staff_on_insert()
@@ -134,7 +138,8 @@ execute procedure public.set_project_staff_on_insert();
 call setup_audit(
     'institutions',
     'documents',
-    'projects_states',
-    'projects_states_flow',
+    'project_phases',
+    'project_states',
+    'project_progress',
     'projects'
 );
