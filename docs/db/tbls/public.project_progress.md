@@ -39,8 +39,8 @@
 
 | Name | Definition |
 | ---- | ---------- |
-| trg_audit_update_project_progress | CREATE TRIGGER trg_audit_update_project_progress BEFORE UPDATE ON public.project_progress FOR EACH ROW EXECUTE FUNCTION handle_audit_update() |
 | audit_project_progress_changes | CREATE TRIGGER audit_project_progress_changes AFTER INSERT OR DELETE OR UPDATE ON public.project_progress FOR EACH ROW EXECUTE FUNCTION log_changes() |
+| trg_audit_update_project_progress | CREATE TRIGGER trg_audit_update_project_progress BEFORE UPDATE ON public.project_progress FOR EACH ROW EXECUTE FUNCTION handle_audit_update() |
 
 ## Relations
 
@@ -108,6 +108,7 @@ erDiagram
   text secondary_contact ""
   text email ""
   bigint role_id FK ""
+  text profile_photo_path ""
 }
 "public.documents" {
   timestamp_with_time_zone created_at ""

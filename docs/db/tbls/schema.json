@@ -192,12 +192,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_roles",
-          "def": "CREATE TRIGGER trg_audit_update_roles BEFORE UPDATE ON public.roles FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_roles_changes",
           "def": "CREATE TRIGGER audit_roles_changes AFTER INSERT OR DELETE OR UPDATE ON public.roles FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_roles",
+          "def": "CREATE TRIGGER trg_audit_update_roles BEFORE UPDATE ON public.roles FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -267,6 +267,11 @@
         {
           "name": "role_id",
           "type": "bigint",
+          "nullable": true
+        },
+        {
+          "name": "profile_photo_path",
+          "type": "text",
           "nullable": true
         }
       ],
@@ -356,12 +361,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_profiles",
-          "def": "CREATE TRIGGER trg_audit_update_profiles BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_profiles_changes",
           "def": "CREATE TRIGGER audit_profiles_changes AFTER INSERT OR DELETE OR UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_profiles",
+          "def": "CREATE TRIGGER trg_audit_update_profiles BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -446,12 +451,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_countries",
-          "def": "CREATE TRIGGER trg_audit_update_countries BEFORE UPDATE ON public.countries FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_countries_changes",
           "def": "CREATE TRIGGER audit_countries_changes AFTER INSERT OR DELETE OR UPDATE ON public.countries FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_countries",
+          "def": "CREATE TRIGGER trg_audit_update_countries BEFORE UPDATE ON public.countries FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -554,12 +559,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_states",
-          "def": "CREATE TRIGGER trg_audit_update_states BEFORE UPDATE ON public.states FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_states_changes",
           "def": "CREATE TRIGGER audit_states_changes AFTER INSERT OR DELETE OR UPDATE ON public.states FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_states",
+          "def": "CREATE TRIGGER trg_audit_update_states BEFORE UPDATE ON public.states FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -662,12 +667,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_cities",
-          "def": "CREATE TRIGGER trg_audit_update_cities BEFORE UPDATE ON public.cities FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_cities_changes",
           "def": "CREATE TRIGGER audit_cities_changes AFTER INSERT OR DELETE OR UPDATE ON public.cities FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_cities",
+          "def": "CREATE TRIGGER trg_audit_update_cities BEFORE UPDATE ON public.cities FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -752,12 +757,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_locations",
-          "def": "CREATE TRIGGER trg_audit_update_locations BEFORE UPDATE ON public.locations FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_locations_changes",
           "def": "CREATE TRIGGER audit_locations_changes AFTER INSERT OR DELETE OR UPDATE ON public.locations FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_locations",
+          "def": "CREATE TRIGGER trg_audit_update_locations BEFORE UPDATE ON public.locations FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -878,12 +883,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_campuses",
-          "def": "CREATE TRIGGER trg_audit_update_campuses BEFORE UPDATE ON public.campuses FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_campuses_changes",
           "def": "CREATE TRIGGER audit_campuses_changes AFTER INSERT OR DELETE OR UPDATE ON public.campuses FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_campuses",
+          "def": "CREATE TRIGGER trg_audit_update_campuses BEFORE UPDATE ON public.campuses FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -1022,12 +1027,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_faculties",
-          "def": "CREATE TRIGGER trg_audit_update_faculties BEFORE UPDATE ON public.faculties FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_faculties_changes",
           "def": "CREATE TRIGGER audit_faculties_changes AFTER INSERT OR DELETE OR UPDATE ON public.faculties FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_faculties",
+          "def": "CREATE TRIGGER trg_audit_update_faculties BEFORE UPDATE ON public.faculties FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -1112,12 +1117,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_degrees",
-          "def": "CREATE TRIGGER trg_audit_update_degrees BEFORE UPDATE ON public.degrees FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_degrees_changes",
           "def": "CREATE TRIGGER audit_degrees_changes AFTER INSERT OR DELETE OR UPDATE ON public.degrees FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_degrees",
+          "def": "CREATE TRIGGER trg_audit_update_degrees BEFORE UPDATE ON public.degrees FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -1253,12 +1258,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_schools",
-          "def": "CREATE TRIGGER trg_audit_update_schools BEFORE UPDATE ON public.schools FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_schools_changes",
           "def": "CREATE TRIGGER audit_schools_changes AFTER INSERT OR DELETE OR UPDATE ON public.schools FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_schools",
+          "def": "CREATE TRIGGER trg_audit_update_schools BEFORE UPDATE ON public.schools FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -1430,12 +1435,12 @@
           "def": "CREATE TRIGGER a_set_invited_by_profile_id BEFORE INSERT ON public.invitations FOR EACH ROW EXECUTE FUNCTION set_invited_by_profile_id()"
         },
         {
-          "name": "trg_audit_update_invitations",
-          "def": "CREATE TRIGGER trg_audit_update_invitations BEFORE UPDATE ON public.invitations FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_invitations_changes",
           "def": "CREATE TRIGGER audit_invitations_changes AFTER INSERT OR DELETE OR UPDATE ON public.invitations FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_invitations",
+          "def": "CREATE TRIGGER trg_audit_update_invitations BEFORE UPDATE ON public.invitations FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -1548,12 +1553,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_students",
-          "def": "CREATE TRIGGER trg_audit_update_students BEFORE UPDATE ON public.students FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_students_changes",
           "def": "CREATE TRIGGER audit_students_changes AFTER INSERT OR DELETE OR UPDATE ON public.students FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_students",
+          "def": "CREATE TRIGGER trg_audit_update_students BEFORE UPDATE ON public.students FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -1674,12 +1679,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_institutions",
-          "def": "CREATE TRIGGER trg_audit_update_institutions BEFORE UPDATE ON public.institutions FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_institutions_changes",
           "def": "CREATE TRIGGER audit_institutions_changes AFTER INSERT OR DELETE OR UPDATE ON public.institutions FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_institutions",
+          "def": "CREATE TRIGGER trg_audit_update_institutions BEFORE UPDATE ON public.institutions FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -1803,12 +1808,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_documents",
-          "def": "CREATE TRIGGER trg_audit_update_documents BEFORE UPDATE ON public.documents FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_documents_changes",
           "def": "CREATE TRIGGER audit_documents_changes AFTER INSERT OR DELETE OR UPDATE ON public.documents FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_documents",
+          "def": "CREATE TRIGGER trg_audit_update_documents BEFORE UPDATE ON public.documents FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -1875,12 +1880,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_project_phases",
-          "def": "CREATE TRIGGER trg_audit_update_project_phases BEFORE UPDATE ON public.project_phases FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_project_phases_changes",
           "def": "CREATE TRIGGER audit_project_phases_changes AFTER INSERT OR DELETE OR UPDATE ON public.project_phases FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_project_phases",
+          "def": "CREATE TRIGGER trg_audit_update_project_phases BEFORE UPDATE ON public.project_phases FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -1947,12 +1952,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_project_states",
-          "def": "CREATE TRIGGER trg_audit_update_project_states BEFORE UPDATE ON public.project_states FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_project_states_changes",
           "def": "CREATE TRIGGER audit_project_states_changes AFTER INSERT OR DELETE OR UPDATE ON public.project_states FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_project_states",
+          "def": "CREATE TRIGGER trg_audit_update_project_states BEFORE UPDATE ON public.project_states FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -2100,12 +2105,12 @@
           "def": "CREATE TRIGGER a_set_project_staff_on_insert BEFORE INSERT ON public.projects FOR EACH ROW EXECUTE FUNCTION set_project_staff_on_insert()"
         },
         {
-          "name": "trg_audit_update_projects",
-          "def": "CREATE TRIGGER trg_audit_update_projects BEFORE UPDATE ON public.projects FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_projects_changes",
           "def": "CREATE TRIGGER audit_projects_changes AFTER INSERT OR DELETE OR UPDATE ON public.projects FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_projects",
+          "def": "CREATE TRIGGER trg_audit_update_projects BEFORE UPDATE ON public.projects FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -2262,12 +2267,12 @@
       ],
       "triggers": [
         {
-          "name": "trg_audit_update_project_progress",
-          "def": "CREATE TRIGGER trg_audit_update_project_progress BEFORE UPDATE ON public.project_progress FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        },
-        {
           "name": "audit_project_progress_changes",
           "def": "CREATE TRIGGER audit_project_progress_changes AFTER INSERT OR DELETE OR UPDATE ON public.project_progress FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_project_progress",
+          "def": "CREATE TRIGGER trg_audit_update_project_progress BEFORE UPDATE ON public.project_progress FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },

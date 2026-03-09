@@ -7,7 +7,7 @@
 | [public.audit_meta](public.audit_meta.md) | 4 |  | BASE TABLE |
 | [public.audit_logs](public.audit_logs.md) | 9 |  | BASE TABLE |
 | [public.roles](public.roles.md) | 7 |  | BASE TABLE |
-| [public.profiles](public.profiles.md) | 12 |  | BASE TABLE |
+| [public.profiles](public.profiles.md) | 13 |  | BASE TABLE |
 | [public.countries](public.countries.md) | 6 |  | BASE TABLE |
 | [public.states](public.states.md) | 7 |  | BASE TABLE |
 | [public.cities](public.cities.md) | 7 |  | BASE TABLE |
@@ -176,6 +176,7 @@ erDiagram
   text secondary_contact ""
   text email ""
   bigint role_id FK ""
+  text profile_photo_path ""
 }
 "public.countries" {
   timestamp_with_time_zone created_at ""

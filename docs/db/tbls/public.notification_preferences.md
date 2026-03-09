@@ -68,6 +68,7 @@ erDiagram
   text secondary_contact ""
   text email ""
   bigint role_id FK ""
+  text profile_photo_path ""
 }
 ```
 

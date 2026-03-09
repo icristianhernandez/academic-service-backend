@@ -18,6 +18,7 @@
 | secondary_contact | text |  | true |  |  |  |
 | email | text |  | false |  |  |  |
 | role_id | bigint |  | true |  | [public.roles](public.roles.md) |  |
+| profile_photo_path | text |  | true |  |  |  |
 
 ## Constraints
 
@@ -41,8 +42,8 @@
 
 | Name | Definition |
 | ---- | ---------- |
-| trg_audit_update_profiles | CREATE TRIGGER trg_audit_update_profiles BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION handle_audit_update() |
 | audit_profiles_changes | CREATE TRIGGER audit_profiles_changes AFTER INSERT OR DELETE OR UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION log_changes() |
+| trg_audit_update_profiles | CREATE TRIGGER trg_audit_update_profiles BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION handle_audit_update() |
 
 ## Relations
 
@@ -80,6 +81,7 @@ erDiagram
   text secondary_contact ""
   text email ""
   bigint role_id FK ""
+  text profile_photo_path ""
 }
 "public.campuses" {
   timestamp_with_time_zone created_at ""

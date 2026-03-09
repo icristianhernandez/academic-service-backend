@@ -70,6 +70,7 @@ erDiagram
   text secondary_contact ""
   text email ""
   bigint role_id FK ""
+  text profile_photo_path ""
 }
 "public.notification_events" {
   timestamp_with_time_zone created_at ""

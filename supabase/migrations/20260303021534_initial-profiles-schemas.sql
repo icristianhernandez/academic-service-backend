@@ -14,7 +14,8 @@ create table profiles (
     primary_contact text not null,
     secondary_contact text,
     email text not null unique,
-    role_id bigint references roles (id)
+    role_id bigint references roles (id),
+    profile_photo_path text null
 );
 
 do $$
@@ -165,6 +166,7 @@ begin
         national_id,
         primary_contact,
         secondary_contact,
+        profile_photo_path,
         email,
         role_id,
         created_by,
@@ -177,6 +179,7 @@ begin
         new.raw_user_meta_data ->> 'national_id',
         new.raw_user_meta_data ->> 'primary_contact',
         new.raw_user_meta_data ->> 'secondary_contact',
+        new.raw_user_meta_data ->> 'profile_photo_path',
         new.email,
         invitation_role_id,
         actor_id,

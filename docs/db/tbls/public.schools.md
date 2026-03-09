@@ -36,8 +36,8 @@
 
 | Name | Definition |
 | ---- | ---------- |
-| trg_audit_update_schools | CREATE TRIGGER trg_audit_update_schools BEFORE UPDATE ON public.schools FOR EACH ROW EXECUTE FUNCTION handle_audit_update() |
 | audit_schools_changes | CREATE TRIGGER audit_schools_changes AFTER INSERT OR DELETE OR UPDATE ON public.schools FOR EACH ROW EXECUTE FUNCTION log_changes() |
+| trg_audit_update_schools | CREATE TRIGGER trg_audit_update_schools BEFORE UPDATE ON public.schools FOR EACH ROW EXECUTE FUNCTION handle_audit_update() |
 
 ## Relations
 
@@ -118,6 +118,7 @@ erDiagram
   text secondary_contact ""
   text email ""
   bigint role_id FK ""
+  text profile_photo_path ""
 }
 ```
 

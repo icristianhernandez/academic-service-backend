@@ -29,8 +29,8 @@
 
 | Name | Definition |
 | ---- | ---------- |
-| trg_audit_update_project_states | CREATE TRIGGER trg_audit_update_project_states BEFORE UPDATE ON public.project_states FOR EACH ROW EXECUTE FUNCTION handle_audit_update() |
 | audit_project_states_changes | CREATE TRIGGER audit_project_states_changes AFTER INSERT OR DELETE OR UPDATE ON public.project_states FOR EACH ROW EXECUTE FUNCTION log_changes() |
+| trg_audit_update_project_states | CREATE TRIGGER trg_audit_update_project_states BEFORE UPDATE ON public.project_states FOR EACH ROW EXECUTE FUNCTION handle_audit_update() |
 
 ## Relations
 

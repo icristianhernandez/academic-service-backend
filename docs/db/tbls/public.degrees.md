@@ -31,8 +31,8 @@
 
 | Name | Definition |
 | ---- | ---------- |
-| trg_audit_update_degrees | CREATE TRIGGER trg_audit_update_degrees BEFORE UPDATE ON public.degrees FOR EACH ROW EXECUTE FUNCTION handle_audit_update() |
 | audit_degrees_changes | CREATE TRIGGER audit_degrees_changes AFTER INSERT OR DELETE OR UPDATE ON public.degrees FOR EACH ROW EXECUTE FUNCTION log_changes() |
+| trg_audit_update_degrees | CREATE TRIGGER trg_audit_update_degrees BEFORE UPDATE ON public.degrees FOR EACH ROW EXECUTE FUNCTION handle_audit_update() |
 
 ## Relations
 
