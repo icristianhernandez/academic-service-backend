@@ -10,7 +10,7 @@
 | created_by | uuid | auth.uid() | false |  |  |  |
 | updated_at | timestamp with time zone | now() | false |  |  |  |
 | updated_by | uuid | auth.uid() | true |  |  |  |
-| id | uuid |  | false | [public.campuses](public.campuses.md) [public.faculties](public.faculties.md) [public.schools](public.schools.md) [public.invitations](public.invitations.md) [public.students](public.students.md) [public.institutions](public.institutions.md) [public.documents](public.documents.md) [public.projects](public.projects.md) [public.project_progress](public.project_progress.md) [public.notification_preferences](public.notification_preferences.md) [public.notification_events](public.notification_events.md) [public.notifications](public.notifications.md) |  |  |
+| id | uuid |  | false | [public.campuses](public.campuses.md) [public.faculties](public.faculties.md) [public.schools](public.schools.md) [public.invitations](public.invitations.md) [public.students](public.students.md) [public.documents](public.documents.md) [public.institutions](public.institutions.md) [public.projects](public.projects.md) [public.project_progress](public.project_progress.md) [public.notification_preferences](public.notification_preferences.md) [public.notification_events](public.notification_events.md) [public.notifications](public.notifications.md) |  |  |
 | user_names | text |  | false |  |  |  |
 | user_last_names | text |  | false |  |  |  |
 | national_id | text |  | false |  |  |  |
@@ -56,8 +56,8 @@ erDiagram
 "public.schools" }o--o| "public.profiles" : "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
 "public.invitations" }o--o| "public.profiles" : "FOREIGN KEY (invited_by_profile_id) REFERENCES profiles(id)"
 "public.students" }o--|| "public.profiles" : "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
-"public.institutions" }o--o| "public.profiles" : "FOREIGN KEY (contact_person_profile_id) REFERENCES profiles(id)"
 "public.documents" }o--|| "public.profiles" : "FOREIGN KEY (uploaded_by_profile_id) REFERENCES profiles(id) ON DELETE CASCADE"
+"public.institutions" }o--o| "public.profiles" : "FOREIGN KEY (contact_person_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
@@ -140,16 +140,6 @@ erDiagram
   shift_enum shift ""
   section_enum section ""
 }
-"public.institutions" {
-  timestamp_with_time_zone created_at ""
-  uuid created_by ""
-  timestamp_with_time_zone updated_at ""
-  uuid updated_by ""
-  bigint id ""
-  bigint location_id FK ""
-  uuid contact_person_profile_id FK ""
-  text institution_name ""
-}
 "public.documents" {
   timestamp_with_time_zone created_at ""
   uuid created_by ""
@@ -159,6 +149,16 @@ erDiagram
   text bucket_id FK ""
   text storage_path ""
   uuid uploaded_by_profile_id FK ""
+}
+"public.institutions" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint location_id FK ""
+  uuid contact_person_profile_id FK ""
+  text institution_name ""
 }
 "public.projects" {
   timestamp_with_time_zone created_at ""

@@ -18,8 +18,8 @@
 | [public.schools](public.schools.md) | 8 |  | BASE TABLE |
 | [public.invitations](public.invitations.md) | 12 |  | BASE TABLE |
 | [public.students](public.students.md) | 10 |  | BASE TABLE |
-| [public.institutions](public.institutions.md) | 8 |  | BASE TABLE |
 | [public.documents](public.documents.md) | 8 |  | BASE TABLE |
+| [public.institutions](public.institutions.md) | 8 |  | BASE TABLE |
 | [public.project_phases](public.project_phases.md) | 6 |  | BASE TABLE |
 | [public.project_states](public.project_states.md) | 6 |  | BASE TABLE |
 | [public.projects](public.projects.md) | 11 |  | BASE TABLE |
@@ -118,9 +118,9 @@ erDiagram
 "public.invitations" }o--o| "public.schools" : "FOREIGN KEY (school_to_be_tutor) REFERENCES schools(id)"
 "public.students" }o--|| "public.profiles" : "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
 "public.students" }o--|| "public.schools" : "FOREIGN KEY (school_id) REFERENCES schools(id)"
+"public.documents" }o--|| "public.profiles" : "FOREIGN KEY (uploaded_by_profile_id) REFERENCES profiles(id) ON DELETE CASCADE"
 "public.institutions" }o--o| "public.profiles" : "FOREIGN KEY (contact_person_profile_id) REFERENCES profiles(id)"
 "public.institutions" }o--o| "public.locations" : "FOREIGN KEY (location_id) REFERENCES locations(id)"
-"public.documents" }o--|| "public.profiles" : "FOREIGN KEY (uploaded_by_profile_id) REFERENCES profiles(id) ON DELETE CASCADE"
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
@@ -278,16 +278,6 @@ erDiagram
   shift_enum shift ""
   section_enum section ""
 }
-"public.institutions" {
-  timestamp_with_time_zone created_at ""
-  uuid created_by ""
-  timestamp_with_time_zone updated_at ""
-  uuid updated_by ""
-  bigint id ""
-  bigint location_id FK ""
-  uuid contact_person_profile_id FK ""
-  text institution_name ""
-}
 "public.documents" {
   timestamp_with_time_zone created_at ""
   uuid created_by ""
@@ -297,6 +287,16 @@ erDiagram
   text bucket_id FK ""
   text storage_path ""
   uuid uploaded_by_profile_id FK ""
+}
+"public.institutions" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint location_id FK ""
+  uuid contact_person_profile_id FK ""
+  text institution_name ""
 }
 "public.project_phases" {
   timestamp_with_time_zone created_at ""

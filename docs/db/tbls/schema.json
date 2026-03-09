@@ -1563,132 +1563,6 @@
       ]
     },
     {
-      "name": "public.institutions",
-      "type": "BASE TABLE",
-      "columns": [
-        {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "nullable": false,
-          "default": "now()"
-        },
-        {
-          "name": "created_by",
-          "type": "uuid",
-          "nullable": false,
-          "default": "auth.uid()"
-        },
-        {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "nullable": false,
-          "default": "now()"
-        },
-        {
-          "name": "updated_by",
-          "type": "uuid",
-          "nullable": true,
-          "default": "auth.uid()"
-        },
-        {
-          "name": "id",
-          "type": "bigint",
-          "nullable": false
-        },
-        {
-          "name": "location_id",
-          "type": "bigint",
-          "nullable": true
-        },
-        {
-          "name": "contact_person_profile_id",
-          "type": "uuid",
-          "nullable": true
-        },
-        {
-          "name": "institution_name",
-          "type": "text",
-          "nullable": false
-        }
-      ],
-      "indexes": [
-        {
-          "name": "institutions_pkey",
-          "def": "CREATE UNIQUE INDEX institutions_pkey ON public.institutions USING btree (id)",
-          "table": "public.institutions",
-          "columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "institutions_institution_name_key",
-          "def": "CREATE UNIQUE INDEX institutions_institution_name_key ON public.institutions USING btree (institution_name)",
-          "table": "public.institutions",
-          "columns": [
-            "institution_name"
-          ]
-        }
-      ],
-      "constraints": [
-        {
-          "name": "institutions_contact_person_profile_id_fkey",
-          "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (contact_person_profile_id) REFERENCES profiles(id)",
-          "table": "public.institutions",
-          "referenced_table": "profiles",
-          "columns": [
-            "contact_person_profile_id"
-          ],
-          "referenced_columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "institutions_location_id_fkey",
-          "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (location_id) REFERENCES locations(id)",
-          "table": "public.institutions",
-          "referenced_table": "locations",
-          "columns": [
-            "location_id"
-          ],
-          "referenced_columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "institutions_pkey",
-          "type": "PRIMARY KEY",
-          "def": "PRIMARY KEY (id)",
-          "table": "public.institutions",
-          "referenced_table": "",
-          "columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "institutions_institution_name_key",
-          "type": "UNIQUE",
-          "def": "UNIQUE (institution_name)",
-          "table": "public.institutions",
-          "referenced_table": "",
-          "columns": [
-            "institution_name"
-          ]
-        }
-      ],
-      "triggers": [
-        {
-          "name": "audit_institutions_changes",
-          "def": "CREATE TRIGGER audit_institutions_changes AFTER INSERT OR DELETE OR UPDATE ON public.institutions FOR EACH ROW EXECUTE FUNCTION log_changes()"
-        },
-        {
-          "name": "trg_audit_update_institutions",
-          "def": "CREATE TRIGGER trg_audit_update_institutions BEFORE UPDATE ON public.institutions FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
-        }
-      ]
-    },
-    {
       "name": "public.documents",
       "type": "BASE TABLE",
       "columns": [
@@ -1814,6 +1688,132 @@
         {
           "name": "trg_audit_update_documents",
           "def": "CREATE TRIGGER trg_audit_update_documents BEFORE UPDATE ON public.documents FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
+        }
+      ]
+    },
+    {
+      "name": "public.institutions",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "nullable": false,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "updated_by",
+          "type": "uuid",
+          "nullable": true,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "location_id",
+          "type": "bigint",
+          "nullable": true
+        },
+        {
+          "name": "contact_person_profile_id",
+          "type": "uuid",
+          "nullable": true
+        },
+        {
+          "name": "institution_name",
+          "type": "text",
+          "nullable": false
+        }
+      ],
+      "indexes": [
+        {
+          "name": "institutions_pkey",
+          "def": "CREATE UNIQUE INDEX institutions_pkey ON public.institutions USING btree (id)",
+          "table": "public.institutions",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "institutions_institution_name_key",
+          "def": "CREATE UNIQUE INDEX institutions_institution_name_key ON public.institutions USING btree (institution_name)",
+          "table": "public.institutions",
+          "columns": [
+            "institution_name"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "institutions_contact_person_profile_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (contact_person_profile_id) REFERENCES profiles(id)",
+          "table": "public.institutions",
+          "referenced_table": "profiles",
+          "columns": [
+            "contact_person_profile_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "institutions_location_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (location_id) REFERENCES locations(id)",
+          "table": "public.institutions",
+          "referenced_table": "locations",
+          "columns": [
+            "location_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "institutions_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.institutions",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "institutions_institution_name_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (institution_name)",
+          "table": "public.institutions",
+          "referenced_table": "",
+          "columns": [
+            "institution_name"
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "name": "audit_institutions_changes",
+          "def": "CREATE TRIGGER audit_institutions_changes AFTER INSERT OR DELETE OR UPDATE ON public.institutions FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_institutions",
+          "def": "CREATE TRIGGER trg_audit_update_institutions BEFORE UPDATE ON public.institutions FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -3026,6 +3026,19 @@
       "def": "FOREIGN KEY (school_id) REFERENCES schools(id)"
     },
     {
+      "table": "public.documents",
+      "columns": [
+        "uploaded_by_profile_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.profiles",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (uploaded_by_profile_id) REFERENCES profiles(id) ON DELETE CASCADE"
+    },
+    {
       "table": "public.institutions",
       "columns": [
         "contact_person_profile_id"
@@ -3050,19 +3063,6 @@
       ],
       "parent_cardinality": "zero_or_one",
       "def": "FOREIGN KEY (location_id) REFERENCES locations(id)"
-    },
-    {
-      "table": "public.documents",
-      "columns": [
-        "uploaded_by_profile_id"
-      ],
-      "cardinality": "zero_or_more",
-      "parent_table": "public.profiles",
-      "parent_columns": [
-        "id"
-      ],
-      "parent_cardinality": "exactly_one",
-      "def": "FOREIGN KEY (uploaded_by_profile_id) REFERENCES profiles(id) ON DELETE CASCADE"
     },
     {
       "table": "public.projects",

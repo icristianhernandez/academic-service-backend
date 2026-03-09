@@ -18,8 +18,8 @@
 | [public.schools](public.schools.md) | 8 |  | BASE TABLE |
 | [public.invitations](public.invitations.md) | 12 |  | BASE TABLE |
 | [public.students](public.students.md) | 10 |  | BASE TABLE |
-| [public.institutions](public.institutions.md) | 8 |  | BASE TABLE |
 | [public.documents](public.documents.md) | 8 |  | BASE TABLE |
+| [public.institutions](public.institutions.md) | 8 |  | BASE TABLE |
 | [public.project_phases](public.project_phases.md) | 6 |  | BASE TABLE |
 | [public.project_states](public.project_states.md) | 6 |  | BASE TABLE |
 | [public.projects](public.projects.md) | 11 |  | BASE TABLE |
