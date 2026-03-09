@@ -1,15 +1,24 @@
 ---
-name: DB Docs Enforcer
+name: DB Docs Generate
 
 "on":
-  pull_request:
+  push:
+    branches:
+      - main
     paths:
       - "supabase/migrations/**"
       - ".tbls.yml"
       - "supabase/config.toml"
 
+permissions:
+  contents: write
+
+concurrency:
+  group: db-docs-generate-main
+  cancel-in-progress: true
+
 jobs:
-  db-docs:
+  generate-docs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -38,5 +47,8 @@ jobs:
           ./.tools/tbls/bin/tbls doc --rm-dist
           ./.tools/tbls/bin/tbls out -t md -o docs/db/tbls/schema.md
 
-      - name: Verify docs up to date
-        run: git diff --exit-code -- docs/db/tbls
+      - name: Commit updated docs
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(docs): regenerate DB docs [skip ci]"
+          file_pattern: docs/db/tbls/**

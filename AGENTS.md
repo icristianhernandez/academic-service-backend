@@ -32,7 +32,6 @@ loop to:
 - Run the DB (reset task).
 - If any of these (tasks) return an error, analyze the cause, research
   solutions, apply them, and repeat the loop until all tasks pass.
-- After all tests pass, execute the regenerate doc task.
 - You have permission to run these tasks and their associated commands.
 
 ### When communicating directly with the DB
@@ -42,7 +41,7 @@ check connections, queries, constraints, etc.
 
 ## Schema design conventions
 
-You must do a ' call setup_audit( {comma separated string of table names} )'
+You must do a " call setup_audit( {comma separated string of table names} )"
 when adding new tables in a migration; this should be placed at the end of
 the file once all tables have been added and contain all tables in the call.
 
