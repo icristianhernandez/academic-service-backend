@@ -52,7 +52,7 @@
       "label": "SQL: Lint",
       "type": "shell",
       "command": "${workspaceFolder}/.venv/bin/sqlfluff",
-      "args": ["lint", "supabase/migrations/*.sql"],
+      "args": ["lint", "supabase/migrations/*.sql", "supabase/seed.sql"],
       "group": "build",
       "presentation": {
         "reveal": "always",
@@ -72,7 +72,7 @@
       "label": "SQL: Fix",
       "type": "shell",
       "command": "${workspaceFolder}/.venv/bin/sqlfluff",
-      "args": ["fix", "supabase/migrations/*.sql"],
+      "args": ["fix", "supabase/migrations/*.sql", "supabase/seed.sql"],
       "group": "build",
       "presentation": {
         "reveal": "always",
