@@ -19,6 +19,11 @@ Do not make assumptions about the user request; if something is unstated or
 ambiguous, ask the user for clarification using the question tool. After
 completing the user request, provide the user with a short, direct response.
 
+Answer shortly to a user request, preferably in one paragraph of no more than
+two lines. If more space is needed to avoid cutting details, it is allowed.
+This constraint does not apply to research, running subcommands, code, and so on.
+For all tasks required to answer or fulfill a user request, perform them exhaustively.
+
 ## Workflow
 
 ### When performing DB/Backend changes

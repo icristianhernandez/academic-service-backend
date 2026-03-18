@@ -125,15 +125,25 @@ returns trigger
 language plpgsql
 security definer set search_path = ''
 as $$
+declare
+    v_token text;
 begin
+    v_token := new.raw_user_meta_data ->> 'invitation_token';
+
+    if v_token is null or v_token = '' then
+        raise exception 'Signup failed. Invitation token is required'
+            using errcode = 'P0001';
+    end if;
+
     perform 1
     from public.invitations
     where email = new.email 
-      and is_active = true
+      and reclaimed_at is null
+      and hashed_token = extensions.crypt(v_token, hashed_token)
     limit 1;
 
     if not found then
-        raise exception 'Signup failed. No active invitation found for email: %', new.email 
+        raise exception 'Signup failed. Invalid or expired invitation for email: %', new.email 
             using errcode = 'P0001';
     end if;
 
@@ -154,7 +164,7 @@ begin
     into invitation_role_id
     from public.invitations
     where email = new.email
-      and is_active = true
+      and reclaimed_at is null
     limit 1;
 
     actor_id := coalesce(auth.uid(), new.id);
@@ -208,7 +218,7 @@ begin
         from public.invitations invitation
         join public.roles role on role.id = invitation.role_to_have_id
         where invitation.email = new.email
-          and invitation.is_active = true
+          and invitation.reclaimed_at is null
           and role.role_name = 'student'
     )
     into is_student_role;
@@ -280,7 +290,7 @@ begin
     from public.invitations invitation
     join public.roles role on role.id = invitation.role_to_have_id
     where invitation.email = new.email
-      and invitation.is_active = true
+      and invitation.reclaimed_at is null
     limit 1;
 
     if role_name is distinct from 'coordinator' then
@@ -321,7 +331,7 @@ begin
     from public.invitations invitation
     join public.roles role on role.id = invitation.role_to_have_id
     where invitation.email = new.email
-        and invitation.is_active = true
+        and invitation.reclaimed_at is null
     limit 1;
 
     if role_name is distinct from 'tutor' then
@@ -353,10 +363,16 @@ returns trigger
 language plpgsql
 security definer set search_path = ''
 as $$
+declare
+    v_token text;
 begin
+    v_token := new.raw_user_meta_data ->> 'invitation_token';
+
     update public.invitations
-    set is_active = false
-    where email = new.email;
+    set reclaimed_at = now()
+    where email = new.email
+      -- I'm not convinced that this is needed
+      and hashed_token = extensions.crypt(v_token, hashed_token);
 
     return new;
 end;

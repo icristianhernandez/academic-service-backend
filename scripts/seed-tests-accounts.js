@@ -5,6 +5,8 @@ const supabase = createClient(
   "sb_secret_N7UND0UgjKTVK-Uodkm0Hg_xSvEMPvz",
 );
 
+const INVITATION_TOKEN = "123456";
+
 async function seedTestUsers(
   email,
   password,
@@ -29,6 +31,13 @@ async function seedTestUsers(
     },
   });
   if (error) {
+    if (
+      error.message.includes("already exists") ||
+      error.message.includes("already been registered")
+    ) {
+      console.log(`User ${email} already exists.`);
+      return null;
+    }
     console.error(`Error creating user ${email}:`, error);
     return null;
   }
@@ -38,10 +47,36 @@ async function seedTestUsers(
 }
 
 async function main() {
+  // 1. Fetch roles
+  const { data: roles, error: rolesError } = await supabase
+    .from("roles")
+    .select("id, role_name");
+  if (rolesError) {
+    console.error("Error fetching roles:", rolesError);
+    return;
+  }
+  const roleMap = Object.fromEntries(roles.map((r) => [r.role_name, r.id]));
+
+  // 2. Fetch Engineering faculty and Systems school
+  const { data: facultyData } = await supabase
+    .from("faculties")
+    .select("id")
+    .eq("faculty_name", "Facultad de Ingenieria")
+    .single();
+  const engineeringFacultyId = facultyData?.id;
+
+  const { data: schoolData } = await supabase
+    .from("schools")
+    .select("id, degrees!inner(degree_name)")
+    .eq("degrees.degree_name", "Ingenieria de Sistemas")
+    .single();
+  const systemsSchoolId = schoolData?.id;
+
   const testAccounts = [
     {
       email: "student@test.local",
       password: "123",
+      role: "student",
       user_names: "test test",
       user_last_names: "student 1",
       national_id: "V-10000001",
@@ -59,6 +94,7 @@ async function main() {
     {
       email: "administrative@test.local",
       password: "123",
+      role: "administrative",
       user_names: "test test",
       user_last_names: "administrative 1",
       national_id: "V-10000002",
@@ -68,6 +104,7 @@ async function main() {
     {
       email: "tutor@test.local",
       password: "123",
+      role: "tutor",
       user_names: "test test",
       user_last_names: "tutor 1",
       national_id: "V-10000003",
@@ -77,6 +114,7 @@ async function main() {
     {
       email: "coordinator@test.local",
       password: "123",
+      role: "coordinator",
       user_names: "test test",
       user_last_names: "coordinator 1",
       national_id: "V-10000004",
@@ -86,6 +124,7 @@ async function main() {
     {
       email: "dean@test.local",
       password: "123",
+      role: "dean",
       user_names: "test test",
       user_last_names: "dean 1",
       national_id: "V-10000005",
@@ -95,6 +134,7 @@ async function main() {
     {
       email: "sysadmin@test.local",
       password: "123",
+      role: "sysadmin",
       user_names: "test test",
       user_last_names: "sysadmin 1",
       national_id: "V-10000006",
@@ -103,7 +143,61 @@ async function main() {
     },
   ];
 
+  const SEED_WORKER_ID = "00000000-0000-0000-0000-000000000001";
+
   for (const account of testAccounts) {
+    const roleId = roleMap[account.role];
+
+    // 3. Ensure invitation exists
+    const { data: existingInvitation } = await supabase
+      .from("invitations")
+      .select("id")
+      .eq("email", account.email)
+      .single();
+
+    if (!existingInvitation) {
+      const invitationPayload = {
+        email: account.email,
+        role_to_have_id: roleId,
+        created_by: SEED_WORKER_ID,
+        updated_by: SEED_WORKER_ID,
+      };
+
+      if (account.role === "coordinator") {
+        invitationPayload.faculty_to_be_coordinator = engineeringFacultyId;
+      } else if (account.role === "tutor") {
+        invitationPayload.school_to_be_tutor = systemsSchoolId;
+      }
+
+      const { error: invError } = await supabase
+        .from("invitations")
+        .insert(invitationPayload);
+
+      if (invError) {
+        console.error(
+          `Error creating invitation for ${account.email}:`,
+          invError,
+        );
+        continue;
+      }
+
+      // SECURITY CONCERN
+      const { data: hashedToken } = await supabase.rpc(
+        "hash_invitation_token",
+        {
+          token: INVITATION_TOKEN,
+        },
+      );
+
+      await supabase
+        .from("invitations")
+        .update({ hashed_token: hashedToken })
+        .eq("email", account.email);
+
+      console.log(`Invitation for ${account.email} created.`);
+    }
+
+    // 4. Create user
     await seedTestUsers(
       account.email,
       account.password,
@@ -112,7 +206,10 @@ async function main() {
       account.national_id,
       account.primary_contact,
       account.secondary_contact,
-      account.extra_metadata,
+      {
+        ...account.extra_metadata,
+        invitation_token: INVITATION_TOKEN,
+      },
     );
   }
 }

@@ -146,10 +146,29 @@
       "problemMatcher": []
     },
     {
+      "label": "DB: New Edge Function",
+      "type": "shell",
+      "command": "npx",
+      "args": ["supabase", "functions", "new", "${input:migrationName}"],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "DB: Diff Migration",
       "type": "shell",
       "command": "npx",
-      "args": ["supabase", "db", "diff", "--use-pg-schema", "-f", "${input:migrationName}"],
+      "args": [
+        "supabase",
+        "db",
+        "diff",
+        "--use-pg-schema",
+        "-f",
+        "${input:migrationName}"
+      ],
       "group": "build",
       "presentation": {
         "reveal": "always",
@@ -161,15 +180,22 @@
       "label": "DB: Dump Seed Data",
       "type": "shell",
       "command": "npx",
-      "args": ["supabase", "db", "dump", "--local", "--data-only", "-f", "supabase/seed.sql"],
+      "args": [
+        "supabase",
+        "db",
+        "dump",
+        "--local",
+        "--data-only",
+        "-f",
+        "supabase/seed.sql"
+      ],
       "group": "build",
       "presentation": {
         "reveal": "always",
         "panel": "shared"
       },
       "problemMatcher": []
-    }
-    ,
+    },
     {
       "label": "Docs: Generate",
       "type": "shell",
@@ -184,20 +210,12 @@
         "panel": "shared"
       },
       "problemMatcher": []
-    }
-    ,
+    },
     {
       "label": "Supabase AI Skills Update (Repo Wide)",
       "type": "process",
       "command": "npx",
-      "args": [
-        "skills",
-        "add",
-        "supabase/agent-skills",
-        "--skill",
-        "*",
-        "-y"
-      ],
+      "args": ["skills", "add", "supabase/agent-skills", "--skill", "*", "-y"],
       "options": {
         "cwd": "${workspaceFolder}",
         "env": {
