@@ -1326,15 +1326,26 @@
           "nullable": false
         },
         {
-          "name": "token",
+          "name": "hashed_token",
           "type": "text",
           "nullable": false
         },
         {
-          "name": "is_active",
-          "type": "boolean",
+          "name": "failed_attemps",
+          "type": "integer",
           "nullable": true,
-          "default": "true"
+          "default": "0"
+        },
+        {
+          "name": "token_expires_at",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "default": "(now() + '7 days'::interval)"
+        },
+        {
+          "name": "reclaimed_at",
+          "type": "timestamp with time zone",
+          "nullable": true
         }
       ],
       "indexes": [
@@ -1431,12 +1442,16 @@
       ],
       "triggers": [
         {
-          "name": "a_set_invited_by_profile_id",
-          "def": "CREATE TRIGGER a_set_invited_by_profile_id BEFORE INSERT ON public.invitations FOR EACH ROW EXECUTE FUNCTION set_invited_by_profile_id()"
+          "name": "a_generate_invitation_token",
+          "def": "CREATE TRIGGER a_generate_invitation_token BEFORE INSERT ON public.invitations FOR EACH ROW EXECUTE FUNCTION assign_invitation_token()"
         },
         {
           "name": "audit_invitations_changes",
           "def": "CREATE TRIGGER audit_invitations_changes AFTER INSERT OR DELETE OR UPDATE ON public.invitations FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "b_set_invited_by_profile_id",
+          "def": "CREATE TRIGGER b_set_invited_by_profile_id BEFORE INSERT ON public.invitations FOR EACH ROW EXECUTE FUNCTION set_invited_by_profile_id()"
         },
         {
           "name": "trg_audit_update_invitations",
@@ -3479,6 +3494,24 @@
     },
     {
       "name": "public.set_invited_by_profile_id",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.generate_invitation_token",
+      "return_type": "text",
+      "arguments": "",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.hash_invitation_token",
+      "return_type": "text",
+      "arguments": "token text",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.assign_invitation_token",
       "return_type": "trigger",
       "arguments": "",
       "type": "FUNCTION"

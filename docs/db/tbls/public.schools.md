@@ -71,8 +71,10 @@ erDiagram
   bigint school_to_be_tutor FK ""
   bigint role_to_have_id FK ""
   text email ""
-  text token ""
-  boolean is_active ""
+  text hashed_token ""
+  integer failed_attemps ""
+  timestamp_with_time_zone token_expires_at ""
+  timestamp_with_time_zone reclaimed_at ""
 }
 "public.students" {
   timestamp_with_time_zone created_at ""

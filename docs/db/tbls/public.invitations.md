@@ -16,8 +16,10 @@
 | school_to_be_tutor | bigint |  | true |  | [public.schools](public.schools.md) |  |
 | role_to_have_id | bigint |  | true |  | [public.roles](public.roles.md) |  |
 | email | text |  | false |  |  |  |
-| token | text |  | false |  |  |  |
-| is_active | boolean | true | true |  |  |  |
+| hashed_token | text |  | false |  |  |  |
+| failed_attemps | integer | 0 | true |  |  |  |
+| token_expires_at | timestamp with time zone | (now() + '7 days'::interval) | true |  |  |  |
+| reclaimed_at | timestamp with time zone |  | true |  |  |  |
 
 ## Constraints
 
@@ -41,8 +43,9 @@
 
 | Name | Definition |
 | ---- | ---------- |
-| a_set_invited_by_profile_id | CREATE TRIGGER a_set_invited_by_profile_id BEFORE INSERT ON public.invitations FOR EACH ROW EXECUTE FUNCTION set_invited_by_profile_id() |
+| a_generate_invitation_token | CREATE TRIGGER a_generate_invitation_token BEFORE INSERT ON public.invitations FOR EACH ROW EXECUTE FUNCTION assign_invitation_token() |
 | audit_invitations_changes | CREATE TRIGGER audit_invitations_changes AFTER INSERT OR DELETE OR UPDATE ON public.invitations FOR EACH ROW EXECUTE FUNCTION log_changes() |
+| b_set_invited_by_profile_id | CREATE TRIGGER b_set_invited_by_profile_id BEFORE INSERT ON public.invitations FOR EACH ROW EXECUTE FUNCTION set_invited_by_profile_id() |
 | trg_audit_update_invitations | CREATE TRIGGER trg_audit_update_invitations BEFORE UPDATE ON public.invitations FOR EACH ROW EXECUTE FUNCTION handle_audit_update() |
 
 ## Relations
@@ -66,8 +69,10 @@ erDiagram
   bigint school_to_be_tutor FK ""
   bigint role_to_have_id FK ""
   text email ""
-  text token ""
-  boolean is_active ""
+  text hashed_token ""
+  integer failed_attemps ""
+  timestamp_with_time_zone token_expires_at ""
+  timestamp_with_time_zone reclaimed_at ""
 }
 "public.profiles" {
   timestamp_with_time_zone created_at ""

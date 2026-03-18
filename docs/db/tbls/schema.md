@@ -16,7 +16,7 @@
 | [public.faculties](public.faculties.md) | 9 |  | BASE TABLE |
 | [public.degrees](public.degrees.md) | 6 |  | BASE TABLE |
 | [public.schools](public.schools.md) | 8 |  | BASE TABLE |
-| [public.invitations](public.invitations.md) | 12 |  | BASE TABLE |
+| [public.invitations](public.invitations.md) | 14 |  | BASE TABLE |
 | [public.students](public.students.md) | 10 |  | BASE TABLE |
 | [public.documents](public.documents.md) | 8 |  | BASE TABLE |
 | [public.institutions](public.institutions.md) | 8 |  | BASE TABLE |
@@ -70,6 +70,9 @@
 | public.deactivate_invitation_on_signup | trigger |  | FUNCTION |
 | public.get_invitation_rol | text | p_email text, p_token text | FUNCTION |
 | public.set_invited_by_profile_id | trigger |  | FUNCTION |
+| public.generate_invitation_token | text |  | FUNCTION |
+| public.hash_invitation_token | text | token text | FUNCTION |
+| public.assign_invitation_token | trigger |  | FUNCTION |
 | public.set_project_staff_on_insert | trigger |  | FUNCTION |
 
 ## Enums
