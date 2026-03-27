@@ -1,5 +1,9 @@
 import "@supabase/functions-js/edge-runtime.d.ts";
 import mailer from "smtp";
+import {
+  buildInvitationEmailHtml,
+  buildInvitationEmailText,
+} from "./email-template.ts";
 
 Deno.serve(async (req) => {
   const invitation_edge_api_key = Deno.env.get("INVITATION_EDGE_API_KEY");
@@ -60,8 +64,24 @@ Deno.serve(async (req) => {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
-    timeZone: "UTC",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
   }).format(date);
+
+  const emailText = buildInvitationEmailText({
+    email,
+    role,
+    token,
+    expiresAt: formattedExpiredDate,
+  });
+
+  const emailHtml = buildInvitationEmailHtml({
+    email,
+    role,
+    token,
+    expiresAt: formattedExpiredDate,
+  });
 
   if (smtp_provider === "mock") {
     console.log(
@@ -69,7 +89,8 @@ Deno.serve(async (req) => {
         `To: ${email}, ` +
         `Role: ${role}, ` +
         `Token: ${token}, ` +
-        `Expires: ${formattedExpiredDate}`,
+        `Expires: ${formattedExpiredDate}\n` +
+        `${emailText}`,
     );
   } else if (smtp_provider === "local") {
     const transporter = mailer.transporter({
@@ -83,7 +104,8 @@ Deno.serve(async (req) => {
         to: email,
         subject:
           "Invitación Sistema de Servicio Comunitario - Universidad Santa María",
-        text: `Hola,\n\nHas sido invitado con el rol: ${role}.\nTu token de invitación es: ${token}\nExpira el: ${formattedExpiredDate}`,
+        text: emailText,
+        html: emailHtml,
       });
 
       console.log(`[LOCAL EMAIL] Sent successfully to ${email}`);
@@ -113,7 +135,7 @@ Deno.serve(async (req) => {
   return new Response(
     JSON.stringify({
       ok: true,
-      message: "Mock email sent successfully",
+      message: "Invitation email processed successfully",
       email,
     }),
     {
