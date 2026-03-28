@@ -1,8 +1,8 @@
 import "@supabase/functions-js/edge-runtime.d.ts";
 import mailer from "smtp";
 import {
-  buildInvitationEmailHtml,
-  buildInvitationEmailText,
+  build_invitation_email_html,
+  build_invitation_email_text,
 } from "./email-template.ts";
 
 Deno.serve(async (req) => {
@@ -59,28 +59,28 @@ Deno.serve(async (req) => {
     );
   }
 
-  const date = new Date(expires_at);
-  const formattedExpiredDate = new Intl.DateTimeFormat("es-VE", {
+  const expiration_date = new Date(expires_at);
+  const formatted_expired_date = new Intl.DateTimeFormat("es-VE", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
-  }).format(date);
+  }).format(expiration_date);
 
-  const emailText = buildInvitationEmailText({
+  const email_text = build_invitation_email_text({
     email,
     role,
     token,
-    expiresAt: formattedExpiredDate,
+    expires_at: formatted_expired_date,
   });
 
-  const emailHtml = buildInvitationEmailHtml({
+  const email_html = build_invitation_email_html({
     email,
     role,
     token,
-    expiresAt: formattedExpiredDate,
+    expires_at: formatted_expired_date,
   });
 
   if (smtp_provider === "mock") {
@@ -89,33 +89,33 @@ Deno.serve(async (req) => {
         `To: ${email}, ` +
         `Role: ${role}, ` +
         `Token: ${token}, ` +
-        `Expires: ${formattedExpiredDate}\n` +
-        `${emailText}`,
+        `Expires: ${formatted_expired_date}\n` +
+        `${email_text}`,
     );
   } else if (smtp_provider === "local") {
-    const transporter = mailer.transporter({
+    const smtp_transporter = mailer.transporter({
       host: "inbucket",
       port: 1025,
       secure: false,
     });
     try {
-      await transporter.send({
+      await smtp_transporter.send({
         from: "no-reply@usm.local",
         to: email,
         subject:
           "Invitación Sistema de Servicio Comunitario - Universidad Santa María",
-        text: emailText,
-        html: emailHtml,
+        text: email_text,
+        html: email_html,
       });
 
       console.log(`[LOCAL EMAIL] Sent successfully to ${email}`);
     } catch (error) {
-      const errorMessage =
+      const error_message =
         error instanceof Error ? error.message : String(error);
       console.error(`[LOCAL EMAIL] Error:`, error);
       return new Response(
         JSON.stringify({
-          error: `Failed to send local email: ${errorMessage}`,
+          error: `Failed to send local email: ${error_message}`,
         }),
         { status: 500, headers: { "Content-Type": "application/json" } },
       );

@@ -1,11 +1,11 @@
-type InvitationTemplateParams = {
+type invitation_template_params = {
   email: string;
   role: string;
   token: string;
-  expiresAt: string;
+  expires_at: string;
 };
 
-const ROLE_LABELS: Record<string, string> = {
+const role_labels: Record<string, string> = {
   student: "Estudiante",
   tutor: "Tutor",
   coordinator: "Coordinador",
@@ -14,15 +14,15 @@ const ROLE_LABELS: Record<string, string> = {
   sysadmin: "Administrador del Sistema",
 };
 
-function resolveRoleLabel(role: string): string {
-  const key = role.trim().toLowerCase();
-  return ROLE_LABELS[key] ?? role;
+function resolve_role_label(role: string): string {
+  const role_key = role.trim().toLowerCase();
+  return role_labels[role_key] ?? role;
 }
 
-export function buildInvitationEmailText(
-  params: InvitationTemplateParams,
+export function build_invitation_email_text(
+  params: invitation_template_params,
 ): string {
-  const roleLabel = resolveRoleLabel(params.role);
+  const role_label = resolve_role_label(params.role);
 
   return [
     "Universidad Santa Maria",
@@ -32,10 +32,10 @@ export function buildInvitationEmailText(
     "",
     "Has sido invitado para registrarte en el sistema.",
     `Correo invitado: ${params.email}`,
-    `Rol asignado: ${roleLabel}`,
+    `Rol asignado: ${role_label}`,
     "",
     `Codigo de invitacion: ${params.token}`,
-    `Vence: ${params.expiresAt}`,
+    `Vence: ${params.expires_at}`,
     "",
     "Instrucciones:",
     "1) Abre la pantalla de registro del sistema.",
@@ -49,10 +49,10 @@ export function buildInvitationEmailText(
   ].join("\n");
 }
 
-export function buildInvitationEmailHtml(
-  params: InvitationTemplateParams,
+export function build_invitation_email_html(
+  params: invitation_template_params,
 ): string {
-  const roleLabel = resolveRoleLabel(params.role);
+  const role_label = resolve_role_label(params.role);
 
   return `
 <!doctype html>
@@ -82,8 +82,8 @@ export function buildInvitationEmailHtml(
                   <tr>
                     <td style="padding:14px 16px;font-size:14px;line-height:1.7;">
                       <strong>Correo invitado:</strong> ${params.email}<br />
-                      <strong>Rol asignado:</strong> ${roleLabel}<br />
-                      <strong>Vigencia:</strong> ${params.expiresAt}
+                      <strong>Rol asignado:</strong> ${role_label}<br />
+                      <strong>Vigencia:</strong> ${params.expires_at}
                     </td>
                   </tr>
                 </table>
