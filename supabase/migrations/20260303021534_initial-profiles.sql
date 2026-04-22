@@ -17,7 +17,8 @@ create table profiles (
     role_id bigint references roles (id),
     profile_photo_path text null,
     email_notifications_enabled boolean default true,
-    inbox_notifications_enabled boolean default true
+    inbox_notifications_enabled boolean default true,
+    disabled_at timestamp with time zone default null
 );
 
 do $$

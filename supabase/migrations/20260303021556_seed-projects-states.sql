@@ -11,19 +11,39 @@ select set_config(
     true
 );
 
-insert into project_phases (project_phase_name, project_phase_order)
+insert into project_phases (
+    project_phase_name,
+    project_phase_order,
+    phase_kind,
+    report_number
+)
 select
     seed_phase.project_phase_name,
-    seed_phase.project_phase_order
+    seed_phase.project_phase_order,
+    seed_phase.phase_kind,
+    seed_phase.report_number
 from (
     values
-    ('Preproyecto', 1),
-    ('Reporte 1', 2),
-    ('Reporte 2', 3),
-    ('Reporte 3', 4),
-    ('Reporte Final', 5),
-    ('Aprobado', 6)
-) as seed_phase (project_phase_name, project_phase_order)
+    ('Preproyecto', 1, 'preproject', null),
+    ('Reporte 1', 2, 'report', 1),
+    ('Reporte 2', 3, 'report', 2),
+    ('Reporte 3', 4, 'report', 3),
+    ('Reporte 4', 5, 'report', 4),
+    ('Reporte 5', 6, 'report', 5),
+    ('Reporte 6', 7, 'report', 6),
+    ('Reporte 7', 8, 'report', 7),
+    ('Reporte 8', 9, 'report', 8),
+    ('Reporte 9', 10, 'report', 9),
+    ('Reporte 10', 11, 'report', 10),
+    ('Reporte Final', 12, 'final_report', null),
+    ('Aprobado', 13, 'approved', null)
+)
+    as seed_phase (
+        project_phase_name,
+        project_phase_order,
+        phase_kind,
+        report_number
+    )
 where not exists (
     select 1
     from project_phases as existing_phase

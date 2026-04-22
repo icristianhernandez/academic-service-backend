@@ -11,8 +11,11 @@ create table faculties (
     id bigint generated always as identity primary key,
     campus_id bigint not null references campuses (id),
     faculty_name text not null unique,
+    reports_required_count smallint not null default 3,
     dean_profile_id uuid references profiles (id),
-    coordinator_profile_id uuid references profiles (id)
+    coordinator_profile_id uuid references profiles (id),
+
+    check (reports_required_count between 0 and 10)
 );
 
 create table degrees (

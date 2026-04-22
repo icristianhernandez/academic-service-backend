@@ -35,12 +35,14 @@ on conflict (degree_name) do nothing;
 insert into faculties (
     campus_id,
     faculty_name,
+    reports_required_count,
     dean_profile_id,
     coordinator_profile_id
 )
 select
     campus.id as campus_id,
     'Facultad de Ingenieria' as faculty_name,
+    3 as reports_required_count,
     null as dean_profile_id,
     null as coordinator_profile_id
 from campuses as campus
@@ -48,6 +50,7 @@ where campus.campus_name = 'Universidad Santa Maria - La Florencia'
 on conflict (faculty_name) do update
     set
         campus_id = excluded.campus_id,
+        reports_required_count = excluded.reports_required_count,
         dean_profile_id = excluded.dean_profile_id,
         coordinator_profile_id = excluded.coordinator_profile_id;
 
