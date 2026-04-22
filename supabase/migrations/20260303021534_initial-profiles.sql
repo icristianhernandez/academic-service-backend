@@ -15,7 +15,9 @@ create table profiles (
     secondary_contact text,
     email text not null unique,
     role_id bigint references roles (id),
-    profile_photo_path text null
+    profile_photo_path text null,
+    email_notifications_enabled boolean default true,
+    inbox_notifications_enabled boolean default true
 );
 
 do $$

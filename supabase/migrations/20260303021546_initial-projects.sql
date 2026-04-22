@@ -9,13 +9,14 @@ create table institutions (
 create table project_phases (
     like audit_meta including all,
     id bigint generated always as identity primary key,
-    project_phase_name text not null
+    project_phase_name text not null unique,
+    project_phase_order smallint not null unique
 );
 
 create table project_states (
     like audit_meta including all,
     id bigint generated always as identity primary key,
-    project_state_name text not null
+    project_state_name text not null unique
 );
 
 create table projects (
@@ -39,6 +40,9 @@ create table project_progress (
     document_id bigint not null references documents (id),
     observations text
 );
+
+create index idx_project_progress_project_created
+on project_progress (project_id, created_at desc, id desc);
 
 create function public.set_project_staff_on_insert()
 returns trigger

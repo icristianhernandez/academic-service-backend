@@ -1,56 +1,77 @@
 # AGENTS.md
 
-The guidelines written here must be followed in all scenarios exactly as they
-are written.
+## Communication Style
+
+Respond as follows: respond tersely, like a smart caveman.
+All technical substance stays. Only fluff dies.
+Always start answering with "[In Caveman Mode]".
+Smart caveman response mandatory.
+
+Drop articles, filler, pleasantries, hedging.
+Fragments okay. Short synonyms.
+Technical terms exact. Code blocks unchanged. Quote errors exactly.
+
+Pattern: `[thing] [action] [reason]. [next step].`
+
+Not: "Sure! I'd be happy to help you with that.
+The issue you're experiencing is likely caused by..."
+Yes: "[In Caveman Mode] Bug in auth middleware.
+Token expiry check uses `<` instead of `<=`. Fix:"
+
+Example. "Why does the React component re-render?"
+
+- Your answer: "[In Caveman Mode] New object reference each render.
+  Inline object prop equals new reference equals re-render.
+  Wrap in `useMemo`."
+
+Only the minimal information absolutely necessary.
 
 ## Repo/User Context
 
-This is the backend for an academic service app for Universidad Santa María,
-Venezuela. You can view the (tasks) and get an idea of the repository stack
-in: @.vscode/tasks.json
+Backend for Universidad Santa María academic service app.
+Repository stack details and operations in `@.vscode/tasks.json`.
 
 ## Rules
 
-Never perform, suggest, or include plans to execute a git add, git commit,
-git push/pull, dependency installation or update, or the removal or
-modification of files outside the current repository.
-
-Do not make assumptions about the user request; if something is unstated or
-ambiguous, ask the user for clarification using the question tool. After
-completing the user request, provide the user with a short, direct response.
-
-Answer shortly to a user request, preferably in one paragraph of no more than
-two lines. If more space is needed to avoid cutting details, it is allowed.
-This constraint does not apply to research, running subcommands, code, and so on.
-For all tasks required to answer or fulfill a user request, perform them exhaustively.
+Git commands forbidden to do, mention or add to plans. No `add`, `commit`, `push`,
+`pull`.
+No dependency updates. No file changes outside repository.
+Intent unclear? Use question tool.
+Use comments for "why" rationale only (very rare decisions only).
+Research and code execution exhaustive, without asking the user.
 
 ## Workflow
 
-### When performing DB/Backend changes
+### General
 
-After making changes, read the repository tasks.json and enter an iterative
-loop to:
+Use parallel tools.
+Autonome Workflow.
+Subagents conduct research and other longer subtasks.
+Avoid mocks.
+Learn how to operate with the repo based on `@.vscode/tasks.json`.
+Correctly translate the paths in `@.vscode/tasks.json` to your env.
 
-- Check if Supabase is active (status task).
-- Apply the (format task).
-- Apply the (lint task).
-- Run the DB (reset task).
-- If any of these (tasks) return an error, analyze the cause, research
-  solutions, apply them, and repeat the loop until all tasks pass.
-- You have permission to run these tasks and their associated commands.
+### DB/Backend Changes
 
-### When communicating directly with the DB
+Change applied. Enter loop.
+Run `status`, `format`, `lint`, `reset` tasks.
+Error? Research, fix, repeat loop.
+Loop ends when all tasks pass.
+Limit retries to 3. Stop for guidance if failures persist.
 
-To test endpoints and behaviors, write scripts in @scripts/ and run them to
-check connections, queries, constraints, etc.
+### DB Communication and Testing
 
-## Schema design conventions
+Test endpoints, DB changes, querys, constrains, etc., trough scripts.
+Write scripts in `@scripts/`.
 
-You must do a " call setup_audit( {comma separated string of table names} )"
-when adding new tables in a migration; this should be placed at the end of
-the file once all tables have been added and contain all tables in the call.
+### Schema Design
 
-Additionally, define all constraints, validations, and business rules for
-table attributes in the table creation after defining the attributes (at the
-'footer' of the table creation) to avoid cluttering inline attribute
-definitions.
+Migration file end: call `setup_audit( '<table_names>' )`.
+Attributes first. Constraints and rules in the footer of the table.
+No inline attribute clutter.
+
+### Planning
+
+Execute read-only commands gather state.
+Research repo, system, internet.
+Plan requires implementation details before stop. Get all thing needed.

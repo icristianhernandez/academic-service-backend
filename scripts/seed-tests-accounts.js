@@ -6,6 +6,7 @@ const supabase = createClient(
 );
 
 const INVITATION_TOKEN = "123456";
+const SEED_WORKER_ID = "00000000-0000-0000-0000-000000000001";
 
 async function seedTestUsers(
   email,
@@ -71,6 +72,37 @@ async function main() {
     .eq("degrees.degree_name", "Ingenieria de Sistemas")
     .single();
   const systemsSchoolId = schoolData?.id;
+
+  // 3. Ensure a default institution exists
+  const { data: existingInstitution } = await supabase
+    .from("institutions")
+    .select("id")
+    .limit(1)
+    .single();
+
+  if (!existingInstitution) {
+    const { data: locationData } = await supabase
+      .from("locations")
+      .select("id")
+      .limit(1)
+      .single();
+
+    if (locationData) {
+      const { error: instError } = await supabase
+        .from("institutions")
+        .insert({
+          location_id: locationData.id,
+          institution_name: "Universidad Santa Maria - Test Institution",
+          created_by: SEED_WORKER_ID,
+          updated_by: SEED_WORKER_ID,
+        });
+      if (instError) {
+        console.error("Error creating test institution:", instError);
+      } else {
+        console.log("Test institution created.");
+      }
+    }
+  }
 
   const testAccounts = [
     {
@@ -142,8 +174,6 @@ async function main() {
       secondary_contact: "04241111111",
     },
   ];
-
-  const SEED_WORKER_ID = "00000000-0000-0000-0000-000000000001";
 
   for (const account of testAccounts) {
     const roleId = roleMap[account.role];
