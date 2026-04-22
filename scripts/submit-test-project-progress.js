@@ -294,7 +294,6 @@ async function main() {
   const expectedRecipients = [
     project.tutor_profile_id,
     project.coordinator_profile_id,
-    studentProfile.id,
   ];
 
   let allRecipientsFound = true;
@@ -310,7 +309,16 @@ async function main() {
     process.exit(1);
   }
 
+  const actorWasNotified = recipients.some(
+    (recipient) => recipient.recipient_id === studentProfile.id,
+  );
+  if (actorWasNotified) {
+    console.error("\nFAIL: Action author should not receive own notification");
+    process.exit(1);
+  }
+
   console.log(`\nPASS: All ${recipients.length} expected recipients found`);
+  console.log("PASS: Action author excluded from recipients");
   console.log("\n=== ALL TESTS PASSED ===\n");
 }
 

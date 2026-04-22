@@ -126,8 +126,9 @@ select
         'state_changed', true,
         'project_state_id', review_state.id,
         'old_project_state_id', (
-            select id from public.project_states
-            where project_state_name = 'En Espera'
+            select project_state.id
+            from public.project_states as project_state
+            where project_state.project_state_name = 'En Espera'
         )
     ) as match_context
 from notification_types as notification_type
@@ -164,8 +165,9 @@ select
         'state_changed', true,
         'project_state_id', review_state.id,
         'old_project_state_id', (
-            select id from public.project_states
-            where project_state_name = 'En Espera'
+            select project_state.id
+            from public.project_states as project_state
+            where project_state.project_state_name = 'En Espera'
         )
     ) as match_context
 from notification_types as notification_type
