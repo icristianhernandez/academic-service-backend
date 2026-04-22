@@ -7,27 +7,31 @@
 | [public.audit_meta](public.audit_meta.md) | 4 |  | BASE TABLE |
 | [public.audit_logs](public.audit_logs.md) | 9 |  | BASE TABLE |
 | [public.roles](public.roles.md) | 7 |  | BASE TABLE |
-| [public.profiles](public.profiles.md) | 13 |  | BASE TABLE |
+| [public.profiles](public.profiles.md) | 16 |  | BASE TABLE |
 | [public.countries](public.countries.md) | 6 |  | BASE TABLE |
 | [public.states](public.states.md) | 7 |  | BASE TABLE |
 | [public.cities](public.cities.md) | 7 |  | BASE TABLE |
 | [public.locations](public.locations.md) | 7 |  | BASE TABLE |
 | [public.campuses](public.campuses.md) | 8 |  | BASE TABLE |
-| [public.faculties](public.faculties.md) | 9 |  | BASE TABLE |
+| [public.faculties](public.faculties.md) | 10 |  | BASE TABLE |
 | [public.degrees](public.degrees.md) | 6 |  | BASE TABLE |
 | [public.schools](public.schools.md) | 8 |  | BASE TABLE |
 | [public.invitations](public.invitations.md) | 14 |  | BASE TABLE |
 | [public.students](public.students.md) | 10 |  | BASE TABLE |
 | [public.documents](public.documents.md) | 8 |  | BASE TABLE |
 | [public.institutions](public.institutions.md) | 8 |  | BASE TABLE |
-| [public.project_phases](public.project_phases.md) | 6 |  | BASE TABLE |
+| [public.project_phases](public.project_phases.md) | 9 |  | BASE TABLE |
 | [public.project_states](public.project_states.md) | 6 |  | BASE TABLE |
 | [public.projects](public.projects.md) | 11 |  | BASE TABLE |
 | [public.project_progress](public.project_progress.md) | 11 |  | BASE TABLE |
-| [public.notification_preferences](public.notification_preferences.md) | 9 |  | BASE TABLE |
-| [public.notification_events](public.notification_events.md) | 12 |  | BASE TABLE |
-| [public.notification_deliveries](public.notification_deliveries.md) | 12 |  | BASE TABLE |
-| [public.notifications](public.notifications.md) | 10 |  | BASE TABLE |
+| [public.notification_types](public.notification_types.md) | 6 |  | BASE TABLE |
+| [public.notification_recipients_rules](public.notification_recipients_rules.md) | 8 |  | BASE TABLE |
+| [public.notification_type_resolution_rules](public.notification_type_resolution_rules.md) | 11 |  | BASE TABLE |
+| [public.notification_type_defaults](public.notification_type_defaults.md) | 8 |  | BASE TABLE |
+| [public.notifications_events](public.notifications_events.md) | 16 |  | BASE TABLE |
+| [public.notification_recipients](public.notification_recipients.md) | 7 |  | BASE TABLE |
+| [public.user_inbox](public.user_inbox.md) | 7 |  | BASE TABLE |
+| [public.notifications_external_deliveries](public.notifications_external_deliveries.md) | 12 |  | BASE TABLE |
 
 ## Stored procedures and functions
 
@@ -73,7 +77,15 @@
 | public.generate_invitation_token | text |  | FUNCTION |
 | public.hash_invitation_token | text | token text | FUNCTION |
 | public.assign_invitation_token | trigger |  | FUNCTION |
+| public.validate_project_progress_phase_transition | trigger |  | FUNCTION |
 | public.set_project_staff_on_insert | trigger |  | FUNCTION |
+| public.resolve_notification_type_id | int8 | p_source_kind text, p_operation_kind text, p_context jsonb | FUNCTION |
+| public.enqueue_project_progress_notification_event | trigger |  | FUNCTION |
+| public.process_notification_events_queue | int4 | p_batch_size integer DEFAULT 100 | FUNCTION |
+| public.claim_notifications_external_deliveries_queue | record | p_batch_size integer DEFAULT 100 | FUNCTION |
+| public.invoke_notifications_external_deliveries_worker | int8 | p_batch_size integer DEFAULT 100 | FUNCTION |
+| public.mark_notifications_external_delivery_sent | bool | p_delivery_id bigint | FUNCTION |
+| public.mark_notifications_external_delivery_failed | bool | p_delivery_id bigint, p_error_message text | FUNCTION |
 
 ## Enums
 
@@ -89,8 +101,10 @@
 | auth.oauth_response_type | code |
 | auth.one_time_token_type | confirmation_token, email_change_token_current, email_change_token_new, phone_change_token, reauthentication_token, recovery_token |
 | net.request_status | ERROR, PENDING, SUCCESS |
-| public.notification_channel_enum | email, in_app |
+| public.notification_channel_enum | email |
 | public.notification_delivery_status_enum | failed, pending, processing, sent, skipped |
+| public.notification_event_status_enum | failed, pending, processed, processing |
+| public.notification_rule_target_kind_enum | actor, event_schema, explicit_profile, payload, permission_level, role |
 | public.section_enum | A, B, C, D, E, F |
 | public.semester_enum | 1, 10, 2, 3, 4, 5, 6, 7, 8, 9 |
 | public.shift_enum | EVENING, MORNING |
@@ -133,12 +147,15 @@ erDiagram
 "public.project_progress" }o--|| "public.project_phases" : "FOREIGN KEY (project_phase_id) REFERENCES project_phases(id)"
 "public.project_progress" }o--|| "public.project_states" : "FOREIGN KEY (project_state_id) REFERENCES project_states(id)"
 "public.project_progress" }o--|| "public.projects" : "FOREIGN KEY (project_id) REFERENCES projects(id)"
-"public.notification_preferences" }o--|| "public.profiles" : "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
-"public.notification_events" }o--o| "public.profiles" : "FOREIGN KEY (actor_profile_id) REFERENCES profiles(id)"
-"public.notification_events" }o--|| "public.profiles" : "FOREIGN KEY (recipient_profile_id) REFERENCES profiles(id)"
-"public.notification_deliveries" }o--|| "public.notification_events" : "FOREIGN KEY (event_id) REFERENCES notification_events(id) ON DELETE CASCADE"
-"public.notifications" }o--|| "public.profiles" : "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
-"public.notifications" }o--o| "public.notification_events" : "FOREIGN KEY (event_id) REFERENCES notification_events(id)"
+"public.notification_recipients_rules" }o--|| "public.notification_types" : "FOREIGN KEY (notification_type_id) REFERENCES notification_types(id)"
+"public.notification_type_resolution_rules" }o--|| "public.notification_types" : "FOREIGN KEY (notification_type_id) REFERENCES notification_types(id)"
+"public.notification_type_defaults" |o--|| "public.notification_types" : "FOREIGN KEY (notification_type_id) REFERENCES notification_types(id)"
+"public.notifications_events" }o--o| "public.profiles" : "FOREIGN KEY (actor_id) REFERENCES profiles(id)"
+"public.notifications_events" }o--|| "public.notification_types" : "FOREIGN KEY (notification_type_id) REFERENCES notification_types(id)"
+"public.notification_recipients" }o--|| "public.profiles" : "FOREIGN KEY (recipient_id) REFERENCES profiles(id)"
+"public.notification_recipients" }o--|| "public.notifications_events" : "FOREIGN KEY (notification_id) REFERENCES notifications_events(id)"
+"public.user_inbox" |o--|| "public.notification_recipients" : "FOREIGN KEY (notification_recipient_id) REFERENCES notification_recipients(id)"
+"public.notifications_external_deliveries" }o--|| "public.notification_recipients" : "FOREIGN KEY (notification_recipient_id) REFERENCES notification_recipients(id)"
 
 "public.audit_meta" {
   timestamp_with_time_zone created_at ""
@@ -180,6 +197,9 @@ erDiagram
   text email ""
   bigint role_id FK ""
   text profile_photo_path ""
+  boolean email_notifications_enabled ""
+  boolean inbox_notifications_enabled ""
+  timestamp_with_time_zone disabled_at ""
 }
 "public.countries" {
   timestamp_with_time_zone created_at ""
@@ -234,6 +254,7 @@ erDiagram
   bigint id ""
   bigint campus_id FK ""
   text faculty_name ""
+  smallint reports_required_count ""
   uuid dean_profile_id FK ""
   uuid coordinator_profile_id FK ""
 }
@@ -310,6 +331,9 @@ erDiagram
   uuid updated_by ""
   bigint id ""
   text project_phase_name ""
+  smallint project_phase_order ""
+  text phase_kind ""
+  smallint report_number ""
 }
 "public.project_states" {
   timestamp_with_time_zone created_at ""
@@ -345,56 +369,96 @@ erDiagram
   bigint document_id FK ""
   text observations ""
 }
-"public.notification_preferences" {
+"public.notification_types" {
   timestamp_with_time_zone created_at ""
   uuid created_by ""
   timestamp_with_time_zone updated_at ""
   uuid updated_by ""
-  uuid id ""
-  uuid profile_id FK ""
-  text event_type ""
-  notification_channel_enum channel ""
-  boolean enabled ""
+  bigint id ""
+  text type_key ""
 }
-"public.notification_events" {
+"public.notification_recipients_rules" {
   timestamp_with_time_zone created_at ""
   uuid created_by ""
   timestamp_with_time_zone updated_at ""
   uuid updated_by ""
-  uuid id ""
-  text event_type ""
-  uuid recipient_profile_id FK ""
-  uuid actor_profile_id FK ""
+  bigint id ""
+  bigint notification_type_id FK ""
+  notification_rule_target_kind_enum rule_target_kind ""
+  text recipient_target ""
+}
+"public.notification_type_resolution_rules" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  text source_kind ""
+  text operation_kind ""
+  bigint notification_type_id FK ""
+  integer priority ""
+  boolean is_active ""
+  jsonb match_context ""
+}
+"public.notification_type_defaults" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  text source_kind ""
+  text operation_kind ""
+  bigint notification_type_id FK ""
+}
+"public.notifications_events" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint notification_type_id FK ""
+  text source_kind ""
+  text operation_kind ""
+  text source_record_id ""
   jsonb payload ""
-  text dedupe_key ""
-  timestamp_with_time_zone available_at ""
+  uuid actor_id FK ""
+  notification_event_status_enum processed_status ""
+  integer retry_count ""
   timestamp_with_time_zone processed_at ""
-}
-"public.notification_deliveries" {
-  timestamp_with_time_zone created_at ""
-  uuid created_by ""
-  timestamp_with_time_zone updated_at ""
-  uuid updated_by ""
-  uuid id ""
-  uuid event_id FK ""
-  notification_channel_enum channel ""
-  notification_delivery_status_enum status ""
-  integer attempt_count ""
-  timestamp_with_time_zone last_attempt_at ""
-  timestamp_with_time_zone sent_at ""
   text error_message ""
+  timestamp_with_time_zone last_attempt ""
 }
-"public.notifications" {
+"public.notification_recipients" {
   timestamp_with_time_zone created_at ""
   uuid created_by ""
   timestamp_with_time_zone updated_at ""
   uuid updated_by ""
-  uuid id ""
-  uuid profile_id FK ""
-  uuid event_id FK ""
-  text notification_type ""
-  jsonb payload ""
+  bigint id ""
+  bigint notification_id FK ""
+  uuid recipient_id FK ""
+}
+"public.user_inbox" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint notification_recipient_id FK ""
   timestamp_with_time_zone read_at ""
+}
+"public.notifications_external_deliveries" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint notification_recipient_id FK ""
+  notification_channel_enum to_channel ""
+  notification_delivery_status_enum delivery_status ""
+  integer retry_count ""
+  timestamp_with_time_zone processed_at ""
+  text error_message ""
+  timestamp_with_time_zone last_attempt ""
 }
 ```
 

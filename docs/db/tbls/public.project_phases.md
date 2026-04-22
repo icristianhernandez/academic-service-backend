@@ -12,18 +12,27 @@
 | updated_by | uuid | auth.uid() | true |  |  |  |
 | id | bigint |  | false | [public.project_progress](public.project_progress.md) |  |  |
 | project_phase_name | text |  | false |  |  |  |
+| project_phase_order | smallint |  | false |  |  |  |
+| phase_kind | text |  | false |  |  |  |
+| report_number | smallint |  | true |  |  |  |
 
 ## Constraints
 
 | Name | Type | Definition |
 | ---- | ---- | ---------- |
+| project_phases_check | CHECK | CHECK ((((phase_kind = 'report'::text) AND (report_number IS NOT NULL) AND ((report_number >= 1) AND (report_number <= 10))) OR ((phase_kind <> 'report'::text) AND (report_number IS NULL)))) |
+| project_phases_phase_kind_check | CHECK | CHECK ((phase_kind = ANY (ARRAY['preproject'::text, 'report'::text, 'final_report'::text, 'approved'::text]))) |
 | project_phases_pkey | PRIMARY KEY | PRIMARY KEY (id) |
+| project_phases_project_phase_name_key | UNIQUE | UNIQUE (project_phase_name) |
+| project_phases_project_phase_order_key | UNIQUE | UNIQUE (project_phase_order) |
 
 ## Indexes
 
 | Name | Definition |
 | ---- | ---------- |
 | project_phases_pkey | CREATE UNIQUE INDEX project_phases_pkey ON public.project_phases USING btree (id) |
+| project_phases_project_phase_name_key | CREATE UNIQUE INDEX project_phases_project_phase_name_key ON public.project_phases USING btree (project_phase_name) |
+| project_phases_project_phase_order_key | CREATE UNIQUE INDEX project_phases_project_phase_order_key ON public.project_phases USING btree (project_phase_order) |
 
 ## Triggers
 
@@ -46,6 +55,9 @@ erDiagram
   uuid updated_by ""
   bigint id ""
   text project_phase_name ""
+  smallint project_phase_order ""
+  text phase_kind ""
+  smallint report_number ""
 }
 "public.project_progress" {
   timestamp_with_time_zone created_at ""

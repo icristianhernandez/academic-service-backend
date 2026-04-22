@@ -7,27 +7,31 @@
 | [public.audit_meta](public.audit_meta.md) | 4 |  | BASE TABLE |
 | [public.audit_logs](public.audit_logs.md) | 9 |  | BASE TABLE |
 | [public.roles](public.roles.md) | 7 |  | BASE TABLE |
-| [public.profiles](public.profiles.md) | 13 |  | BASE TABLE |
+| [public.profiles](public.profiles.md) | 16 |  | BASE TABLE |
 | [public.countries](public.countries.md) | 6 |  | BASE TABLE |
 | [public.states](public.states.md) | 7 |  | BASE TABLE |
 | [public.cities](public.cities.md) | 7 |  | BASE TABLE |
 | [public.locations](public.locations.md) | 7 |  | BASE TABLE |
 | [public.campuses](public.campuses.md) | 8 |  | BASE TABLE |
-| [public.faculties](public.faculties.md) | 9 |  | BASE TABLE |
+| [public.faculties](public.faculties.md) | 10 |  | BASE TABLE |
 | [public.degrees](public.degrees.md) | 6 |  | BASE TABLE |
 | [public.schools](public.schools.md) | 8 |  | BASE TABLE |
 | [public.invitations](public.invitations.md) | 14 |  | BASE TABLE |
 | [public.students](public.students.md) | 10 |  | BASE TABLE |
 | [public.documents](public.documents.md) | 8 |  | BASE TABLE |
 | [public.institutions](public.institutions.md) | 8 |  | BASE TABLE |
-| [public.project_phases](public.project_phases.md) | 6 |  | BASE TABLE |
+| [public.project_phases](public.project_phases.md) | 9 |  | BASE TABLE |
 | [public.project_states](public.project_states.md) | 6 |  | BASE TABLE |
 | [public.projects](public.projects.md) | 11 |  | BASE TABLE |
 | [public.project_progress](public.project_progress.md) | 11 |  | BASE TABLE |
-| [public.notification_preferences](public.notification_preferences.md) | 9 |  | BASE TABLE |
-| [public.notification_events](public.notification_events.md) | 12 |  | BASE TABLE |
-| [public.notification_deliveries](public.notification_deliveries.md) | 12 |  | BASE TABLE |
-| [public.notifications](public.notifications.md) | 10 |  | BASE TABLE |
+| [public.notification_types](public.notification_types.md) | 6 |  | BASE TABLE |
+| [public.notification_recipients_rules](public.notification_recipients_rules.md) | 8 |  | BASE TABLE |
+| [public.notification_type_resolution_rules](public.notification_type_resolution_rules.md) | 11 |  | BASE TABLE |
+| [public.notification_type_defaults](public.notification_type_defaults.md) | 8 |  | BASE TABLE |
+| [public.notifications_events](public.notifications_events.md) | 16 |  | BASE TABLE |
+| [public.notification_recipients](public.notification_recipients.md) | 7 |  | BASE TABLE |
+| [public.user_inbox](public.user_inbox.md) | 7 |  | BASE TABLE |
+| [public.notifications_external_deliveries](public.notifications_external_deliveries.md) | 12 |  | BASE TABLE |
 
 ## Functions
 
@@ -73,7 +77,15 @@
 | public.generate_invitation_token | text |  | FUNCTION |
 | public.hash_invitation_token | text | token text | FUNCTION |
 | public.assign_invitation_token | trigger |  | FUNCTION |
+| public.validate_project_progress_phase_transition | trigger |  | FUNCTION |
 | public.set_project_staff_on_insert | trigger |  | FUNCTION |
+| public.resolve_notification_type_id | int8 | p_source_kind text, p_operation_kind text, p_context jsonb | FUNCTION |
+| public.enqueue_project_progress_notification_event | trigger |  | FUNCTION |
+| public.process_notification_events_queue | int4 | p_batch_size integer DEFAULT 100 | FUNCTION |
+| public.claim_notifications_external_deliveries_queue | record | p_batch_size integer DEFAULT 100 | FUNCTION |
+| public.invoke_notifications_external_deliveries_worker | int8 | p_batch_size integer DEFAULT 100 | FUNCTION |
+| public.mark_notifications_external_delivery_sent | bool | p_delivery_id bigint | FUNCTION |
+| public.mark_notifications_external_delivery_failed | bool | p_delivery_id bigint, p_error_message text | FUNCTION |
 
 ## Enums
 
@@ -89,8 +101,10 @@
 | auth.oauth_response_type | code |
 | auth.one_time_token_type | confirmation_token, email_change_token_current, email_change_token_new, phone_change_token, reauthentication_token, recovery_token |
 | net.request_status | ERROR, PENDING, SUCCESS |
-| public.notification_channel_enum | email, in_app |
+| public.notification_channel_enum | email |
 | public.notification_delivery_status_enum | failed, pending, processing, sent, skipped |
+| public.notification_event_status_enum | failed, pending, processed, processing |
+| public.notification_rule_target_kind_enum | actor, event_schema, explicit_profile, payload, permission_level, role |
 | public.section_enum | A, B, C, D, E, F |
 | public.semester_enum | 1, 10, 2, 3, 4, 5, 6, 7, 8, 9 |
 | public.shift_enum | EVENING, MORNING |

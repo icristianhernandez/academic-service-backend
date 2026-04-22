@@ -18,12 +18,14 @@
 | Name | Type | Definition |
 | ---- | ---- | ---------- |
 | project_states_pkey | PRIMARY KEY | PRIMARY KEY (id) |
+| project_states_project_state_name_key | UNIQUE | UNIQUE (project_state_name) |
 
 ## Indexes
 
 | Name | Definition |
 | ---- | ---------- |
 | project_states_pkey | CREATE UNIQUE INDEX project_states_pkey ON public.project_states USING btree (id) |
+| project_states_project_state_name_key | CREATE UNIQUE INDEX project_states_project_state_name_key ON public.project_states USING btree (project_state_name) |
 
 ## Triggers
 

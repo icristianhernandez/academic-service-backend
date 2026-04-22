@@ -83,6 +83,9 @@ erDiagram
   text email ""
   bigint role_id FK ""
   text profile_photo_path ""
+  boolean email_notifications_enabled ""
+  boolean inbox_notifications_enabled ""
+  timestamp_with_time_zone disabled_at ""
 }
 ```
 

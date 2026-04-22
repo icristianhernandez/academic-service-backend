@@ -88,6 +88,9 @@ erDiagram
   text email ""
   bigint role_id FK ""
   text profile_photo_path ""
+  boolean email_notifications_enabled ""
+  boolean inbox_notifications_enabled ""
+  timestamp_with_time_zone disabled_at ""
 }
 "public.faculties" {
   timestamp_with_time_zone created_at ""
@@ -97,6 +100,7 @@ erDiagram
   bigint id ""
   bigint campus_id FK ""
   text faculty_name ""
+  smallint reports_required_count ""
   uuid dean_profile_id FK ""
   uuid coordinator_profile_id FK ""
 }

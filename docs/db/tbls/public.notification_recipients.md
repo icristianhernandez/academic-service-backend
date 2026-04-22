@@ -1,0 +1,123 @@
+# public.notification_recipients
+
+## Description
+
+## Columns
+
+| Name | Type | Default | Nullable | Children | Parents | Comment |
+| ---- | ---- | ------- | -------- | -------- | ------- | ------- |
+| created_at | timestamp with time zone | now() | false |  |  |  |
+| created_by | uuid | auth.uid() | false |  |  |  |
+| updated_at | timestamp with time zone | now() | false |  |  |  |
+| updated_by | uuid | auth.uid() | true |  |  |  |
+| id | bigint |  | false | [public.user_inbox](public.user_inbox.md) [public.notifications_external_deliveries](public.notifications_external_deliveries.md) |  |  |
+| notification_id | bigint |  | false |  | [public.notifications_events](public.notifications_events.md) |  |
+| recipient_id | uuid |  | false |  | [public.profiles](public.profiles.md) |  |
+
+## Constraints
+
+| Name | Type | Definition |
+| ---- | ---- | ---------- |
+| notification_recipients_recipient_id_fkey | FOREIGN KEY | FOREIGN KEY (recipient_id) REFERENCES profiles(id) |
+| notification_recipients_notification_id_fkey | FOREIGN KEY | FOREIGN KEY (notification_id) REFERENCES notifications_events(id) |
+| notification_recipients_pkey | PRIMARY KEY | PRIMARY KEY (id) |
+| notification_recipients_notification_id_recipient_id_key | UNIQUE | UNIQUE (notification_id, recipient_id) |
+
+## Indexes
+
+| Name | Definition |
+| ---- | ---------- |
+| notification_recipients_pkey | CREATE UNIQUE INDEX notification_recipients_pkey ON public.notification_recipients USING btree (id) |
+| notification_recipients_notification_id_recipient_id_key | CREATE UNIQUE INDEX notification_recipients_notification_id_recipient_id_key ON public.notification_recipients USING btree (notification_id, recipient_id) |
+| idx_notification_recipients_recipient | CREATE INDEX idx_notification_recipients_recipient ON public.notification_recipients USING btree (recipient_id, created_at) |
+
+## Triggers
+
+| Name | Definition |
+| ---- | ---------- |
+| audit_notification_recipients_changes | CREATE TRIGGER audit_notification_recipients_changes AFTER INSERT OR DELETE OR UPDATE ON public.notification_recipients FOR EACH ROW EXECUTE FUNCTION log_changes() |
+| trg_audit_update_notification_recipients | CREATE TRIGGER trg_audit_update_notification_recipients BEFORE UPDATE ON public.notification_recipients FOR EACH ROW EXECUTE FUNCTION handle_audit_update() |
+
+## Relations
+
+```mermaid
+erDiagram
+
+"public.user_inbox" |o--|| "public.notification_recipients" : "FOREIGN KEY (notification_recipient_id) REFERENCES notification_recipients(id)"
+"public.notifications_external_deliveries" }o--|| "public.notification_recipients" : "FOREIGN KEY (notification_recipient_id) REFERENCES notification_recipients(id)"
+"public.notification_recipients" }o--|| "public.notifications_events" : "FOREIGN KEY (notification_id) REFERENCES notifications_events(id)"
+"public.notification_recipients" }o--|| "public.profiles" : "FOREIGN KEY (recipient_id) REFERENCES profiles(id)"
+
+"public.notification_recipients" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint notification_id FK ""
+  uuid recipient_id FK ""
+}
+"public.user_inbox" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint notification_recipient_id FK ""
+  timestamp_with_time_zone read_at ""
+}
+"public.notifications_external_deliveries" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint notification_recipient_id FK ""
+  notification_channel_enum to_channel ""
+  notification_delivery_status_enum delivery_status ""
+  integer retry_count ""
+  timestamp_with_time_zone processed_at ""
+  text error_message ""
+  timestamp_with_time_zone last_attempt ""
+}
+"public.notifications_events" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint notification_type_id FK ""
+  text source_kind ""
+  text operation_kind ""
+  text source_record_id ""
+  jsonb payload ""
+  uuid actor_id FK ""
+  notification_event_status_enum processed_status ""
+  integer retry_count ""
+  timestamp_with_time_zone processed_at ""
+  text error_message ""
+  timestamp_with_time_zone last_attempt ""
+}
+"public.profiles" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  uuid id FK ""
+  text user_names ""
+  text user_last_names ""
+  text national_id ""
+  text primary_contact ""
+  text secondary_contact ""
+  text email ""
+  bigint role_id FK ""
+  text profile_photo_path ""
+  boolean email_notifications_enabled ""
+  boolean inbox_notifications_enabled ""
+  timestamp_with_time_zone disabled_at ""
+}
+```
+
+---
+
+> Generated by [tbls](https://github.com/k1LoW/tbls)

@@ -10,7 +10,7 @@
 | created_by | uuid | auth.uid() | false |  |  |  |
 | updated_at | timestamp with time zone | now() | false |  |  |  |
 | updated_by | uuid | auth.uid() | true |  |  |  |
-| id | uuid |  | false | [public.campuses](public.campuses.md) [public.faculties](public.faculties.md) [public.schools](public.schools.md) [public.invitations](public.invitations.md) [public.students](public.students.md) [public.documents](public.documents.md) [public.institutions](public.institutions.md) [public.projects](public.projects.md) [public.project_progress](public.project_progress.md) [public.notification_preferences](public.notification_preferences.md) [public.notification_events](public.notification_events.md) [public.notifications](public.notifications.md) |  |  |
+| id | uuid |  | false | [public.campuses](public.campuses.md) [public.faculties](public.faculties.md) [public.schools](public.schools.md) [public.invitations](public.invitations.md) [public.students](public.students.md) [public.documents](public.documents.md) [public.institutions](public.institutions.md) [public.projects](public.projects.md) [public.project_progress](public.project_progress.md) [public.notifications_events](public.notifications_events.md) [public.notification_recipients](public.notification_recipients.md) |  |  |
 | user_names | text |  | false |  |  |  |
 | user_last_names | text |  | false |  |  |  |
 | national_id | text |  | false |  |  |  |
@@ -19,6 +19,9 @@
 | email | text |  | false |  |  |  |
 | role_id | bigint |  | true |  | [public.roles](public.roles.md) |  |
 | profile_photo_path | text |  | true |  |  |  |
+| email_notifications_enabled | boolean | true | true |  |  |  |
+| inbox_notifications_enabled | boolean | true | true |  |  |  |
+| disabled_at | timestamp with time zone |  | true |  |  |  |
 
 ## Constraints
 
@@ -62,10 +65,8 @@ erDiagram
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
 "public.project_progress" }o--|| "public.profiles" : "FOREIGN KEY (author_profile_id) REFERENCES profiles(id)"
-"public.notification_preferences" }o--|| "public.profiles" : "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
-"public.notification_events" }o--o| "public.profiles" : "FOREIGN KEY (actor_profile_id) REFERENCES profiles(id)"
-"public.notification_events" }o--|| "public.profiles" : "FOREIGN KEY (recipient_profile_id) REFERENCES profiles(id)"
-"public.notifications" }o--|| "public.profiles" : "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
+"public.notifications_events" }o--o| "public.profiles" : "FOREIGN KEY (actor_id) REFERENCES profiles(id)"
+"public.notification_recipients" }o--|| "public.profiles" : "FOREIGN KEY (recipient_id) REFERENCES profiles(id)"
 "public.profiles" }o--o| "public.roles" : "FOREIGN KEY (role_id) REFERENCES roles(id)"
 
 "public.profiles" {
@@ -82,6 +83,9 @@ erDiagram
   text email ""
   bigint role_id FK ""
   text profile_photo_path ""
+  boolean email_notifications_enabled ""
+  boolean inbox_notifications_enabled ""
+  timestamp_with_time_zone disabled_at ""
 }
 "public.campuses" {
   timestamp_with_time_zone created_at ""
@@ -101,6 +105,7 @@ erDiagram
   bigint id ""
   bigint campus_id FK ""
   text faculty_name ""
+  smallint reports_required_count ""
   uuid dean_profile_id FK ""
   uuid coordinator_profile_id FK ""
 }
@@ -188,42 +193,32 @@ erDiagram
   bigint document_id FK ""
   text observations ""
 }
-"public.notification_preferences" {
+"public.notifications_events" {
   timestamp_with_time_zone created_at ""
   uuid created_by ""
   timestamp_with_time_zone updated_at ""
   uuid updated_by ""
-  uuid id ""
-  uuid profile_id FK ""
-  text event_type ""
-  notification_channel_enum channel ""
-  boolean enabled ""
-}
-"public.notification_events" {
-  timestamp_with_time_zone created_at ""
-  uuid created_by ""
-  timestamp_with_time_zone updated_at ""
-  uuid updated_by ""
-  uuid id ""
-  text event_type ""
-  uuid recipient_profile_id FK ""
-  uuid actor_profile_id FK ""
+  bigint id ""
+  bigint notification_type_id FK ""
+  text source_kind ""
+  text operation_kind ""
+  text source_record_id ""
   jsonb payload ""
-  text dedupe_key ""
-  timestamp_with_time_zone available_at ""
+  uuid actor_id FK ""
+  notification_event_status_enum processed_status ""
+  integer retry_count ""
   timestamp_with_time_zone processed_at ""
+  text error_message ""
+  timestamp_with_time_zone last_attempt ""
 }
-"public.notifications" {
+"public.notification_recipients" {
   timestamp_with_time_zone created_at ""
   uuid created_by ""
   timestamp_with_time_zone updated_at ""
   uuid updated_by ""
-  uuid id ""
-  uuid profile_id FK ""
-  uuid event_id FK ""
-  text notification_type ""
-  jsonb payload ""
-  timestamp_with_time_zone read_at ""
+  bigint id ""
+  bigint notification_id FK ""
+  uuid recipient_id FK ""
 }
 "public.roles" {
   timestamp_with_time_zone created_at ""

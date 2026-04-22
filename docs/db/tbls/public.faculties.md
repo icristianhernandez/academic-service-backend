@@ -13,6 +13,7 @@
 | id | bigint |  | false | [public.schools](public.schools.md) [public.invitations](public.invitations.md) |  |  |
 | campus_id | bigint |  | false |  | [public.campuses](public.campuses.md) |  |
 | faculty_name | text |  | false |  |  |  |
+| reports_required_count | smallint | 3 | false |  |  |  |
 | dean_profile_id | uuid |  | true |  | [public.profiles](public.profiles.md) |  |
 | coordinator_profile_id | uuid |  | true |  | [public.profiles](public.profiles.md) |  |
 
@@ -20,6 +21,7 @@
 
 | Name | Type | Definition |
 | ---- | ---- | ---------- |
+| faculties_reports_required_count_check | CHECK | CHECK (((reports_required_count >= 0) AND (reports_required_count <= 10))) |
 | faculties_coordinator_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id) |
 | faculties_dean_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (dean_profile_id) REFERENCES profiles(id) |
 | faculties_campus_id_fkey | FOREIGN KEY | FOREIGN KEY (campus_id) REFERENCES campuses(id) |
@@ -59,6 +61,7 @@ erDiagram
   bigint id ""
   bigint campus_id FK ""
   text faculty_name ""
+  smallint reports_required_count ""
   uuid dean_profile_id FK ""
   uuid coordinator_profile_id FK ""
 }
@@ -112,6 +115,9 @@ erDiagram
   text email ""
   bigint role_id FK ""
   text profile_photo_path ""
+  boolean email_notifications_enabled ""
+  boolean inbox_notifications_enabled ""
+  timestamp_with_time_zone disabled_at ""
 }
 ```
 
