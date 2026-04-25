@@ -363,3 +363,9 @@ call setup_audit(
     'user_inbox',
     'notifications_external_deliveries'
 );
+
+
+begin;
+  alter publication supabase_realtime add table public.notification_recipients;
+  alter publication supabase_realtime add table public.user_inbox;
+commit;
