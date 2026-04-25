@@ -69,6 +69,38 @@ select
     'project_progress' as source_kind,
     'update' as operation_kind,
     notification_type.id as notification_type_id,
+    350 as priority,
+    jsonb_build_object(
+        'has_previous_progress', true,
+        'phase_advanced', true,
+        'state_changed', true,
+        'project_state_id', review_state.id
+    ) as match_context
+from notification_types as notification_type
+cross join project_states as review_state
+where
+    notification_type.type_key = 'project-phase-advanced-to-review'
+    and review_state.project_state_name = 'En Revisión'
+on conflict (
+    source_kind,
+    operation_kind,
+    notification_type_id,
+    priority,
+    match_context
+) do update
+    set is_active = true;
+
+insert into notification_type_resolution_rules (
+    source_kind,
+    operation_kind,
+    notification_type_id,
+    priority,
+    match_context
+)
+select
+    'project_progress' as source_kind,
+    'update' as operation_kind,
+    notification_type.id as notification_type_id,
     295 as priority,
     jsonb_build_object(
         'has_previous_progress', true,
