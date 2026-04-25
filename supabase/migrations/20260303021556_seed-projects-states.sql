@@ -329,6 +329,7 @@ cross join (
     ('project-phase-advanced', 'student_profile_id'),
     ('project-phase-advanced', 'coordinator_profile_id'),
     ('project-state-to-review', 'tutor_profile_id'),
+    ('project-state-to-review', 'coordinator_profile_id'),
     ('project-review-to-wait-same-phase', 'student_profile_id')
 ) as recipient_targets (type_key, recipient_target)
 where
