@@ -2420,7 +2420,7 @@
         },
         {
           "name": "b_enqueue_project_progress_notification_event",
-          "def": "CREATE TRIGGER b_enqueue_project_progress_notification_event AFTER INSERT ON public.project_progress FOR EACH ROW EXECUTE FUNCTION enqueue_project_progress_notification_event()"
+          "def": "CREATE TRIGGER b_enqueue_project_progress_notification_event AFTER INSERT OR UPDATE ON public.project_progress FOR EACH ROW EXECUTE FUNCTION enqueue_project_progress_notification_event()"
         },
         {
           "name": "b_validate_project_progress_phase_transition",
@@ -3101,6 +3101,10 @@
         }
       ],
       "triggers": [
+        {
+          "name": "a_dispatch_notification_event_now",
+          "def": "CREATE TRIGGER a_dispatch_notification_event_now AFTER INSERT ON public.notifications_events FOR EACH STATEMENT EXECUTE FUNCTION dispatch_notification_event_now()"
+        },
         {
           "name": "audit_notifications_events_changes",
           "def": "CREATE TRIGGER audit_notifications_events_changes AFTER INSERT OR DELETE OR UPDATE ON public.notifications_events FOR EACH ROW EXECUTE FUNCTION log_changes()"
@@ -4309,6 +4313,12 @@
       "name": "public.mark_notifications_external_delivery_failed",
       "return_type": "bool",
       "arguments": "p_delivery_id bigint, p_error_message text",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.dispatch_notification_event_now",
+      "return_type": "trigger",
+      "arguments": "",
       "type": "FUNCTION"
     }
   ],

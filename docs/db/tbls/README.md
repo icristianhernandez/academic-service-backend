@@ -86,6 +86,7 @@
 | public.invoke_notifications_external_deliveries_worker | int8 | p_batch_size integer DEFAULT 100 | FUNCTION |
 | public.mark_notifications_external_delivery_sent | bool | p_delivery_id bigint | FUNCTION |
 | public.mark_notifications_external_delivery_failed | bool | p_delivery_id bigint, p_error_message text | FUNCTION |
+| public.dispatch_notification_event_now | trigger |  | FUNCTION |
 
 ## Enums
 
