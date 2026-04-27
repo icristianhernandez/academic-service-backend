@@ -133,7 +133,7 @@ insert into notification_recipients_rules (
 select
     notification_type.id,
     'payload'::notification_rule_target_kind_enum,
-    'student_profile_id'
+    'student_profile_id' as recipient_target
 from notification_types as notification_type
 where notification_type.type_key = 'project-review-to-rejected-same-phase'
 on conflict (
@@ -303,9 +303,9 @@ begin
 end;
 $$;
 
-drop trigger if exists b_enqueue_project_progress_notification_event on public.project_progress;
+drop trigger if exists b_enqueue_proj_progress_notif on public.project_progress;
 
-create trigger b_enqueue_project_progress_notification_event
+create trigger b_enqueue_proj_progress_notif
 after insert or update on public.project_progress
 for each row
 execute function public.enqueue_project_progress_notification_event();

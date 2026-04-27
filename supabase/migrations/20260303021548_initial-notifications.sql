@@ -366,6 +366,6 @@ call setup_audit(
 
 
 begin;
-  alter publication supabase_realtime add table public.notification_recipients;
-  alter publication supabase_realtime add table public.user_inbox;
+alter publication supabase_realtime add table public.notification_recipients;
+alter publication supabase_realtime add table public.user_inbox;
 commit;
