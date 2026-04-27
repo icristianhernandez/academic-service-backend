@@ -2419,8 +2419,12 @@
           "def": "CREATE TRIGGER audit_project_progress_changes AFTER INSERT OR DELETE OR UPDATE ON public.project_progress FOR EACH ROW EXECUTE FUNCTION log_changes()"
         },
         {
+          "name": "b_enqueue_proj_progress_notif",
+          "def": "CREATE TRIGGER b_enqueue_proj_progress_notif AFTER INSERT OR UPDATE ON public.project_progress FOR EACH ROW EXECUTE FUNCTION enqueue_project_progress_notification_event()"
+        },
+        {
           "name": "b_enqueue_project_progress_notification_event",
-          "def": "CREATE TRIGGER b_enqueue_project_progress_notification_event AFTER INSERT OR UPDATE ON public.project_progress FOR EACH ROW EXECUTE FUNCTION enqueue_project_progress_notification_event()"
+          "def": "CREATE TRIGGER b_enqueue_project_progress_notification_event AFTER INSERT ON public.project_progress FOR EACH ROW EXECUTE FUNCTION enqueue_project_progress_notification_event()"
         },
         {
           "name": "b_validate_project_progress_phase_transition",

@@ -41,7 +41,8 @@
 | Name | Definition |
 | ---- | ---------- |
 | audit_project_progress_changes | CREATE TRIGGER audit_project_progress_changes AFTER INSERT OR DELETE OR UPDATE ON public.project_progress FOR EACH ROW EXECUTE FUNCTION log_changes() |
-| b_enqueue_project_progress_notification_event | CREATE TRIGGER b_enqueue_project_progress_notification_event AFTER INSERT OR UPDATE ON public.project_progress FOR EACH ROW EXECUTE FUNCTION enqueue_project_progress_notification_event() |
+| b_enqueue_proj_progress_notif | CREATE TRIGGER b_enqueue_proj_progress_notif AFTER INSERT OR UPDATE ON public.project_progress FOR EACH ROW EXECUTE FUNCTION enqueue_project_progress_notification_event() |
+| b_enqueue_project_progress_notification_event | CREATE TRIGGER b_enqueue_project_progress_notification_event AFTER INSERT ON public.project_progress FOR EACH ROW EXECUTE FUNCTION enqueue_project_progress_notification_event() |
 | b_validate_project_progress_phase_transition | CREATE TRIGGER b_validate_project_progress_phase_transition BEFORE INSERT ON public.project_progress FOR EACH ROW EXECUTE FUNCTION validate_project_progress_phase_transition() |
 | trg_audit_update_project_progress | CREATE TRIGGER trg_audit_update_project_progress BEFORE UPDATE ON public.project_progress FOR EACH ROW EXECUTE FUNCTION handle_audit_update() |
 
