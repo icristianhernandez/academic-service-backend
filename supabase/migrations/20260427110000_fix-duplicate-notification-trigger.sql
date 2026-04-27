@@ -1,0 +1,2 @@
+drop trigger if exists b_enqueue_project_progress_notification_event
+on public.project_progress;
