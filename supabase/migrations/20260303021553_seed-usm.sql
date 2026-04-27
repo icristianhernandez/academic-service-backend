@@ -29,7 +29,20 @@ on conflict (campus_name) do update
         president_profile_id = excluded.president_profile_id;
 
 insert into degrees (degree_name)
-values ('Ingenieria de Sistemas')
+values
+('Ingenieria de Sistemas'),
+('Arquitectura'),
+('Ingenieria Industrial'),
+('Ingenieria Civil'),
+('Ingenieria en Telecomunicaciones'),
+('Derecho'),
+('Estudios Internacionales'),
+('Comunicacion Social'),
+('Administracion'),
+('Economia'),
+('Contaduria Publica'),
+('Odontologia'),
+('Farmacia')
 on conflict (degree_name) do nothing;
 
 insert into faculties (
@@ -41,11 +54,19 @@ insert into faculties (
 )
 select
     campus.id as campus_id,
-    'Facultad de Ingenieria' as faculty_name,
-    3 as reports_required_count,
+    faculty_data.faculty_name,
+    faculty_data.reports_required_count,
     null as dean_profile_id,
     null as coordinator_profile_id
-from campuses as campus
+from (
+    values
+    ('Facultad de Ingenieria', 3::smallint),
+    ('Facultad de Derecho', 1::smallint),
+    ('Facultad de Ciencias Economicas y Sociales', 0::smallint),
+    ('Facultad de Odontologia', 3::smallint),
+    ('Facultad de Farmacia', 3::smallint)
+) as faculty_data (faculty_name, reports_required_count)
+cross join campuses as campus
 where campus.campus_name = 'Universidad Santa Maria - La Florencia'
 on conflict (faculty_name) do update
     set
@@ -56,19 +77,32 @@ on conflict (faculty_name) do update
 
 insert into schools (degree_id, faculty_id, tutor_profile_id)
 select
-    degree.id as degree_id,
-    faculty.id as faculty_id,
+    d.id as degree_id,
+    f.id as faculty_id,
     null as tutor_profile_id
-from degrees as degree
-cross join faculties as faculty
-where
-    degree.degree_name = 'Ingenieria de Sistemas'
-    and faculty.faculty_name = 'Facultad de Ingenieria'
-    and not exists (
-        select 1
-        from schools
-        where
-            schools.degree_id = degree.id
-            and schools.faculty_id = faculty.id
-            and schools.tutor_profile_id is null
-    );
+from (
+    values
+    ('Ingenieria de Sistemas', 'Facultad de Ingenieria'),
+    ('Arquitectura', 'Facultad de Ingenieria'),
+    ('Ingenieria Industrial', 'Facultad de Ingenieria'),
+    ('Ingenieria Civil', 'Facultad de Ingenieria'),
+    ('Ingenieria en Telecomunicaciones', 'Facultad de Ingenieria'),
+    ('Derecho', 'Facultad de Derecho'),
+    ('Estudios Internacionales', 'Facultad de Derecho'),
+    ('Comunicacion Social', 'Facultad de Ciencias Economicas y Sociales'),
+    ('Administracion', 'Facultad de Ciencias Economicas y Sociales'),
+    ('Economia', 'Facultad de Ciencias Economicas y Sociales'),
+    ('Contaduria Publica', 'Facultad de Ciencias Economicas y Sociales'),
+    ('Odontologia', 'Facultad de Odontologia'),
+    ('Farmacia', 'Facultad de Farmacia')
+) as school_data (degree_name, faculty_name)
+inner join degrees as d on school_data.degree_name = d.degree_name
+inner join faculties as f on school_data.faculty_name = f.faculty_name
+where not exists (
+    select 1
+    from schools as s
+    where
+        s.degree_id = d.id
+        and s.faculty_id = f.id
+        and s.tutor_profile_id is null
+);
