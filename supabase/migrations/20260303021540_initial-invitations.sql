@@ -15,7 +15,7 @@ create table invitations (
     -- TODO: logic to enforces/set the next things aren't implemented yet
     hashed_token text not null,
     failed_attemps integer default 0,
-    token_expires_at timestamptz default (now() + interval '7 days'),
+    token_expires_at timestamptz default (now() + interval '1 day'),
     reclaimed_at timestamptz default null
 );
 
