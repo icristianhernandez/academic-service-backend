@@ -1373,7 +1373,7 @@
           "name": "token_expires_at",
           "type": "timestamp with time zone",
           "nullable": true,
-          "default": "(now() + '7 days'::interval)"
+          "default": "(now() + '1 day'::interval)"
         },
         {
           "name": "reclaimed_at",

@@ -18,7 +18,7 @@
 | email | text |  | false |  |  |  |
 | hashed_token | text |  | false |  |  |  |
 | failed_attemps | integer | 0 | true |  |  |  |
-| token_expires_at | timestamp with time zone | (now() + '7 days'::interval) | true |  |  |  |
+| token_expires_at | timestamp with time zone | (now() + '1 day'::interval) | true |  |  |  |
 | reclaimed_at | timestamp with time zone |  | true |  |  |  |
 
 ## Constraints
