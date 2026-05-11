@@ -35,8 +35,7 @@ from (
     ('Reporte 8', 9, 'report', 8),
     ('Reporte 9', 10, 'report', 9),
     ('Reporte 10', 11, 'report', 10),
-    ('Reporte Final', 12, 'final_report', null),
-    ('Aprobado', 13, 'approved', null)
+    ('Reporte Final', 12, 'final_report', null)
 )
     as seed_phase (
         project_phase_name,
@@ -54,9 +53,9 @@ insert into project_states (project_state_name)
 select seed_state.project_state_name
 from (
     values
-    ('En Espera'),
-    ('En Revisión'),
-    ('Cancelado')
+    ('Aprobado'),
+    ('En revisión'),
+    ('Rechazado para corrección')
 ) as seed_state (project_state_name)
 where not exists (
     select 1
@@ -148,14 +147,14 @@ select
         'old_project_state_id', (
             select project_state.id
             from public.project_states as project_state
-            where project_state.project_state_name = 'En Espera'
+            where project_state.project_state_name = 'Aprobado'
         )
     ) as match_context
 from notification_types as notification_type
 cross join project_states as review_state
 where
     notification_type.type_key = 'project-state-to-review'
-    and review_state.project_state_name = 'En Revisión'
+    and review_state.project_state_name = 'En revisión'
 on conflict (
     source_kind,
     operation_kind,
@@ -187,14 +186,14 @@ select
         'old_project_state_id', (
             select project_state.id
             from public.project_states as project_state
-            where project_state.project_state_name = 'En Espera'
+            where project_state.project_state_name = 'Aprobado'
         )
     ) as match_context
 from notification_types as notification_type
 cross join project_states as review_state
 where
     notification_type.type_key = 'project-phase-advanced-to-review'
-    and review_state.project_state_name = 'En Revisión'
+    and review_state.project_state_name = 'En revisión'
 on conflict (
     source_kind,
     operation_kind,
@@ -262,7 +261,7 @@ cross join project_states as old_state
 cross join project_states as review_state
 where
     notification_type.type_key = 'project-state-to-review'
-    and review_state.project_state_name = 'En Revisión'
+    and review_state.project_state_name = 'En revisión'
     and old_state.id <> review_state.id
 on conflict (
     source_kind,
@@ -302,8 +301,8 @@ cross join project_states as review_state
 cross join project_states as waiting_state
 where
     notification_type.type_key = 'project-review-to-wait-same-phase'
-    and review_state.project_state_name = 'En Revisión'
-    and waiting_state.project_state_name = 'En Espera'
+    and review_state.project_state_name = 'En revisión'
+    and waiting_state.project_state_name = 'Aprobado'
 on conflict (
     source_kind,
     operation_kind,

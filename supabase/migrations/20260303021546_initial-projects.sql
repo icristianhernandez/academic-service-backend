@@ -18,8 +18,7 @@ create table project_phases (
         phase_kind in (
             'preproject',
             'report',
-            'final_report',
-            'approved'
+            'final_report'
         )
     ),
     check (
@@ -76,6 +75,7 @@ declare
     new_phase public.project_phases;
     previous_progress public.project_progress;
     previous_phase public.project_phases;
+    previous_state_name text;
     is_valid_transition boolean := false;
 begin
     select
@@ -150,10 +150,24 @@ begin
             using errcode = 'P0001';
     end if;
 
+    select project_state_name into previous_state_name
+    from public.project_states
+    where id = previous_progress.project_state_id
+    limit 1;
+
     if new_phase.project_phase_order < previous_phase.project_phase_order then
         raise exception
             'Project progress validation failed. Phase cannot move backwards'
             using errcode = 'P0001';
+    end if;
+
+    if new_phase.project_phase_order > previous_phase.project_phase_order then
+        if previous_state_name <> 'Aprobado' then
+            raise exception
+                'Project progress validation failed. Cannot advance phase because previous phase is not approved. Current state: %',
+                previous_state_name
+                using errcode = 'P0001';
+        end if;
     end if;
 
     if new_phase.project_phase_order = previous_phase.project_phase_order then

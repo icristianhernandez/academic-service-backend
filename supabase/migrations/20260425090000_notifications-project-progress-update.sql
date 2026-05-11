@@ -47,8 +47,8 @@ cross join project_states as review_state
 cross join project_states as waiting_state
 where
     notification_type.type_key = 'project-review-to-wait-same-phase'
-    and review_state.project_state_name = 'En Revisión'
-    and waiting_state.project_state_name = 'En Espera'
+    and review_state.project_state_name = 'En revisión'
+    and waiting_state.project_state_name = 'Aprobado'
 on conflict (
     source_kind,
     operation_kind,
@@ -80,7 +80,7 @@ from notification_types as notification_type
 cross join project_states as review_state
 where
     notification_type.type_key = 'project-phase-advanced-to-review'
-    and review_state.project_state_name = 'En Revisión'
+    and review_state.project_state_name = 'En revisión'
 on conflict (
     source_kind,
     operation_kind,
@@ -114,8 +114,8 @@ cross join project_states as review_state
 cross join project_states as rejected_state
 where
     notification_type.type_key = 'project-review-to-rejected-same-phase'
-    and review_state.project_state_name = 'En Revisión'
-    and rejected_state.project_state_name = 'Cancelado'
+    and review_state.project_state_name = 'En revisión'
+    and rejected_state.project_state_name = 'Rechazado para corrección'
 on conflict (
     source_kind,
     operation_kind,
