@@ -45,10 +45,13 @@ values
 ('Farmacia')
 on conflict (degree_name) do nothing;
 
+-- TODO: missing exact values
 insert into faculties (
     campus_id,
     faculty_name,
     reports_required_count,
+    min_members,
+    max_members,
     dean_profile_id,
     coordinator_profile_id
 )
@@ -56,22 +59,29 @@ select
     campus.id as campus_id,
     faculty_data.faculty_name,
     faculty_data.reports_required_count,
+    faculty_data.min_members,
+    faculty_data.max_members,
     null as dean_profile_id,
     null as coordinator_profile_id
 from (
     values
-    ('Facultad de Ingenieria', 3::smallint),
-    ('Facultad de Derecho', 1::smallint),
-    ('Facultad de Ciencias Economicas y Sociales', 0::smallint),
-    ('Facultad de Odontologia', 3::smallint),
-    ('Facultad de Farmacia', 3::smallint)
-) as faculty_data (faculty_name, reports_required_count)
+    ('Facultad de Ingenieria', 3::smallint, 2, 5),
+    ('Facultad de Derecho', 1::smallint, 1, 2),
+    ('Facultad de Ciencias Economicas y Sociales', 0::smallint, 1, 5),
+    ('Facultad de Odontologia', 3::smallint, 1, 3),
+    ('Facultad de Farmacia', 3::smallint, 1, 3)
+)
+    as faculty_data (
+        faculty_name, reports_required_count, min_members, max_members
+    )
 cross join campuses as campus
 where campus.campus_name = 'Universidad Santa Maria - La Florencia'
 on conflict (faculty_name) do update
     set
         campus_id = excluded.campus_id,
         reports_required_count = excluded.reports_required_count,
+        min_members = excluded.min_members,
+        max_members = excluded.max_members,
         dean_profile_id = excluded.dean_profile_id,
         coordinator_profile_id = excluded.coordinator_profile_id;
 

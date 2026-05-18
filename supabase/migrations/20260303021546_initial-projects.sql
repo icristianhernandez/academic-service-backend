@@ -45,7 +45,7 @@ create table projects (
     id bigint generated always as identity primary key,
     subcoordinator_profile_id uuid not null references profiles (id),
     coordinator_profile_id uuid not null references profiles (id),
-    student_profile_id uuid not null references profiles (id),
+    student_profile_id uuid not null references profiles (id) unique,
     institution_id bigint not null references institutions (id),
     title text not null,
     abstract text
@@ -64,6 +64,21 @@ create table project_progress (
 
 create index idx_project_progress_project_created
 on project_progress (project_id, created_at desc, id desc);
+
+create table project_members (
+    like audit_meta including all,
+    id bigint generated always as identity primary key,
+    project_id bigint not null references projects (id),
+    profile_id uuid not null references profiles (id),
+    is_leader boolean not null default false,
+
+    unique (project_id, profile_id),
+    unique (profile_id)
+);
+
+create unique index idx_project_members_one_leader
+on project_members (project_id)
+where is_leader = true;
 
 create function public.validate_project_progress_phase_transition()
 returns trigger
@@ -252,6 +267,15 @@ begin
             using errcode = 'P0001';
     end if;
 
+    if exists (
+        select 1 from public.project_members
+        where profile_id = new.student_profile_id
+    ) then
+        raise exception
+            'Project creation failed. Student is already a member of another project'
+            using errcode = 'P0001';
+    end if;
+
     if subcoordinator_id is null then
         raise exception
             'Project creation failed. School % has no subcoordinator assigned',
@@ -278,10 +302,84 @@ before insert on projects
 for each row
 execute procedure public.set_project_staff_on_insert();
 
+create function public.validate_project_member_limits()
+returns trigger
+language plpgsql
+security definer set search_path = ''
+as $$
+declare
+    current_count  integer;
+    max_allowed    smallint;
+    leader_school  bigint;
+    member_school  bigint;
+    has_progress   boolean;
+    target_pid     bigint;
+begin
+    target_pid := coalesce(new.project_id, old.project_id);
+
+    select exists (
+        select 1 from public.project_progress
+        where project_id = target_pid
+    ) into has_progress;
+
+    if has_progress then
+        raise exception
+            'Cannot modify members after project has begun'
+            using errcode = 'P0001';
+    end if;
+
+    if tg_op = 'INSERT' then
+        select s.id, f.max_members into leader_school, max_allowed
+        from public.projects p
+        join public.students st on st.profile_id = p.student_profile_id
+        join public.schools s on s.id = st.school_id
+        join public.faculties f on f.id = s.faculty_id
+        where p.id = new.project_id;
+
+        if not found then
+            raise exception
+                'Project % has no valid school', new.project_id
+                using errcode = 'P0001';
+        end if;
+
+        select st.school_id into member_school
+        from public.students st
+        where st.profile_id = new.profile_id;
+
+        if not found or member_school <> leader_school then
+            raise exception
+                'New member must belong to the same school as the project leader'
+                using errcode = 'P0001';
+        end if;
+
+        select count(*) into current_count
+        from public.project_members
+        where project_id = new.project_id;
+
+        if current_count + 1 > max_allowed then
+            raise exception
+                'Project % exceeds maximum members (%)', new.project_id, max_allowed
+                using errcode = 'P0001';
+        end if;
+    end if;
+
+    if tg_op = 'INSERT' then return new;
+    elsif tg_op = 'UPDATE' then return new;
+    else return old;
+    end if;
+end;
+$$;
+
+create trigger a_validate_project_member_limits
+before insert or update or delete on project_members
+for each row
+execute procedure public.validate_project_member_limits();
+
 call setup_audit(
     'institutions',
     'project_phases',
     'project_states',
     'project_progress',
-    'projects'
+    'projects',
+    'project_members'
 );

@@ -12,10 +12,15 @@ create table faculties (
     campus_id bigint not null references campuses (id),
     faculty_name text not null unique,
     reports_required_count smallint not null default 3,
+    min_members smallint not null default 1,
+    max_members smallint not null default 1,
     dean_profile_id uuid references profiles (id),
     coordinator_profile_id uuid references profiles (id),
 
-    check (reports_required_count between 0 and 10)
+    check (reports_required_count between 0 and 10),
+    check (min_members between 1 and 20),
+    check (max_members between 1 and 20),
+    check (min_members <= max_members)
 );
 
 create table degrees (
