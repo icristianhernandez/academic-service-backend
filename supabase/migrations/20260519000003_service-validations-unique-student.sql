@@ -1,0 +1,3 @@
+alter table public.service_validations
+add constraint service_validations_student_profile_id_unique
+unique (student_profile_id);
