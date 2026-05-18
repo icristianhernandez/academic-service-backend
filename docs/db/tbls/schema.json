@@ -959,6 +959,18 @@
           "default": "3"
         },
         {
+          "name": "min_members",
+          "type": "smallint",
+          "nullable": false,
+          "default": "1"
+        },
+        {
+          "name": "max_members",
+          "type": "smallint",
+          "nullable": false,
+          "default": "1"
+        },
+        {
           "name": "dean_profile_id",
           "type": "uuid",
           "nullable": true
@@ -988,6 +1000,37 @@
         }
       ],
       "constraints": [
+        {
+          "name": "faculties_check",
+          "type": "CHECK",
+          "def": "CHECK ((min_members \u003c= max_members))",
+          "table": "public.faculties",
+          "referenced_table": "",
+          "columns": [
+            "min_members",
+            "max_members"
+          ]
+        },
+        {
+          "name": "faculties_max_members_check",
+          "type": "CHECK",
+          "def": "CHECK (((max_members \u003e= 1) AND (max_members \u003c= 20)))",
+          "table": "public.faculties",
+          "referenced_table": "",
+          "columns": [
+            "max_members"
+          ]
+        },
+        {
+          "name": "faculties_min_members_check",
+          "type": "CHECK",
+          "def": "CHECK (((min_members \u003e= 1) AND (min_members \u003c= 20)))",
+          "table": "public.faculties",
+          "referenced_table": "",
+          "columns": [
+            "min_members"
+          ]
+        },
         {
           "name": "faculties_reports_required_count_check",
           "type": "CHECK",
@@ -1203,7 +1246,7 @@
           "nullable": false
         },
         {
-          "name": "tutor_profile_id",
+          "name": "subcoordinator_profile_id",
           "type": "uuid",
           "nullable": true
         }
@@ -1229,13 +1272,13 @@
       ],
       "constraints": [
         {
-          "name": "schools_tutor_profile_id_fkey",
+          "name": "schools_subcoordinator_profile_id_fkey",
           "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)",
+          "def": "FOREIGN KEY (subcoordinator_profile_id) REFERENCES profiles(id)",
           "table": "public.schools",
           "referenced_table": "profiles",
           "columns": [
-            "tutor_profile_id"
+            "subcoordinator_profile_id"
           ],
           "referenced_columns": [
             "id"
@@ -1344,7 +1387,7 @@
           "nullable": true
         },
         {
-          "name": "school_to_be_tutor",
+          "name": "school_to_be_subcoordinator",
           "type": "bigint",
           "nullable": true
         },
@@ -1440,13 +1483,13 @@
           ]
         },
         {
-          "name": "invitations_school_to_be_tutor_fkey",
+          "name": "invitations_school_to_be_subcoordinator_fkey",
           "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (school_to_be_tutor) REFERENCES schools(id)",
+          "def": "FOREIGN KEY (school_to_be_subcoordinator) REFERENCES schools(id)",
           "table": "public.invitations",
           "referenced_table": "schools",
           "columns": [
-            "school_to_be_tutor"
+            "school_to_be_subcoordinator"
           ],
           "referenced_columns": [
             "id"
@@ -1960,7 +2003,7 @@
         {
           "name": "project_phases_phase_kind_check",
           "type": "CHECK",
-          "def": "CHECK ((phase_kind = ANY (ARRAY['preproject'::text, 'report'::text, 'final_report'::text])))",
+          "def": "CHECK ((phase_kind = ANY (ARRAY['preproject'::text, 'report'::text, 'final_report'::text, 'approved'::text])))",
           "table": "public.project_phases",
           "referenced_table": "",
           "columns": [
@@ -2133,9 +2176,9 @@
           "nullable": false
         },
         {
-          "name": "tutor_profile_id",
+          "name": "subcoordinator_profile_id",
           "type": "uuid",
-          "nullable": false
+          "nullable": true
         },
         {
           "name": "coordinator_profile_id",
@@ -2171,6 +2214,14 @@
           "columns": [
             "id"
           ]
+        },
+        {
+          "name": "projects_student_profile_id_key",
+          "def": "CREATE UNIQUE INDEX projects_student_profile_id_key ON public.projects USING btree (student_profile_id)",
+          "table": "public.projects",
+          "columns": [
+            "student_profile_id"
+          ]
         }
       ],
       "constraints": [
@@ -2201,13 +2252,13 @@
           ]
         },
         {
-          "name": "projects_tutor_profile_id_fkey",
+          "name": "projects_subcoordinator_profile_id_fkey",
           "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)",
+          "def": "FOREIGN KEY (subcoordinator_profile_id) REFERENCES profiles(id)",
           "table": "public.projects",
           "referenced_table": "profiles",
           "columns": [
-            "tutor_profile_id"
+            "subcoordinator_profile_id"
           ],
           "referenced_columns": [
             "id"
@@ -2234,6 +2285,16 @@
           "referenced_table": "",
           "columns": [
             "id"
+          ]
+        },
+        {
+          "name": "projects_student_profile_id_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (student_profile_id)",
+          "table": "public.projects",
+          "referenced_table": "",
+          "columns": [
+            "student_profile_id"
           ]
         }
       ],
@@ -2429,6 +2490,165 @@
         {
           "name": "trg_audit_update_project_progress",
           "def": "CREATE TRIGGER trg_audit_update_project_progress BEFORE UPDATE ON public.project_progress FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
+        }
+      ]
+    },
+    {
+      "name": "public.project_members",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "nullable": false,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "updated_by",
+          "type": "uuid",
+          "nullable": true,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "project_id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "profile_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "is_leader",
+          "type": "boolean",
+          "nullable": false,
+          "default": "false"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "project_members_pkey",
+          "def": "CREATE UNIQUE INDEX project_members_pkey ON public.project_members USING btree (id)",
+          "table": "public.project_members",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "project_members_project_id_profile_id_key",
+          "def": "CREATE UNIQUE INDEX project_members_project_id_profile_id_key ON public.project_members USING btree (project_id, profile_id)",
+          "table": "public.project_members",
+          "columns": [
+            "project_id",
+            "profile_id"
+          ]
+        },
+        {
+          "name": "project_members_profile_id_key",
+          "def": "CREATE UNIQUE INDEX project_members_profile_id_key ON public.project_members USING btree (profile_id)",
+          "table": "public.project_members",
+          "columns": [
+            "profile_id"
+          ]
+        },
+        {
+          "name": "idx_project_members_one_leader",
+          "def": "CREATE UNIQUE INDEX idx_project_members_one_leader ON public.project_members USING btree (project_id) WHERE (is_leader = true)",
+          "table": "public.project_members",
+          "columns": [
+            "project_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "project_members_profile_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (profile_id) REFERENCES profiles(id)",
+          "table": "public.project_members",
+          "referenced_table": "profiles",
+          "columns": [
+            "profile_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "project_members_project_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (project_id) REFERENCES projects(id)",
+          "table": "public.project_members",
+          "referenced_table": "projects",
+          "columns": [
+            "project_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "project_members_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.project_members",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "project_members_project_id_profile_id_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (project_id, profile_id)",
+          "table": "public.project_members",
+          "referenced_table": "",
+          "columns": [
+            "project_id",
+            "profile_id"
+          ]
+        },
+        {
+          "name": "project_members_profile_id_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (profile_id)",
+          "table": "public.project_members",
+          "referenced_table": "",
+          "columns": [
+            "profile_id"
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "name": "a_validate_project_member_limits",
+          "def": "CREATE TRIGGER a_validate_project_member_limits BEFORE INSERT OR DELETE OR UPDATE ON public.project_members FOR EACH ROW EXECUTE FUNCTION validate_project_member_limits()"
+        },
+        {
+          "name": "audit_project_members_changes",
+          "def": "CREATE TRIGGER audit_project_members_changes AFTER INSERT OR DELETE OR UPDATE ON public.project_members FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_project_members",
+          "def": "CREATE TRIGGER trg_audit_update_project_members BEFORE UPDATE ON public.project_members FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
@@ -3632,7 +3852,7 @@
     {
       "table": "public.schools",
       "columns": [
-        "tutor_profile_id"
+        "subcoordinator_profile_id"
       ],
       "cardinality": "zero_or_more",
       "parent_table": "public.profiles",
@@ -3640,7 +3860,7 @@
         "id"
       ],
       "parent_cardinality": "zero_or_one",
-      "def": "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
+      "def": "FOREIGN KEY (subcoordinator_profile_id) REFERENCES profiles(id)"
     },
     {
       "table": "public.schools",
@@ -3710,7 +3930,7 @@
     {
       "table": "public.invitations",
       "columns": [
-        "school_to_be_tutor"
+        "school_to_be_subcoordinator"
       ],
       "cardinality": "zero_or_more",
       "parent_table": "public.schools",
@@ -3718,7 +3938,7 @@
         "id"
       ],
       "parent_cardinality": "zero_or_one",
-      "def": "FOREIGN KEY (school_to_be_tutor) REFERENCES schools(id)"
+      "def": "FOREIGN KEY (school_to_be_subcoordinator) REFERENCES schools(id)"
     },
     {
       "table": "public.students",
@@ -3803,7 +4023,7 @@
       "columns": [
         "student_profile_id"
       ],
-      "cardinality": "zero_or_more",
+      "cardinality": "zero_or_one",
       "parent_table": "public.profiles",
       "parent_columns": [
         "id"
@@ -3814,15 +4034,15 @@
     {
       "table": "public.projects",
       "columns": [
-        "tutor_profile_id"
+        "subcoordinator_profile_id"
       ],
       "cardinality": "zero_or_more",
       "parent_table": "public.profiles",
       "parent_columns": [
         "id"
       ],
-      "parent_cardinality": "exactly_one",
-      "def": "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (subcoordinator_profile_id) REFERENCES profiles(id)"
     },
     {
       "table": "public.projects",
@@ -3891,6 +4111,32 @@
     },
     {
       "table": "public.project_progress",
+      "columns": [
+        "project_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.projects",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (project_id) REFERENCES projects(id)"
+    },
+    {
+      "table": "public.project_members",
+      "columns": [
+        "profile_id"
+      ],
+      "cardinality": "zero_or_one",
+      "parent_table": "public.profiles",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
+    },
+    {
+      "table": "public.project_members",
       "columns": [
         "project_id"
       ],
@@ -4220,7 +4466,7 @@
       "type": "FUNCTION"
     },
     {
-      "name": "public.assign_school_to_teacher_on_signup",
+      "name": "public.assign_school_to_subcoordinator_on_signup",
       "return_type": "trigger",
       "arguments": "",
       "type": "FUNCTION"
@@ -4269,6 +4515,12 @@
     },
     {
       "name": "public.set_project_staff_on_insert",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.validate_project_member_limits",
       "return_type": "trigger",
       "arguments": "",
       "type": "FUNCTION"

@@ -63,7 +63,7 @@ erDiagram
   timestamp_with_time_zone updated_at ""
   uuid updated_by ""
   bigint id ""
-  uuid tutor_profile_id FK ""
+  uuid subcoordinator_profile_id FK ""
   uuid coordinator_profile_id FK ""
   uuid student_profile_id FK ""
   bigint institution_id FK ""

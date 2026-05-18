@@ -78,7 +78,7 @@ erDiagram
   bigint id ""
   uuid invited_by_profile_id FK ""
   bigint faculty_to_be_coordinator FK ""
-  bigint school_to_be_tutor FK ""
+  bigint school_to_be_subcoordinator FK ""
   bigint role_to_have_id FK ""
   text email ""
   text hashed_token ""

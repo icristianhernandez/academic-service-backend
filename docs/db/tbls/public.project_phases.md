@@ -21,7 +21,7 @@
 | Name | Type | Definition |
 | ---- | ---- | ---------- |
 | project_phases_check | CHECK | CHECK ((((phase_kind = 'report'::text) AND (report_number IS NOT NULL) AND ((report_number >= 1) AND (report_number <= 10))) OR ((phase_kind <> 'report'::text) AND (report_number IS NULL)))) |
-| project_phases_phase_kind_check | CHECK | CHECK ((phase_kind = ANY (ARRAY['preproject'::text, 'report'::text, 'final_report'::text]))) |
+| project_phases_phase_kind_check | CHECK | CHECK ((phase_kind = ANY (ARRAY['preproject'::text, 'report'::text, 'final_report'::text, 'approved'::text]))) |
 | project_phases_pkey | PRIMARY KEY | PRIMARY KEY (id) |
 | project_phases_project_phase_name_key | UNIQUE | UNIQUE (project_phase_name) |
 | project_phases_project_phase_order_key | UNIQUE | UNIQUE (project_phase_order) |

@@ -10,7 +10,7 @@
 | created_by | uuid | auth.uid() | false |  |  |  |
 | updated_at | timestamp with time zone | now() | false |  |  |  |
 | updated_by | uuid | auth.uid() | true |  |  |  |
-| id | uuid |  | false | [public.campuses](public.campuses.md) [public.faculties](public.faculties.md) [public.schools](public.schools.md) [public.invitations](public.invitations.md) [public.students](public.students.md) [public.documents](public.documents.md) [public.institutions](public.institutions.md) [public.projects](public.projects.md) [public.project_progress](public.project_progress.md) [public.notifications_events](public.notifications_events.md) [public.notification_recipients](public.notification_recipients.md) |  |  |
+| id | uuid |  | false | [public.campuses](public.campuses.md) [public.faculties](public.faculties.md) [public.schools](public.schools.md) [public.invitations](public.invitations.md) [public.students](public.students.md) [public.documents](public.documents.md) [public.institutions](public.institutions.md) [public.projects](public.projects.md) [public.project_progress](public.project_progress.md) [public.project_members](public.project_members.md) [public.notifications_events](public.notifications_events.md) [public.notification_recipients](public.notification_recipients.md) |  |  |
 | user_names | text |  | false |  |  |  |
 | user_last_names | text |  | false |  |  |  |
 | national_id | text |  | false |  |  |  |
@@ -56,15 +56,16 @@ erDiagram
 "public.campuses" }o--o| "public.profiles" : "FOREIGN KEY (president_profile_id) REFERENCES profiles(id)"
 "public.faculties" }o--o| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
 "public.faculties" }o--o| "public.profiles" : "FOREIGN KEY (dean_profile_id) REFERENCES profiles(id)"
-"public.schools" }o--o| "public.profiles" : "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
+"public.schools" }o--o| "public.profiles" : "FOREIGN KEY (subcoordinator_profile_id) REFERENCES profiles(id)"
 "public.invitations" }o--o| "public.profiles" : "FOREIGN KEY (invited_by_profile_id) REFERENCES profiles(id)"
 "public.students" }o--|| "public.profiles" : "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
 "public.documents" }o--|| "public.profiles" : "FOREIGN KEY (uploaded_by_profile_id) REFERENCES profiles(id) ON DELETE CASCADE"
 "public.institutions" }o--o| "public.profiles" : "FOREIGN KEY (contact_person_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
-"public.projects" }o--|| "public.profiles" : "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
-"public.projects" }o--|| "public.profiles" : "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
+"public.projects" |o--|| "public.profiles" : "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
+"public.projects" }o--o| "public.profiles" : "FOREIGN KEY (subcoordinator_profile_id) REFERENCES profiles(id)"
 "public.project_progress" }o--|| "public.profiles" : "FOREIGN KEY (author_profile_id) REFERENCES profiles(id)"
+"public.project_members" |o--|| "public.profiles" : "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
 "public.notifications_events" }o--o| "public.profiles" : "FOREIGN KEY (actor_id) REFERENCES profiles(id)"
 "public.notification_recipients" }o--|| "public.profiles" : "FOREIGN KEY (recipient_id) REFERENCES profiles(id)"
 "public.profiles" }o--o| "public.roles" : "FOREIGN KEY (role_id) REFERENCES roles(id)"
@@ -106,6 +107,8 @@ erDiagram
   bigint campus_id FK ""
   text faculty_name ""
   smallint reports_required_count ""
+  smallint min_members ""
+  smallint max_members ""
   uuid dean_profile_id FK ""
   uuid coordinator_profile_id FK ""
 }
@@ -117,7 +120,7 @@ erDiagram
   bigint id ""
   bigint degree_id FK ""
   bigint faculty_id FK ""
-  uuid tutor_profile_id FK ""
+  uuid subcoordinator_profile_id FK ""
 }
 "public.invitations" {
   timestamp_with_time_zone created_at ""
@@ -127,7 +130,7 @@ erDiagram
   bigint id ""
   uuid invited_by_profile_id FK ""
   bigint faculty_to_be_coordinator FK ""
-  bigint school_to_be_tutor FK ""
+  bigint school_to_be_subcoordinator FK ""
   bigint role_to_have_id FK ""
   text email ""
   text hashed_token ""
@@ -173,7 +176,7 @@ erDiagram
   timestamp_with_time_zone updated_at ""
   uuid updated_by ""
   bigint id ""
-  uuid tutor_profile_id FK ""
+  uuid subcoordinator_profile_id FK ""
   uuid coordinator_profile_id FK ""
   uuid student_profile_id FK ""
   bigint institution_id FK ""
@@ -192,6 +195,16 @@ erDiagram
   uuid author_profile_id FK ""
   bigint document_id FK ""
   text observations ""
+}
+"public.project_members" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint project_id FK ""
+  uuid profile_id FK ""
+  boolean is_leader ""
 }
 "public.notifications_events" {
   timestamp_with_time_zone created_at ""

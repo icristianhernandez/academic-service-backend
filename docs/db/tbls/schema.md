@@ -13,7 +13,7 @@
 | [public.cities](public.cities.md) | 7 |  | BASE TABLE |
 | [public.locations](public.locations.md) | 7 |  | BASE TABLE |
 | [public.campuses](public.campuses.md) | 8 |  | BASE TABLE |
-| [public.faculties](public.faculties.md) | 10 |  | BASE TABLE |
+| [public.faculties](public.faculties.md) | 12 |  | BASE TABLE |
 | [public.degrees](public.degrees.md) | 6 |  | BASE TABLE |
 | [public.schools](public.schools.md) | 8 |  | BASE TABLE |
 | [public.invitations](public.invitations.md) | 14 |  | BASE TABLE |
@@ -24,6 +24,7 @@
 | [public.project_states](public.project_states.md) | 6 |  | BASE TABLE |
 | [public.projects](public.projects.md) | 11 |  | BASE TABLE |
 | [public.project_progress](public.project_progress.md) | 11 |  | BASE TABLE |
+| [public.project_members](public.project_members.md) | 8 |  | BASE TABLE |
 | [public.notification_types](public.notification_types.md) | 6 |  | BASE TABLE |
 | [public.notification_recipients_rules](public.notification_recipients_rules.md) | 8 |  | BASE TABLE |
 | [public.notification_type_resolution_rules](public.notification_type_resolution_rules.md) | 11 |  | BASE TABLE |
@@ -70,7 +71,7 @@
 | public.handle_new_profile | trigger |  | FUNCTION |
 | public.handle_new_student_profile | trigger |  | FUNCTION |
 | public.assign_faculty_to_coordinator_on_signup | trigger |  | FUNCTION |
-| public.assign_school_to_teacher_on_signup | trigger |  | FUNCTION |
+| public.assign_school_to_subcoordinator_on_signup | trigger |  | FUNCTION |
 | public.deactivate_invitation_on_signup | trigger |  | FUNCTION |
 | public.get_invitation_rol | text | p_email text, p_token text | FUNCTION |
 | public.set_invited_by_profile_id | trigger |  | FUNCTION |
@@ -79,6 +80,7 @@
 | public.assign_invitation_token | trigger |  | FUNCTION |
 | public.validate_project_progress_phase_transition | trigger |  | FUNCTION |
 | public.set_project_staff_on_insert | trigger |  | FUNCTION |
+| public.validate_project_member_limits | trigger |  | FUNCTION |
 | public.resolve_notification_type_id | int8 | p_source_kind text, p_operation_kind text, p_context jsonb | FUNCTION |
 | public.enqueue_project_progress_notification_event | trigger |  | FUNCTION |
 | public.process_notification_events_queue | int4 | p_batch_size integer DEFAULT 100 | FUNCTION |

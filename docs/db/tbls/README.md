@@ -13,7 +13,7 @@
 | [public.cities](public.cities.md) | 7 |  | BASE TABLE |
 | [public.locations](public.locations.md) | 7 |  | BASE TABLE |
 | [public.campuses](public.campuses.md) | 8 |  | BASE TABLE |
-| [public.faculties](public.faculties.md) | 10 |  | BASE TABLE |
+| [public.faculties](public.faculties.md) | 12 |  | BASE TABLE |
 | [public.degrees](public.degrees.md) | 6 |  | BASE TABLE |
 | [public.schools](public.schools.md) | 8 |  | BASE TABLE |
 | [public.invitations](public.invitations.md) | 14 |  | BASE TABLE |
@@ -24,6 +24,7 @@
 | [public.project_states](public.project_states.md) | 6 |  | BASE TABLE |
 | [public.projects](public.projects.md) | 11 |  | BASE TABLE |
 | [public.project_progress](public.project_progress.md) | 11 |  | BASE TABLE |
+| [public.project_members](public.project_members.md) | 8 |  | BASE TABLE |
 | [public.notification_types](public.notification_types.md) | 6 |  | BASE TABLE |
 | [public.notification_recipients_rules](public.notification_recipients_rules.md) | 8 |  | BASE TABLE |
 | [public.notification_type_resolution_rules](public.notification_type_resolution_rules.md) | 11 |  | BASE TABLE |
@@ -70,7 +71,7 @@
 | public.handle_new_profile | trigger |  | FUNCTION |
 | public.handle_new_student_profile | trigger |  | FUNCTION |
 | public.assign_faculty_to_coordinator_on_signup | trigger |  | FUNCTION |
-| public.assign_school_to_teacher_on_signup | trigger |  | FUNCTION |
+| public.assign_school_to_subcoordinator_on_signup | trigger |  | FUNCTION |
 | public.deactivate_invitation_on_signup | trigger |  | FUNCTION |
 | public.get_invitation_rol | text | p_email text, p_token text | FUNCTION |
 | public.set_invited_by_profile_id | trigger |  | FUNCTION |
@@ -79,6 +80,7 @@
 | public.assign_invitation_token | trigger |  | FUNCTION |
 | public.validate_project_progress_phase_transition | trigger |  | FUNCTION |
 | public.set_project_staff_on_insert | trigger |  | FUNCTION |
+| public.validate_project_member_limits | trigger |  | FUNCTION |
 | public.resolve_notification_type_id | int8 | p_source_kind text, p_operation_kind text, p_context jsonb | FUNCTION |
 | public.enqueue_project_progress_notification_event | trigger |  | FUNCTION |
 | public.process_notification_events_queue | int4 | p_batch_size integer DEFAULT 100 | FUNCTION |
@@ -127,27 +129,29 @@ erDiagram
 "public.faculties" }o--o| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
 "public.faculties" }o--o| "public.profiles" : "FOREIGN KEY (dean_profile_id) REFERENCES profiles(id)"
 "public.faculties" }o--|| "public.campuses" : "FOREIGN KEY (campus_id) REFERENCES campuses(id)"
-"public.schools" }o--o| "public.profiles" : "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
+"public.schools" }o--o| "public.profiles" : "FOREIGN KEY (subcoordinator_profile_id) REFERENCES profiles(id)"
 "public.schools" }o--|| "public.faculties" : "FOREIGN KEY (faculty_id) REFERENCES faculties(id)"
 "public.schools" }o--|| "public.degrees" : "FOREIGN KEY (degree_id) REFERENCES degrees(id)"
 "public.invitations" }o--o| "public.roles" : "FOREIGN KEY (role_to_have_id) REFERENCES roles(id)"
 "public.invitations" }o--o| "public.profiles" : "FOREIGN KEY (invited_by_profile_id) REFERENCES profiles(id)"
 "public.invitations" }o--o| "public.faculties" : "FOREIGN KEY (faculty_to_be_coordinator) REFERENCES faculties(id)"
-"public.invitations" }o--o| "public.schools" : "FOREIGN KEY (school_to_be_tutor) REFERENCES schools(id)"
+"public.invitations" }o--o| "public.schools" : "FOREIGN KEY (school_to_be_subcoordinator) REFERENCES schools(id)"
 "public.students" }o--|| "public.profiles" : "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
 "public.students" }o--|| "public.schools" : "FOREIGN KEY (school_id) REFERENCES schools(id)"
 "public.documents" }o--|| "public.profiles" : "FOREIGN KEY (uploaded_by_profile_id) REFERENCES profiles(id) ON DELETE CASCADE"
 "public.institutions" }o--o| "public.profiles" : "FOREIGN KEY (contact_person_profile_id) REFERENCES profiles(id)"
 "public.institutions" }o--o| "public.locations" : "FOREIGN KEY (location_id) REFERENCES locations(id)"
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
-"public.projects" }o--|| "public.profiles" : "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
-"public.projects" }o--|| "public.profiles" : "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
+"public.projects" |o--|| "public.profiles" : "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
+"public.projects" }o--o| "public.profiles" : "FOREIGN KEY (subcoordinator_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.institutions" : "FOREIGN KEY (institution_id) REFERENCES institutions(id)"
 "public.project_progress" }o--|| "public.profiles" : "FOREIGN KEY (author_profile_id) REFERENCES profiles(id)"
 "public.project_progress" }o--|| "public.documents" : "FOREIGN KEY (document_id) REFERENCES documents(id)"
 "public.project_progress" }o--|| "public.project_phases" : "FOREIGN KEY (project_phase_id) REFERENCES project_phases(id)"
 "public.project_progress" }o--|| "public.project_states" : "FOREIGN KEY (project_state_id) REFERENCES project_states(id)"
 "public.project_progress" }o--|| "public.projects" : "FOREIGN KEY (project_id) REFERENCES projects(id)"
+"public.project_members" |o--|| "public.profiles" : "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
+"public.project_members" }o--|| "public.projects" : "FOREIGN KEY (project_id) REFERENCES projects(id)"
 "public.notification_recipients_rules" }o--|| "public.notification_types" : "FOREIGN KEY (notification_type_id) REFERENCES notification_types(id)"
 "public.notification_type_resolution_rules" }o--|| "public.notification_types" : "FOREIGN KEY (notification_type_id) REFERENCES notification_types(id)"
 "public.notification_type_defaults" |o--|| "public.notification_types" : "FOREIGN KEY (notification_type_id) REFERENCES notification_types(id)"
@@ -256,6 +260,8 @@ erDiagram
   bigint campus_id FK ""
   text faculty_name ""
   smallint reports_required_count ""
+  smallint min_members ""
+  smallint max_members ""
   uuid dean_profile_id FK ""
   uuid coordinator_profile_id FK ""
 }
@@ -275,7 +281,7 @@ erDiagram
   bigint id ""
   bigint degree_id FK ""
   bigint faculty_id FK ""
-  uuid tutor_profile_id FK ""
+  uuid subcoordinator_profile_id FK ""
 }
 "public.invitations" {
   timestamp_with_time_zone created_at ""
@@ -285,7 +291,7 @@ erDiagram
   bigint id ""
   uuid invited_by_profile_id FK ""
   bigint faculty_to_be_coordinator FK ""
-  bigint school_to_be_tutor FK ""
+  bigint school_to_be_subcoordinator FK ""
   bigint role_to_have_id FK ""
   text email ""
   text hashed_token ""
@@ -350,7 +356,7 @@ erDiagram
   timestamp_with_time_zone updated_at ""
   uuid updated_by ""
   bigint id ""
-  uuid tutor_profile_id FK ""
+  uuid subcoordinator_profile_id FK ""
   uuid coordinator_profile_id FK ""
   uuid student_profile_id FK ""
   bigint institution_id FK ""
@@ -369,6 +375,16 @@ erDiagram
   uuid author_profile_id FK ""
   bigint document_id FK ""
   text observations ""
+}
+"public.project_members" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint project_id FK ""
+  uuid profile_id FK ""
+  boolean is_leader ""
 }
 "public.notification_types" {
   timestamp_with_time_zone created_at ""

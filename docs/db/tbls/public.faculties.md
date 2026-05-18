@@ -14,6 +14,8 @@
 | campus_id | bigint |  | false |  | [public.campuses](public.campuses.md) |  |
 | faculty_name | text |  | false |  |  |  |
 | reports_required_count | smallint | 3 | false |  |  |  |
+| min_members | smallint | 1 | false |  |  |  |
+| max_members | smallint | 1 | false |  |  |  |
 | dean_profile_id | uuid |  | true |  | [public.profiles](public.profiles.md) |  |
 | coordinator_profile_id | uuid |  | true |  | [public.profiles](public.profiles.md) |  |
 
@@ -21,6 +23,9 @@
 
 | Name | Type | Definition |
 | ---- | ---- | ---------- |
+| faculties_check | CHECK | CHECK ((min_members <= max_members)) |
+| faculties_max_members_check | CHECK | CHECK (((max_members >= 1) AND (max_members <= 20))) |
+| faculties_min_members_check | CHECK | CHECK (((min_members >= 1) AND (min_members <= 20))) |
 | faculties_reports_required_count_check | CHECK | CHECK (((reports_required_count >= 0) AND (reports_required_count <= 10))) |
 | faculties_coordinator_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id) |
 | faculties_dean_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (dean_profile_id) REFERENCES profiles(id) |
@@ -62,6 +67,8 @@ erDiagram
   bigint campus_id FK ""
   text faculty_name ""
   smallint reports_required_count ""
+  smallint min_members ""
+  smallint max_members ""
   uuid dean_profile_id FK ""
   uuid coordinator_profile_id FK ""
 }
@@ -73,7 +80,7 @@ erDiagram
   bigint id ""
   bigint degree_id FK ""
   bigint faculty_id FK ""
-  uuid tutor_profile_id FK ""
+  uuid subcoordinator_profile_id FK ""
 }
 "public.invitations" {
   timestamp_with_time_zone created_at ""
@@ -83,7 +90,7 @@ erDiagram
   bigint id ""
   uuid invited_by_profile_id FK ""
   bigint faculty_to_be_coordinator FK ""
-  bigint school_to_be_tutor FK ""
+  bigint school_to_be_subcoordinator FK ""
   bigint role_to_have_id FK ""
   text email ""
   text hashed_token ""

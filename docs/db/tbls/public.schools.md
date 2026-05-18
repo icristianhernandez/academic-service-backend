@@ -13,13 +13,13 @@
 | id | bigint |  | false | [public.invitations](public.invitations.md) [public.students](public.students.md) |  |  |
 | degree_id | bigint |  | false |  | [public.degrees](public.degrees.md) |  |
 | faculty_id | bigint |  | false |  | [public.faculties](public.faculties.md) |  |
-| tutor_profile_id | uuid |  | true |  | [public.profiles](public.profiles.md) |  |
+| subcoordinator_profile_id | uuid |  | true |  | [public.profiles](public.profiles.md) |  |
 
 ## Constraints
 
 | Name | Type | Definition |
 | ---- | ---- | ---------- |
-| schools_tutor_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id) |
+| schools_subcoordinator_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (subcoordinator_profile_id) REFERENCES profiles(id) |
 | schools_faculty_id_fkey | FOREIGN KEY | FOREIGN KEY (faculty_id) REFERENCES faculties(id) |
 | schools_degree_id_fkey | FOREIGN KEY | FOREIGN KEY (degree_id) REFERENCES degrees(id) |
 | schools_pkey | PRIMARY KEY | PRIMARY KEY (id) |
@@ -44,11 +44,11 @@
 ```mermaid
 erDiagram
 
-"public.invitations" }o--o| "public.schools" : "FOREIGN KEY (school_to_be_tutor) REFERENCES schools(id)"
+"public.invitations" }o--o| "public.schools" : "FOREIGN KEY (school_to_be_subcoordinator) REFERENCES schools(id)"
 "public.students" }o--|| "public.schools" : "FOREIGN KEY (school_id) REFERENCES schools(id)"
 "public.schools" }o--|| "public.degrees" : "FOREIGN KEY (degree_id) REFERENCES degrees(id)"
 "public.schools" }o--|| "public.faculties" : "FOREIGN KEY (faculty_id) REFERENCES faculties(id)"
-"public.schools" }o--o| "public.profiles" : "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
+"public.schools" }o--o| "public.profiles" : "FOREIGN KEY (subcoordinator_profile_id) REFERENCES profiles(id)"
 
 "public.schools" {
   timestamp_with_time_zone created_at ""
@@ -58,7 +58,7 @@ erDiagram
   bigint id ""
   bigint degree_id FK ""
   bigint faculty_id FK ""
-  uuid tutor_profile_id FK ""
+  uuid subcoordinator_profile_id FK ""
 }
 "public.invitations" {
   timestamp_with_time_zone created_at ""
@@ -68,7 +68,7 @@ erDiagram
   bigint id ""
   uuid invited_by_profile_id FK ""
   bigint faculty_to_be_coordinator FK ""
-  bigint school_to_be_tutor FK ""
+  bigint school_to_be_subcoordinator FK ""
   bigint role_to_have_id FK ""
   text email ""
   text hashed_token ""
@@ -105,6 +105,8 @@ erDiagram
   bigint campus_id FK ""
   text faculty_name ""
   smallint reports_required_count ""
+  smallint min_members ""
+  smallint max_members ""
   uuid dean_profile_id FK ""
   uuid coordinator_profile_id FK ""
 }

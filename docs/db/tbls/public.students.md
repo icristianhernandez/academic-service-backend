@@ -84,7 +84,7 @@ erDiagram
   bigint id ""
   bigint degree_id FK ""
   bigint faculty_id FK ""
-  uuid tutor_profile_id FK ""
+  uuid subcoordinator_profile_id FK ""
 }
 ```
 

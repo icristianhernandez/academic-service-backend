@@ -66,6 +66,8 @@ erDiagram
   bigint campus_id FK ""
   text faculty_name ""
   smallint reports_required_count ""
+  smallint min_members ""
+  smallint max_members ""
   uuid dean_profile_id FK ""
   uuid coordinator_profile_id FK ""
 }

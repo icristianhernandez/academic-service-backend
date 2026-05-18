@@ -10,8 +10,8 @@
 | created_by | uuid | auth.uid() | false |  |  |  |
 | updated_at | timestamp with time zone | now() | false |  |  |  |
 | updated_by | uuid | auth.uid() | true |  |  |  |
-| id | bigint |  | false | [public.project_progress](public.project_progress.md) |  |  |
-| tutor_profile_id | uuid |  | false |  | [public.profiles](public.profiles.md) |  |
+| id | bigint |  | false | [public.project_progress](public.project_progress.md) [public.project_members](public.project_members.md) |  |  |
+| subcoordinator_profile_id | uuid |  | true |  | [public.profiles](public.profiles.md) |  |
 | coordinator_profile_id | uuid |  | false |  | [public.profiles](public.profiles.md) |  |
 | student_profile_id | uuid |  | false |  | [public.profiles](public.profiles.md) |  |
 | institution_id | bigint |  | false |  | [public.institutions](public.institutions.md) |  |
@@ -24,15 +24,17 @@
 | ---- | ---- | ---------- |
 | projects_coordinator_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id) |
 | projects_student_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (student_profile_id) REFERENCES profiles(id) |
-| projects_tutor_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id) |
+| projects_subcoordinator_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (subcoordinator_profile_id) REFERENCES profiles(id) |
 | projects_institution_id_fkey | FOREIGN KEY | FOREIGN KEY (institution_id) REFERENCES institutions(id) |
 | projects_pkey | PRIMARY KEY | PRIMARY KEY (id) |
+| projects_student_profile_id_key | UNIQUE | UNIQUE (student_profile_id) |
 
 ## Indexes
 
 | Name | Definition |
 | ---- | ---------- |
 | projects_pkey | CREATE UNIQUE INDEX projects_pkey ON public.projects USING btree (id) |
+| projects_student_profile_id_key | CREATE UNIQUE INDEX projects_student_profile_id_key ON public.projects USING btree (student_profile_id) |
 
 ## Triggers
 
@@ -48,9 +50,10 @@
 erDiagram
 
 "public.project_progress" }o--|| "public.projects" : "FOREIGN KEY (project_id) REFERENCES projects(id)"
-"public.projects" }o--|| "public.profiles" : "FOREIGN KEY (tutor_profile_id) REFERENCES profiles(id)"
+"public.project_members" }o--|| "public.projects" : "FOREIGN KEY (project_id) REFERENCES projects(id)"
+"public.projects" }o--o| "public.profiles" : "FOREIGN KEY (subcoordinator_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
-"public.projects" }o--|| "public.profiles" : "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
+"public.projects" |o--|| "public.profiles" : "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.institutions" : "FOREIGN KEY (institution_id) REFERENCES institutions(id)"
 
 "public.projects" {
@@ -59,7 +62,7 @@ erDiagram
   timestamp_with_time_zone updated_at ""
   uuid updated_by ""
   bigint id ""
-  uuid tutor_profile_id FK ""
+  uuid subcoordinator_profile_id FK ""
   uuid coordinator_profile_id FK ""
   uuid student_profile_id FK ""
   bigint institution_id FK ""
@@ -78,6 +81,16 @@ erDiagram
   uuid author_profile_id FK ""
   bigint document_id FK ""
   text observations ""
+}
+"public.project_members" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint project_id FK ""
+  uuid profile_id FK ""
+  boolean is_leader ""
 }
 "public.profiles" {
   timestamp_with_time_zone created_at ""
