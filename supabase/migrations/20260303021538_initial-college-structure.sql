@@ -3,7 +3,9 @@ create table campuses (
     id bigint generated always as identity primary key,
     location_id bigint not null references locations (id),
     campus_name text not null unique,
-    president_profile_id uuid references profiles (id)
+    rector_profile_id uuid references profiles (id),
+    vicerector_administrativo_profile_id uuid references profiles (id),
+    vicerector_academico_profile_id uuid references profiles (id)
 );
 
 create table faculties (

@@ -12,6 +12,9 @@ const role_labels: Record<string, string> = {
   dean: "Decano",
   administrative: "Administrativo",
   sysadmin: "Administrador del Sistema",
+  rector: "Rector",
+  vicerector_administrativo: "Vicerrector Administrativo",
+  vicerector_academico: "Vicerrector Académico",
 };
 
 function resolve_role_label(role: string): string {

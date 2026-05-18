@@ -18,7 +18,10 @@ values
 ('dean', 3),
 ('subcoordinator', 4),
 ('coordinator', 5),
-('sysadmin', 6)
+('sysadmin', 6),
+('rector', 4),
+('vicerector_administrativo', 4),
+('vicerector_academico', 4)
 on conflict (role_name) do update
     set permission_level = excluded.permission_level;
 

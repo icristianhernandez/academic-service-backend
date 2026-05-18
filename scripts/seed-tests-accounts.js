@@ -73,6 +73,13 @@ async function main() {
     .single();
   const systemsSchoolId = schoolData?.id;
 
+  const { data: campusData } = await supabase
+    .from("campuses")
+    .select("id")
+    .eq("campus_name", "Universidad Santa Maria - La Florencia")
+    .single();
+  const campusId = campusData?.id;
+
   // 3. Ensure a default institution exists
   const { data: existingInstitution } = await supabase
     .from("institutions")
@@ -173,6 +180,36 @@ async function main() {
       primary_contact: "04241111111",
       secondary_contact: "04241111111",
     },
+    {
+      email: "rector@test.local",
+      password: "123",
+      role: "rector",
+      user_names: "test test",
+      user_last_names: "rector 1",
+      national_id: "V-10000007",
+      primary_contact: "04241111111",
+      secondary_contact: "04241111111",
+    },
+    {
+      email: "vicerector_administrativo@test.local",
+      password: "123",
+      role: "vicerector_administrativo",
+      user_names: "test test",
+      user_last_names: "vicerector administrativo 1",
+      national_id: "V-10000008",
+      primary_contact: "04241111111",
+      secondary_contact: "04241111111",
+    },
+    {
+      email: "vicerector_academico@test.local",
+      password: "123",
+      role: "vicerector_academico",
+      user_names: "test test",
+      user_last_names: "vicerector academico 1",
+      national_id: "V-10000009",
+      primary_contact: "04241111111",
+      secondary_contact: "04241111111",
+    },
   ];
 
   for (const account of testAccounts) {
@@ -197,6 +234,12 @@ async function main() {
         invitationPayload.faculty_to_be_coordinator = engineeringFacultyId;
       } else if (account.role === "subcoordinator") {
         invitationPayload.school_to_be_subcoordinator = systemsSchoolId;
+      } else if (account.role === "rector") {
+        invitationPayload.campus_to_be_rector = campusId;
+      } else if (account.role === "vicerector_administrativo") {
+        invitationPayload.campus_to_be_vicerector_administrativo = campusId;
+      } else if (account.role === "vicerector_academico") {
+        invitationPayload.campus_to_be_vicerector_academico = campusId;
       }
 
       const { error: invError } = await supabase

@@ -11,11 +11,11 @@ select set_config(
     true
 );
 
-insert into campuses (location_id, campus_name, president_profile_id)
+insert into campuses (location_id, campus_name, rector_profile_id)
 select
     location_row.id as location_id,
     'Universidad Santa Maria - La Florencia' as campus_name,
-    null as president_profile_id
+    null as rector_profile_id
 from locations as location_row
 where
     location_row.address
@@ -26,7 +26,7 @@ where
 on conflict (campus_name) do update
     set
         location_id = excluded.location_id,
-        president_profile_id = excluded.president_profile_id;
+        rector_profile_id = excluded.rector_profile_id;
 
 insert into degrees (degree_name)
 values

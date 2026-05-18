@@ -361,6 +361,129 @@ begin
 end;
 $$;
 
+create function public.assign_rector_to_campus_on_signup()
+returns trigger
+language plpgsql
+security definer set search_path = ''
+as $$
+declare
+    v_campus_id bigint;
+    v_role_name text;
+begin
+    select invitation.campus_to_be_rector, role.role_name
+    into v_campus_id, v_role_name
+    from public.invitations invitation
+    join public.roles role on role.id = invitation.role_to_have_id
+    where invitation.email = new.email
+      and invitation.reclaimed_at is null
+    limit 1;
+
+    if v_role_name is distinct from 'rector' then
+        return new;
+    end if;
+
+    if exists (
+        select 1
+        from public.campuses campus
+        where campus.id = v_campus_id
+          and campus.rector_profile_id is not null
+    ) then
+        raise exception
+            'Signup failed. Campus % already has a rector assigned',
+            v_campus_id
+            using errcode = 'P0001';
+    end if;
+
+    update public.campuses
+    set rector_profile_id = new.id
+    where id = v_campus_id;
+
+    return new;
+end;
+$$;
+
+create function public.assign_vicerector_administrativo_to_campus_on_signup()
+returns trigger
+language plpgsql
+security definer set search_path = ''
+as $$
+declare
+    v_campus_id bigint;
+    v_role_name text;
+begin
+    select invitation.campus_to_be_vicerector_administrativo, role.role_name
+    into v_campus_id, v_role_name
+    from public.invitations invitation
+    join public.roles role on role.id = invitation.role_to_have_id
+    where invitation.email = new.email
+      and invitation.reclaimed_at is null
+    limit 1;
+
+    if v_role_name is distinct from 'vicerector_administrativo' then
+        return new;
+    end if;
+
+    if exists (
+        select 1
+        from public.campuses campus
+        where campus.id = v_campus_id
+          and campus.vicerector_administrativo_profile_id is not null
+    ) then
+        raise exception
+            'Signup failed. Campus % already has a vicerector administrativo assigned',
+            v_campus_id
+            using errcode = 'P0001';
+    end if;
+
+    update public.campuses
+    set vicerector_administrativo_profile_id = new.id
+    where id = v_campus_id;
+
+    return new;
+end;
+$$;
+
+create function public.assign_vicerector_academico_to_campus_on_signup()
+returns trigger
+language plpgsql
+security definer set search_path = ''
+as $$
+declare
+    v_campus_id bigint;
+    v_role_name text;
+begin
+    select invitation.campus_to_be_vicerector_academico, role.role_name
+    into v_campus_id, v_role_name
+    from public.invitations invitation
+    join public.roles role on role.id = invitation.role_to_have_id
+    where invitation.email = new.email
+      and invitation.reclaimed_at is null
+    limit 1;
+
+    if v_role_name is distinct from 'vicerector_academico' then
+        return new;
+    end if;
+
+    if exists (
+        select 1
+        from public.campuses campus
+        where campus.id = v_campus_id
+          and campus.vicerector_academico_profile_id is not null
+    ) then
+        raise exception
+            'Signup failed. Campus % already has a vicerector academico assigned',
+            v_campus_id
+            using errcode = 'P0001';
+    end if;
+
+    update public.campuses
+    set vicerector_academico_profile_id = new.id
+    where id = v_campus_id;
+
+    return new;
+end;
+$$;
+
 create function public.deactivate_invitation_on_signup()
 returns trigger
 language plpgsql
@@ -405,6 +528,21 @@ create trigger e_assign_school_to_subcoordinator_on_signup
 after insert on auth.users
 for each row
 execute procedure public.assign_school_to_subcoordinator_on_signup();
+
+create trigger f_assign_campus_to_rector_on_signup
+after insert on auth.users
+for each row
+execute procedure public.assign_rector_to_campus_on_signup();
+
+create trigger g_assign_campus_to_vicerector_administrativo_on_signup
+after insert on auth.users
+for each row
+execute procedure public.assign_vicerector_administrativo_to_campus_on_signup();
+
+create trigger h_assign_campus_to_vicerector_academico_on_signup
+after insert on auth.users
+for each row
+execute procedure public.assign_vicerector_academico_to_campus_on_signup();
 
 create trigger z_deactivate_invitation_on_signup
 after insert on auth.users
