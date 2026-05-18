@@ -3831,6 +3831,428 @@
           "def": "CREATE TRIGGER trg_audit_update_notifications_external_deliveries BEFORE UPDATE ON public.notifications_external_deliveries FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
+    },
+    {
+      "name": "public.validacion_states",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "nullable": false,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "updated_by",
+          "type": "uuid",
+          "nullable": true,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "validacion_state_name",
+          "type": "text",
+          "nullable": false
+        }
+      ],
+      "indexes": [
+        {
+          "name": "validacion_states_pkey",
+          "def": "CREATE UNIQUE INDEX validacion_states_pkey ON public.validacion_states USING btree (id)",
+          "table": "public.validacion_states",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "validacion_states_validacion_state_name_key",
+          "def": "CREATE UNIQUE INDEX validacion_states_validacion_state_name_key ON public.validacion_states USING btree (validacion_state_name)",
+          "table": "public.validacion_states",
+          "columns": [
+            "validacion_state_name"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "validacion_states_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.validacion_states",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "validacion_states_validacion_state_name_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (validacion_state_name)",
+          "table": "public.validacion_states",
+          "referenced_table": "",
+          "columns": [
+            "validacion_state_name"
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "name": "audit_validacion_states_changes",
+          "def": "CREATE TRIGGER audit_validacion_states_changes AFTER INSERT OR DELETE OR UPDATE ON public.validacion_states FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_validacion_states",
+          "def": "CREATE TRIGGER trg_audit_update_validacion_states BEFORE UPDATE ON public.validacion_states FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
+        }
+      ]
+    },
+    {
+      "name": "public.service_validations",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "nullable": false,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "updated_by",
+          "type": "uuid",
+          "nullable": true,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "student_profile_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "coordinator_profile_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "achievement_title",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "grade_document_id",
+          "type": "bigint",
+          "nullable": true
+        },
+        {
+          "name": "certificate_document_id",
+          "type": "bigint",
+          "nullable": false
+        }
+      ],
+      "indexes": [
+        {
+          "name": "service_validations_pkey",
+          "def": "CREATE UNIQUE INDEX service_validations_pkey ON public.service_validations USING btree (id)",
+          "table": "public.service_validations",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "service_validations_student_profile_id_unique",
+          "def": "CREATE UNIQUE INDEX service_validations_student_profile_id_unique ON public.service_validations USING btree (student_profile_id)",
+          "table": "public.service_validations",
+          "columns": [
+            "student_profile_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "service_validations_coordinator_profile_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)",
+          "table": "public.service_validations",
+          "referenced_table": "profiles",
+          "columns": [
+            "coordinator_profile_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "service_validations_student_profile_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)",
+          "table": "public.service_validations",
+          "referenced_table": "profiles",
+          "columns": [
+            "student_profile_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "service_validations_certificate_document_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (certificate_document_id) REFERENCES documents(id)",
+          "table": "public.service_validations",
+          "referenced_table": "documents",
+          "columns": [
+            "certificate_document_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "service_validations_grade_document_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (grade_document_id) REFERENCES documents(id)",
+          "table": "public.service_validations",
+          "referenced_table": "documents",
+          "columns": [
+            "grade_document_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "service_validations_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.service_validations",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "service_validations_student_profile_id_unique",
+          "type": "UNIQUE",
+          "def": "UNIQUE (student_profile_id)",
+          "table": "public.service_validations",
+          "referenced_table": "",
+          "columns": [
+            "student_profile_id"
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "name": "a_set_service_validation_staff_on_insert",
+          "def": "CREATE TRIGGER a_set_service_validation_staff_on_insert BEFORE INSERT ON public.service_validations FOR EACH ROW EXECUTE FUNCTION set_service_validation_staff_on_insert()"
+        },
+        {
+          "name": "a_validate_service_validation_no_project",
+          "def": "CREATE TRIGGER a_validate_service_validation_no_project BEFORE INSERT OR UPDATE ON public.service_validations FOR EACH ROW EXECUTE FUNCTION validate_service_validation_no_project()"
+        },
+        {
+          "name": "audit_service_validations_changes",
+          "def": "CREATE TRIGGER audit_service_validations_changes AFTER INSERT OR DELETE OR UPDATE ON public.service_validations FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_service_validations",
+          "def": "CREATE TRIGGER trg_audit_update_service_validations BEFORE UPDATE ON public.service_validations FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
+        }
+      ]
+    },
+    {
+      "name": "public.service_validation_progress",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "nullable": false,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "updated_by",
+          "type": "uuid",
+          "nullable": true,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "service_validation_id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "validacion_state_id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "author_profile_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "document_id",
+          "type": "bigint",
+          "nullable": true
+        },
+        {
+          "name": "observations",
+          "type": "text",
+          "nullable": true
+        }
+      ],
+      "indexes": [
+        {
+          "name": "service_validation_progress_pkey",
+          "def": "CREATE UNIQUE INDEX service_validation_progress_pkey ON public.service_validation_progress USING btree (id)",
+          "table": "public.service_validation_progress",
+          "columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "idx_service_validation_progress_lookup",
+          "def": "CREATE INDEX idx_service_validation_progress_lookup ON public.service_validation_progress USING btree (service_validation_id, created_at DESC, id DESC)",
+          "table": "public.service_validation_progress",
+          "columns": [
+            "service_validation_id",
+            "created_at",
+            "id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "service_validation_progress_author_profile_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (author_profile_id) REFERENCES profiles(id)",
+          "table": "public.service_validation_progress",
+          "referenced_table": "profiles",
+          "columns": [
+            "author_profile_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "service_validation_progress_document_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (document_id) REFERENCES documents(id)",
+          "table": "public.service_validation_progress",
+          "referenced_table": "documents",
+          "columns": [
+            "document_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "service_validation_progress_validacion_state_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (validacion_state_id) REFERENCES validacion_states(id)",
+          "table": "public.service_validation_progress",
+          "referenced_table": "validacion_states",
+          "columns": [
+            "validacion_state_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "service_validation_progress_service_validation_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (service_validation_id) REFERENCES service_validations(id)",
+          "table": "public.service_validation_progress",
+          "referenced_table": "service_validations",
+          "columns": [
+            "service_validation_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "service_validation_progress_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.service_validation_progress",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "name": "a_validate_service_validation_progress_transition",
+          "def": "CREATE TRIGGER a_validate_service_validation_progress_transition BEFORE INSERT ON public.service_validation_progress FOR EACH ROW EXECUTE FUNCTION validate_service_validation_progress_transition()"
+        },
+        {
+          "name": "audit_service_validation_progress_changes",
+          "def": "CREATE TRIGGER audit_service_validation_progress_changes AFTER INSERT OR DELETE OR UPDATE ON public.service_validation_progress FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "b_enqueue_validation_progress_notification_event",
+          "def": "CREATE TRIGGER b_enqueue_validation_progress_notification_event AFTER INSERT OR UPDATE ON public.service_validation_progress FOR EACH ROW EXECUTE FUNCTION enqueue_validation_progress_notification_event()"
+        },
+        {
+          "name": "trg_audit_update_service_validation_progress",
+          "def": "CREATE TRIGGER trg_audit_update_service_validation_progress BEFORE UPDATE ON public.service_validation_progress FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
+        }
+      ]
     }
   ],
   "relations": [
@@ -4431,6 +4853,110 @@
       ],
       "parent_cardinality": "exactly_one",
       "def": "FOREIGN KEY (notification_recipient_id) REFERENCES notification_recipients(id)"
+    },
+    {
+      "table": "public.service_validations",
+      "columns": [
+        "coordinator_profile_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.profiles",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
+    },
+    {
+      "table": "public.service_validations",
+      "columns": [
+        "student_profile_id"
+      ],
+      "cardinality": "zero_or_one",
+      "parent_table": "public.profiles",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
+    },
+    {
+      "table": "public.service_validations",
+      "columns": [
+        "certificate_document_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.documents",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (certificate_document_id) REFERENCES documents(id)"
+    },
+    {
+      "table": "public.service_validations",
+      "columns": [
+        "grade_document_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.documents",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (grade_document_id) REFERENCES documents(id)"
+    },
+    {
+      "table": "public.service_validation_progress",
+      "columns": [
+        "author_profile_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.profiles",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (author_profile_id) REFERENCES profiles(id)"
+    },
+    {
+      "table": "public.service_validation_progress",
+      "columns": [
+        "document_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.documents",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (document_id) REFERENCES documents(id)"
+    },
+    {
+      "table": "public.service_validation_progress",
+      "columns": [
+        "validacion_state_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.validacion_states",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (validacion_state_id) REFERENCES validacion_states(id)"
+    },
+    {
+      "table": "public.service_validation_progress",
+      "columns": [
+        "service_validation_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.service_validations",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (service_validation_id) REFERENCES service_validations(id)"
     }
   ],
   "functions": [
@@ -4760,6 +5286,30 @@
     },
     {
       "name": "public.a_validate_project_document_pdf",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.set_service_validation_staff_on_insert",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.validate_service_validation_no_project",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.validate_service_validation_progress_transition",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.enqueue_validation_progress_notification_event",
       "return_type": "trigger",
       "arguments": "",
       "type": "FUNCTION"

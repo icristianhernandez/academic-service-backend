@@ -33,6 +33,9 @@
 | [public.notification_recipients](public.notification_recipients.md) | 7 |  | BASE TABLE |
 | [public.user_inbox](public.user_inbox.md) | 7 |  | BASE TABLE |
 | [public.notifications_external_deliveries](public.notifications_external_deliveries.md) | 12 |  | BASE TABLE |
+| [public.validacion_states](public.validacion_states.md) | 6 |  | BASE TABLE |
+| [public.service_validations](public.service_validations.md) | 10 |  | BASE TABLE |
+| [public.service_validation_progress](public.service_validation_progress.md) | 10 |  | BASE TABLE |
 
 ## Functions
 
@@ -93,6 +96,10 @@
 | public.mark_notifications_external_delivery_failed | bool | p_delivery_id bigint, p_error_message text | FUNCTION |
 | public.dispatch_notification_event_now | trigger |  | FUNCTION |
 | public.a_validate_project_document_pdf | trigger |  | FUNCTION |
+| public.set_service_validation_staff_on_insert | trigger |  | FUNCTION |
+| public.validate_service_validation_no_project | trigger |  | FUNCTION |
+| public.validate_service_validation_progress_transition | trigger |  | FUNCTION |
+| public.enqueue_validation_progress_notification_event | trigger |  | FUNCTION |
 
 ## Enums
 
