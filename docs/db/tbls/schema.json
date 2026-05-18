@@ -2003,7 +2003,7 @@
         {
           "name": "project_phases_phase_kind_check",
           "type": "CHECK",
-          "def": "CHECK ((phase_kind = ANY (ARRAY['preproject'::text, 'report'::text, 'final_report'::text, 'approved'::text])))",
+          "def": "CHECK ((phase_kind = ANY (ARRAY['preproject'::text, 'report'::text, 'final_report'::text])))",
           "table": "public.project_phases",
           "referenced_table": "",
           "columns": [
