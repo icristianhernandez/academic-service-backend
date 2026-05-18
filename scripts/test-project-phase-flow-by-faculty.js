@@ -52,9 +52,8 @@ async function lookupContext() {
 
   const preprojectPhase = phaseData.find((phase) => phase.phase_kind === "preproject");
   const finalReportPhase = phaseData.find((phase) => phase.phase_kind === "final_report");
-  const approvedPhase = phaseData.find((phase) => phase.phase_kind === "approved");
 
-  if (!preprojectPhase || !finalReportPhase || !approvedPhase) {
+  if (!preprojectPhase || !finalReportPhase) {
     throw new Error("Required fixed phases not found");
   }
 
@@ -92,7 +91,6 @@ async function lookupContext() {
     waitingStateId,
     preprojectPhase,
     finalReportPhase,
-    approvedPhase,
     reportPhasesByNumber,
     facultyId,
   };
@@ -247,11 +245,6 @@ async function runZeroReportsScenario(context) {
     phaseId: context.finalReportPhase.id,
   });
 
-  await expectProgressSuccess("0 reports: Aprobado por Coordinador", {
-    ...basePayload,
-    phaseId: context.approvedPhase.id,
-  });
-
   await deleteProject(projectId);
 }
 
@@ -302,11 +295,6 @@ async function runTwoReportsScenario(context) {
     phaseId: context.finalReportPhase.id,
   });
 
-  await expectProgressSuccess("2 reports: Aprobado por Coordinador", {
-    ...basePayload,
-    phaseId: context.approvedPhase.id,
-  });
-
   await deleteProject(projectId);
 }
 
@@ -352,11 +340,6 @@ async function runTenReportsScenario(context) {
   await expectProgressSuccess("10 reports: Reporte Final", {
     ...basePayload,
     phaseId: context.finalReportPhase.id,
-  });
-
-  await expectProgressSuccess("10 reports: Aprobado por Coordinador", {
-    ...basePayload,
-    phaseId: context.approvedPhase.id,
   });
 
   await deleteProject(projectId);

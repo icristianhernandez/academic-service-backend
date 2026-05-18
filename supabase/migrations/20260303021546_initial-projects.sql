@@ -18,8 +18,7 @@ create table project_phases (
         phase_kind in (
             'preproject',
             'report',
-            'final_report',
-            'approved'
+            'final_report'
         )
     ),
     check (
@@ -236,11 +235,6 @@ begin
             and new_phase.phase_kind = 'final_report' then
             is_valid_transition := true;
         end if;
-    end if;
-
-    if previous_phase.phase_kind = 'final_report'
-        and new_phase.phase_kind = 'approved' then
-        is_valid_transition := true;
     end if;
 
     if not is_valid_transition then

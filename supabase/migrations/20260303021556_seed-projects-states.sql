@@ -35,8 +35,7 @@ from (
     ('Reporte 8', 9, 'report', 8),
     ('Reporte 9', 10, 'report', 9),
     ('Reporte 10', 11, 'report', 10),
-    ('Reporte Final', 12, 'final_report', null),
-    ('Aprobado', 13, 'approved', null)
+    ('Reporte Final', 12, 'final_report', null)
 )
     as seed_phase (
         project_phase_name,
