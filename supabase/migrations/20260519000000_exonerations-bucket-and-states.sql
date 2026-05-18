@@ -1,30 +1,30 @@
 insert into storage.buckets (id, name, public)
-values ('service_validations', 'service_validations', true);
+values ('exonerations', 'exonerations', true);
 
-create policy service_validations_documents_read
+create policy exonerations_documents_read
 on storage.objects
 for select
 to authenticated
-using (bucket_id = 'service_validations');
+using (bucket_id = 'exonerations');
 
-create policy service_validations_documents_insert
+create policy exonerations_documents_insert
 on storage.objects
 for insert
 to authenticated
-with check (bucket_id = 'service_validations');
+with check (bucket_id = 'exonerations');
 
-create policy service_validations_documents_update
+create policy exonerations_documents_update
 on storage.objects
 for update
 to authenticated
-using (bucket_id = 'service_validations')
-with check (bucket_id = 'service_validations');
+using (bucket_id = 'exonerations')
+with check (bucket_id = 'exonerations');
 
-create policy service_validations_documents_delete
+create policy exonerations_documents_delete
 on storage.objects
 for delete
 to authenticated
-using (bucket_id = 'service_validations');
+using (bucket_id = 'exonerations');
 
 create or replace function public.a_validate_project_document_pdf()
 returns trigger
@@ -32,7 +32,7 @@ language plpgsql
 security definer set search_path = ''
 as $$
 begin
-    if new.bucket_id in ('project', 'service_validations')
+    if new.bucket_id in ('project', 'exonerations')
         and new.storage_path !~* '\.pdf$' then
         raise exception 'Solo se aceptan archivos PDF para entregas'
             using errcode = 'P0001';
@@ -41,10 +41,10 @@ begin
 end;
 $$;
 
-create table validacion_states (
+create table exoneration_states (
     like audit_meta including all,
     id bigint generated always as identity primary key,
-    validacion_state_name text not null unique
+    exoneration_state_name text not null unique
 );
 
 select set_config(
@@ -60,15 +60,15 @@ select set_config(
     true
 );
 
-insert into public.validacion_states (validacion_state_name)
+insert into public.exoneration_states (exoneration_state_name)
 values
 ('En revisión'),
 ('Validado por Coordinador'),
 ('Consignado a Planeamiento y Admisión'),
 ('Aprobado por Planeamiento y Admisión'),
 ('Rechazado para corrección')
-on conflict (validacion_state_name) do nothing;
+on conflict (exoneration_state_name) do nothing;
 
 call setup_audit(
-    'validacion_states'
+    'exoneration_states'
 );

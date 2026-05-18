@@ -1,4 +1,4 @@
-create table service_validations (
+create table exonerations (
     like audit_meta including all,
     id bigint generated always as identity primary key,
     student_profile_id uuid not null references profiles (id),
@@ -8,22 +8,20 @@ create table service_validations (
     certificate_document_id bigint not null references documents (id)
 );
 
-create table service_validation_progress (
+create table exoneration_progress (
     like audit_meta including all,
     id bigint generated always as identity primary key,
-    service_validation_id bigint not null references service_validations (id),
-    validacion_state_id bigint not null references validacion_states (id),
+    exoneration_id bigint not null references exonerations (id),
+    exoneration_state_id bigint not null references exoneration_states (id),
     author_profile_id uuid not null references profiles (id),
     document_id bigint references documents (id),
     observations text
 );
 
-create index idx_service_validation_progress_lookup
-on service_validation_progress (
-    service_validation_id, created_at desc, id desc
-);
+create index idx_exoneration_progress_lookup
+on exoneration_progress (exoneration_id, created_at desc, id desc);
 
-create function public.set_service_validation_staff_on_insert()
+create function public.set_exoneration_staff_on_insert()
 returns trigger
 language plpgsql
 security definer set search_path = ''
@@ -41,14 +39,14 @@ begin
 
     if not found then
         raise exception
-            'Convalidation creation failed. No student found for profile_id %',
+            'Exoneration creation failed. No student found for profile_id %',
             new.student_profile_id
             using errcode = 'P0001';
     end if;
 
     if coordinator_id is null then
         raise exception
-            'Convalidation creation failed. Faculty has no coordinator assigned for student profile_id %',
+            'Exoneration creation failed. Faculty has no coordinator assigned for student profile_id %',
             new.student_profile_id
             using errcode = 'P0001';
     end if;
@@ -59,10 +57,10 @@ begin
 end;
 $$;
 
-create trigger a_set_service_validation_staff_on_insert
-before insert on service_validations
+create trigger a_set_exoneration_staff_on_insert
+before insert on exonerations
 for each row
-execute function public.set_service_validation_staff_on_insert();
+execute function public.set_exoneration_staff_on_insert();
 
 create or replace function public.set_project_staff_on_insert()
 returns trigger
@@ -104,11 +102,11 @@ begin
     end if;
 
     if exists (
-        select 1 from public.service_validations
+        select 1 from public.exonerations
         where student_profile_id = new.student_profile_id
     ) then
         raise exception
-            'Project creation failed. Student already has a convalidation'
+            'Project creation failed. Student already has an exoneration'
             using errcode = 'P0001';
     end if;
 
@@ -126,7 +124,7 @@ begin
 end;
 $$;
 
-create function public.validate_service_validation_no_project()
+create function public.validate_exoneration_no_project()
 returns trigger
 language plpgsql
 security definer set search_path = ''
@@ -137,32 +135,32 @@ begin
         where student_profile_id = new.student_profile_id
     ) then
         raise exception
-            'Cannot create convalidation: student already has a project'
+            'Cannot create exoneration: student already has a project'
             using errcode = 'P0001';
     end if;
     return new;
 end;
 $$;
 
-create trigger a_validate_service_validation_no_project
-before insert or update on service_validations
+create trigger a_validate_exoneration_no_project
+before insert or update on exonerations
 for each row
-execute function public.validate_service_validation_no_project();
+execute function public.validate_exoneration_no_project();
 
-create function public.validate_service_validation_progress_transition()
+create function public.validate_exoneration_progress_transition()
 returns trigger
 language plpgsql
 security definer set search_path = ''
 as $$
 declare
-    previous_progress public.service_validation_progress;
+    previous_progress public.exoneration_progress;
     previous_state_name text;
     new_state_name text;
 begin
     select progress_row.*
     into previous_progress
-    from public.service_validation_progress as progress_row
-    where progress_row.service_validation_id = new.service_validation_id
+    from public.exoneration_progress as progress_row
+    where progress_row.exoneration_id = new.exoneration_id
     order by progress_row.created_at desc, progress_row.id desc
     limit 1;
 
@@ -170,27 +168,27 @@ begin
         return new;
     end if;
 
-    select validacion_state_name into previous_state_name
-    from public.validacion_states
-    where id = previous_progress.validacion_state_id
+    select exoneration_state_name into previous_state_name
+    from public.exoneration_states
+    where id = previous_progress.exoneration_state_id
     limit 1;
 
     if not found then
         raise exception
-            'Convalidation progress validation failed. No previous state found for id %',
-            previous_progress.validacion_state_id
+            'Exoneration progress validation failed. No previous state found for id %',
+            previous_progress.exoneration_state_id
             using errcode = 'P0001';
     end if;
 
-    select validacion_state_name into new_state_name
-    from public.validacion_states
-    where id = new.validacion_state_id
+    select exoneration_state_name into new_state_name
+    from public.exoneration_states
+    where id = new.exoneration_state_id
     limit 1;
 
     if not found then
         raise exception
-            'Convalidation progress validation failed. No new state found for id %',
-            new.validacion_state_id
+            'Exoneration progress validation failed. No new state found for id %',
+            new.exoneration_state_id
             using errcode = 'P0001';
     end if;
 
@@ -220,12 +218,12 @@ begin
 end;
 $$;
 
-create trigger a_validate_service_validation_progress_transition
-before insert on service_validation_progress
+create trigger a_validate_exoneration_progress_transition
+before insert on exoneration_progress
 for each row
-execute function public.validate_service_validation_progress_transition();
+execute function public.validate_exoneration_progress_transition();
 
 call setup_audit(
-    'service_validations',
-    'service_validation_progress'
+    'exonerations',
+    'exoneration_progress'
 );

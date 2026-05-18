@@ -20,7 +20,7 @@ async function createDoc(uploaderId, path) {
   const { data, error } = await supabase
     .from("documents")
     .insert({
-      bucket_id: "service_validations",
+      bucket_id: "exonerations",
       storage_path: path,
       uploaded_by_profile_id: uploaderId,
       created_by: SEED_WORKER_ID,
@@ -35,9 +35,9 @@ async function createDoc(uploaderId, path) {
 
 async function getState(name) {
   const { data } = await supabase
-    .from("validacion_states")
+    .from("exoneration_states")
     .select("id")
-    .eq("validacion_state_name", name)
+    .eq("exoneration_state_name", name)
     .single();
   return data.id;
 }
@@ -50,17 +50,17 @@ async function main() {
   const planning = await lookupProfile("administrative@test.local");
 
   if (!student || !coordinator || !planning) {
-    console.error("Missing profiles:", { student: !!student, coordinator: !!coordinator,
-      planning: !!planning });
+    console.error("Missing profiles:", { student: !!student,
+      coordinator: !!coordinator, planning: !!planning });
     process.exit(1);
   }
 
   const certDocId = await createDoc(student.id,
     `test/cert-${Date.now()}.pdf`);
 
-  // ── TEST 1: Create service_validation (auto-assigns coordinator) ──
-  const { data: validation, error: vErr } = await supabase
-    .from("service_validations")
+  // ── TEST 1: Create exoneration (auto-assigns coordinator) ──
+  const { data: exoneration, error: vErr } = await supabase
+    .from("exonerations")
     .insert({
       student_profile_id: student.id,
       certificate_document_id: certDocId,
@@ -71,10 +71,11 @@ async function main() {
     .single();
 
   if (vErr) {
-    console.error("FAIL 1  Create validation:", vErr.message);
+    console.error("FAIL 1  Create exoneration:", vErr.message);
     results.fail++;
   } else {
-    console.log("PASS 1  Validation created, coordinator auto-set:", validation.coordinator_profile_id === coordinator.id);
+    console.log("PASS 1  Exoneration created, coordinator auto-set:",
+      exoneration.coordinator_profile_id === coordinator.id);
     results.pass++;
   }
 
@@ -86,10 +87,10 @@ async function main() {
 
   // ── TEST 2: First progress (En revision) ──
   const { error: p1Err } = await supabase
-    .from("service_validation_progress")
+    .from("exoneration_progress")
     .insert({
-      service_validation_id: validation.id,
-      validacion_state_id: reviewId,
+      exoneration_id: exoneration.id,
+      exoneration_state_id: reviewId,
       author_profile_id: student.id,
       created_by: SEED_WORKER_ID,
       updated_by: SEED_WORKER_ID,
@@ -100,9 +101,9 @@ async function main() {
 
   // ── TEST 3: Rejection flow (En revision -> Rechazado -> En revision) ──
   const { error: rejErr } = await supabase
-    .from("service_validation_progress")
+    .from("exoneration_progress")
     .insert({
-      service_validation_id: validation.id, validacion_state_id: rejectedId,
+      exoneration_id: exoneration.id, exoneration_state_id: rejectedId,
       author_profile_id: coordinator.id, created_by: SEED_WORKER_ID, updated_by: SEED_WORKER_ID,
     });
 
@@ -111,9 +112,9 @@ async function main() {
     console.log("PASS 3a Rechazado para corrección"); results.pass++;
 
     const { error: reopenErr } = await supabase
-      .from("service_validation_progress")
+      .from("exoneration_progress")
       .insert({
-        service_validation_id: validation.id, validacion_state_id: reviewId,
+        exoneration_id: exoneration.id, exoneration_state_id: reviewId,
         author_profile_id: student.id, created_by: SEED_WORKER_ID, updated_by: SEED_WORKER_ID,
       });
 
@@ -123,10 +124,10 @@ async function main() {
 
   // ── TEST 4: Coordinador valida (after reopen) ──
   const { error: p2Err } = await supabase
-    .from("service_validation_progress")
+    .from("exoneration_progress")
     .insert({
-      service_validation_id: validation.id,
-      validacion_state_id: validatedId,
+      exoneration_id: exoneration.id,
+      exoneration_state_id: validatedId,
       author_profile_id: coordinator.id,
       created_by: SEED_WORKER_ID,
       updated_by: SEED_WORKER_ID,
@@ -137,10 +138,10 @@ async function main() {
 
   // ── TEST 5: Coordinador consigna ──
   const { error: p3Err } = await supabase
-    .from("service_validation_progress")
+    .from("exoneration_progress")
     .insert({
-      service_validation_id: validation.id,
-      validacion_state_id: consignedId,
+      exoneration_id: exoneration.id,
+      exoneration_state_id: consignedId,
       author_profile_id: coordinator.id,
       created_by: SEED_WORKER_ID,
       updated_by: SEED_WORKER_ID,
@@ -151,10 +152,10 @@ async function main() {
 
   // ── TEST 6: Planning approves ──
   const { error: p4Err } = await supabase
-    .from("service_validation_progress")
+    .from("exoneration_progress")
     .insert({
-      service_validation_id: validation.id,
-      validacion_state_id: approvedId,
+      exoneration_id: exoneration.id,
+      exoneration_state_id: approvedId,
       author_profile_id: planning.id,
       created_by: SEED_WORKER_ID,
       updated_by: SEED_WORKER_ID,
@@ -165,10 +166,10 @@ async function main() {
 
   // ── TEST 7: Invalid transition (Aprobado -> Validado is invalid) ──
   const { error: invalidErr } = await supabase
-    .from("service_validation_progress")
+    .from("exoneration_progress")
     .insert({
-      service_validation_id: validation.id,
-      validacion_state_id: validatedId,
+      exoneration_id: exoneration.id,
+      exoneration_state_id: validatedId,
       author_profile_id: coordinator.id,
       created_by: SEED_WORKER_ID,
       updated_by: SEED_WORKER_ID,
@@ -177,12 +178,12 @@ async function main() {
   if (invalidErr) { console.log("PASS 7  Invalid transition rejected:", invalidErr.message); results.pass++; }
   else { console.error("FAIL 7  Invalid transition not rejected"); results.fail++; }
 
-  // ── TEST 8: Mutual exclusivity (project after convalidation) ──
+  // ── TEST 8: Mutual exclusivity (project after exoneration) ──
   const { data: inst } = await supabase.from("institutions").select("id").limit(1).single();
   const { error: projErr } = await supabase.from("projects").insert({
     student_profile_id: student.id,
     institution_id: inst.id,
-    title: "Should fail — student has convalidation",
+    title: "Should fail — student has exoneration",
     created_by: SEED_WORKER_ID,
     updated_by: SEED_WORKER_ID,
   });
@@ -191,7 +192,7 @@ async function main() {
   else { console.error("FAIL 8  Mutual exclusivity failed"); results.fail++; }
 
   // ── TEST 9: Unique student constraint ──
-  const { error: dupErr } = await supabase.from("service_validations").insert({
+  const { error: dupErr } = await supabase.from("exonerations").insert({
     student_profile_id: student.id,
     certificate_document_id: certDocId,
     created_by: SEED_WORKER_ID,
@@ -205,7 +206,7 @@ async function main() {
   const { data: events } = await supabase
     .from("notifications_events")
     .select("id")
-    .eq("source_kind", "service_validation_progress");
+    .eq("source_kind", "exoneration_progress");
 
   console.log("       Notifications events:", events.length);
   if (events.length >= 5) { console.log("PASS 10 Notification events generated"); results.pass++; }
@@ -213,7 +214,7 @@ async function main() {
 
   // ── TEST 11: Storage bucket exists ──
   const { data: buckets } = await supabase.storage.listBuckets();
-  const found = buckets.some(b => b.name === "service_validations");
+  const found = buckets.some(b => b.name === "exonerations");
   if (found) { console.log("PASS 11 Storage bucket exists"); results.pass++; }
   else { console.error("FAIL 11 Storage bucket missing"); results.fail++; }
 
