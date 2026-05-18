@@ -18,7 +18,8 @@ create table project_phases (
         phase_kind in (
             'preproject',
             'report',
-            'final_report'
+            'final_report',
+            'approved'
         )
     ),
     check (

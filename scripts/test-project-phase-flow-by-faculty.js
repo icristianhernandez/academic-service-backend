@@ -205,6 +205,11 @@ async function expectProgressFailure(label, payload, expectedSnippet) {
   console.log(`PASS: ${label} (error='${error.message}')`);
 }
 
+async function deleteProject(projectId) {
+  await supabase.from("project_progress").delete().eq("project_id", projectId);
+  await supabase.from("projects").delete().eq("id", projectId);
+}
+
 async function runZeroReportsScenario(context) {
   console.log("\n=== Scenario: 0 reports ===");
   await updateFacultyReportsCount(context.facultyId, 0);
@@ -246,6 +251,8 @@ async function runZeroReportsScenario(context) {
     ...basePayload,
     phaseId: context.approvedPhase.id,
   });
+
+  await deleteProject(projectId);
 }
 
 async function runTwoReportsScenario(context) {
@@ -299,6 +306,8 @@ async function runTwoReportsScenario(context) {
     ...basePayload,
     phaseId: context.approvedPhase.id,
   });
+
+  await deleteProject(projectId);
 }
 
 async function runTenReportsScenario(context) {
@@ -349,6 +358,8 @@ async function runTenReportsScenario(context) {
     ...basePayload,
     phaseId: context.approvedPhase.id,
   });
+
+  await deleteProject(projectId);
 }
 
 async function main() {
@@ -356,6 +367,14 @@ async function main() {
 
   const context = await lookupContext();
   let originalReportsRequiredCount = null;
+
+  const { data: existingProjects } = await supabase
+    .from("projects")
+    .select("id")
+    .eq("student_profile_id", context.studentProfile.id);
+  for (const p of existingProjects || []) {
+    await deleteProject(p.id);
+  }
 
   try {
     const { data: facultyRow, error: facultyError } = await supabase
