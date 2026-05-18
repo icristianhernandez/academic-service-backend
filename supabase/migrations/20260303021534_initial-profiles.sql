@@ -320,7 +320,7 @@ begin
 end;
 $$;
 
-create function public.assign_school_to_teacher_on_signup()
+create function public.assign_school_to_subcoordinator_on_signup()
 returns trigger
 language plpgsql
 security definer set search_path = ''
@@ -329,7 +329,7 @@ declare
     school_id bigint;
     role_name text;
 begin
-    select invitation.school_to_be_tutor, role.role_name
+    select invitation.school_to_be_subcoordinator, role.role_name
     into school_id, role_name
     from public.invitations invitation
     join public.roles role on role.id = invitation.role_to_have_id
@@ -337,7 +337,7 @@ begin
         and invitation.reclaimed_at is null
     limit 1;
 
-    if role_name is distinct from 'tutor' then
+    if role_name is distinct from 'subcoordinator' then
         return new;
     end if;
 
@@ -345,16 +345,16 @@ begin
         select 1
         from public.schools school
         where school.id = school_id
-          and school.tutor_profile_id is not null
+          and school.subcoordinator_profile_id is not null
     ) then
         raise exception
-            'Signup failed. School % already has a tutor assigned',
+            'Signup failed. School % already has a subcoordinator assigned',
             school_id
             using errcode = 'P0001';
     end if;
 
     update public.schools
-    set tutor_profile_id = new.id
+    set subcoordinator_profile_id = new.id
     where id = school_id;
 
     return new;
@@ -401,10 +401,10 @@ after insert on auth.users
 for each row
 execute procedure public.assign_faculty_to_coordinator_on_signup();
 
-create trigger e_assign_faculty_to_coordinator_on_signup
+create trigger e_assign_school_to_subcoordinator_on_signup
 after insert on auth.users
 for each row
-execute procedure public.assign_school_to_teacher_on_signup();
+execute procedure public.assign_school_to_subcoordinator_on_signup();
 
 create trigger z_deactivate_invitation_on_signup
 after insert on auth.users

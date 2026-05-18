@@ -7,7 +7,7 @@ type invitation_template_params = {
 
 const role_labels: Record<string, string> = {
   student: "Estudiante",
-  tutor: "Tutor",
+  subcoordinator: "Subcoordinador",
   coordinator: "Coordinador",
   dean: "Decano",
   administrative: "Administrativo",

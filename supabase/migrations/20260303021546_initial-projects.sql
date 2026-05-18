@@ -43,7 +43,7 @@ create table project_states (
 create table projects (
     like audit_meta including all,
     id bigint generated always as identity primary key,
-    tutor_profile_id uuid not null references profiles (id),
+    subcoordinator_profile_id uuid not null references profiles (id),
     coordinator_profile_id uuid not null references profiles (id),
     student_profile_id uuid not null references profiles (id),
     institution_id bigint not null references institutions (id),
@@ -230,15 +230,15 @@ as $$
 declare
     school_id bigint;
     faculty_id bigint;
-    tutor_id uuid;
+    subcoordinator_id uuid;
     coordinator_id uuid;
 begin
     select
         school.id,
         faculty.id,
-        school.tutor_profile_id,
+        school.subcoordinator_profile_id,
         faculty.coordinator_profile_id
-    into school_id, faculty_id, tutor_id, coordinator_id
+    into school_id, faculty_id, subcoordinator_id, coordinator_id
     from public.students student
     join public.schools school on school.id = student.school_id
     join public.faculties faculty on faculty.id = school.faculty_id
@@ -252,9 +252,9 @@ begin
             using errcode = 'P0001';
     end if;
 
-    if tutor_id is null then
+    if subcoordinator_id is null then
         raise exception
-            'Project creation failed. School % has no tutor assigned',
+            'Project creation failed. School % has no subcoordinator assigned',
             school_id
             using errcode = 'P0001';
     end if;
@@ -266,7 +266,7 @@ begin
             using errcode = 'P0001';
     end if;
 
-    new.tutor_profile_id := tutor_id;
+    new.subcoordinator_profile_id := subcoordinator_id;
     new.coordinator_profile_id := coordinator_id;
 
     return new;

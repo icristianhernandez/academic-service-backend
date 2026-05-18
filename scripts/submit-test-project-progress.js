@@ -88,7 +88,7 @@ async function createProject(studentProfileId, institutionId, title) {
       created_by: SEED_WORKER_ID,
       updated_by: SEED_WORKER_ID,
     })
-    .select("id, tutor_profile_id, coordinator_profile_id")
+    .select("id, subcoordinator_profile_id, coordinator_profile_id")
     .single();
 
   if (error) {
@@ -249,7 +249,7 @@ async function main() {
     "Test Project for Notification Flow",
   );
   console.log(`Project created: ID=${project.id}`);
-  console.log(`  Tutor: ${project.tutor_profile_id}`);
+  console.log(`  Subcoordinador: ${project.subcoordinator_profile_id}`);
   console.log(`  Coordinator: ${project.coordinator_profile_id}`);
 
   console.log("\n--- Creating document ---");
@@ -292,7 +292,7 @@ async function main() {
   const recipients = await verifyRecipients(eventData.event.id, project);
 
   const expectedRecipients = [
-    project.tutor_profile_id,
+    project.subcoordinator_profile_id,
     project.coordinator_profile_id,
   ];
 

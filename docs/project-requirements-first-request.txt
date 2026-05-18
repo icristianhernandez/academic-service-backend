@@ -22,7 +22,7 @@ Segunda parte
 
 Tercera parte
 1. Coordinador
-2. Tutor 
+2. Subcoordinador 
 3. Aprobado ante proyecto si/no + fecha
 4. Proyecto recibido si/no + fecha
 5. Aprobado proyecto final si/no + fecha

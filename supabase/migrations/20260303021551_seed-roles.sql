@@ -16,7 +16,7 @@ values
 ('student', 1),
 ('administrative', 2),
 ('dean', 3),
-('tutor', 4),
+('subcoordinator', 4),
 ('coordinator', 5),
 ('sysadmin', 6)
 on conflict (role_name) do update

@@ -316,7 +316,7 @@ begin
     end if;
 
     notification_payload := jsonb_build_object(
-        'tutor_profile_id', project_staff.tutor_profile_id,
+        'subcoordinator_profile_id', project_staff.subcoordinator_profile_id,
         'coordinator_profile_id', project_staff.coordinator_profile_id,
         'student_profile_id', project_staff.student_profile_id,
         'project_phase_id', new.project_phase_id,

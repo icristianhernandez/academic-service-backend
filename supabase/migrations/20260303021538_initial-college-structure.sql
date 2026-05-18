@@ -29,7 +29,7 @@ create table schools (
     id bigint generated always as identity primary key,
     degree_id bigint not null references degrees (id),
     faculty_id bigint not null references faculties (id),
-    tutor_profile_id uuid references profiles (id),
+    subcoordinator_profile_id uuid references profiles (id),
     unique (degree_id, faculty_id)
 );
 

@@ -9,7 +9,7 @@ create table invitations (
     -- mmm
     invited_by_profile_id uuid references profiles (id),
     faculty_to_be_coordinator bigint references faculties (id),
-    school_to_be_tutor bigint references schools (id),
+    school_to_be_subcoordinator bigint references schools (id),
     role_to_have_id bigint references roles (id),
     email text not null unique,
     -- TODO: logic to enforces/set the next things aren't implemented yet

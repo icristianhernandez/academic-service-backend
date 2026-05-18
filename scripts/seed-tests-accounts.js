@@ -134,11 +134,11 @@ async function main() {
       secondary_contact: "04241111111",
     },
     {
-      email: "tutor@test.local",
+      email: "subcoordinator@test.local",
       password: "123",
-      role: "tutor",
+      role: "subcoordinator",
       user_names: "test test",
-      user_last_names: "tutor 1",
+      user_last_names: "subcoordinator 1",
       national_id: "V-10000003",
       primary_contact: "04241111111",
       secondary_contact: "04241111111",
@@ -195,8 +195,8 @@ async function main() {
 
       if (account.role === "coordinator") {
         invitationPayload.faculty_to_be_coordinator = engineeringFacultyId;
-      } else if (account.role === "tutor") {
-        invitationPayload.school_to_be_tutor = systemsSchoolId;
+      } else if (account.role === "subcoordinator") {
+        invitationPayload.school_to_be_subcoordinator = systemsSchoolId;
       }
 
       const { error: invError } = await supabase

@@ -1,7 +1,7 @@
 -- seed invitations for the next accounts:
 -- student@test.local / 123
 -- administrative@test.local / 123
--- tutor@test.local / 123
+-- subcoordinator@test.local / 123
 -- coordinator@test.local / 123
 -- dean@test.local / 123
 -- sysadmin@test.local / 123

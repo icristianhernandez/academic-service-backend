@@ -75,11 +75,11 @@ on conflict (faculty_name) do update
         dean_profile_id = excluded.dean_profile_id,
         coordinator_profile_id = excluded.coordinator_profile_id;
 
-insert into schools (degree_id, faculty_id, tutor_profile_id)
+insert into schools (degree_id, faculty_id, subcoordinator_profile_id)
 select
     d.id as degree_id,
     f.id as faculty_id,
-    null as tutor_profile_id
+    null as subcoordinator_profile_id
 from (
     values
     ('Ingenieria de Sistemas', 'Facultad de Ingenieria'),
@@ -104,5 +104,5 @@ where not exists (
     where
         s.degree_id = d.id
         and s.faculty_id = f.id
-        and s.tutor_profile_id is null
+        and s.subcoordinator_profile_id is null
 );

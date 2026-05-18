@@ -59,9 +59,11 @@ create table audit_logs (
 --                     where role_name = 'student'
 --                 )
 --                 and (
---                     new_data ->> 'tutor_profile_id' = auth.uid()::text
+--                     new_data ->> 'subcoordinator_profile_id'
+--                         = auth.uid()::text
 --                  or new_data ->> 'coordinator_profile_id' = auth.uid()::text
---                     or old_data ->> 'tutor_profile_id' = auth.uid()::text
+--                     or old_data ->> 'subcoordinator_profile_id'
+--                         = auth.uid()::text
 --                  or old_data ->> 'coordinator_profile_id' = auth.uid()::text
 --                 )
 --             )
