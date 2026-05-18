@@ -35,6 +35,7 @@
 | ---- | ---------- |
 | projects_pkey | CREATE UNIQUE INDEX projects_pkey ON public.projects USING btree (id) |
 | projects_student_profile_id_key | CREATE UNIQUE INDEX projects_student_profile_id_key ON public.projects USING btree (student_profile_id) |
+| idx_projects_unique_title | CREATE UNIQUE INDEX idx_projects_unique_title ON public.projects USING btree (lower(TRIM(BOTH FROM title))) |
 
 ## Triggers
 

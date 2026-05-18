@@ -10,16 +10,20 @@
 | created_by | uuid | auth.uid() | false |  |  |  |
 | updated_at | timestamp with time zone | now() | false |  |  |  |
 | updated_by | uuid | auth.uid() | true |  |  |  |
-| id | bigint |  | false | [public.faculties](public.faculties.md) |  |  |
+| id | bigint |  | false | [public.faculties](public.faculties.md) [public.invitations](public.invitations.md) |  |  |
 | location_id | bigint |  | false |  | [public.locations](public.locations.md) |  |
 | campus_name | text |  | false |  |  |  |
-| president_profile_id | uuid |  | true |  | [public.profiles](public.profiles.md) |  |
+| rector_profile_id | uuid |  | true |  | [public.profiles](public.profiles.md) |  |
+| vicerector_administrativo_profile_id | uuid |  | true |  | [public.profiles](public.profiles.md) |  |
+| vicerector_academico_profile_id | uuid |  | true |  | [public.profiles](public.profiles.md) |  |
 
 ## Constraints
 
 | Name | Type | Definition |
 | ---- | ---- | ---------- |
-| campuses_president_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (president_profile_id) REFERENCES profiles(id) |
+| campuses_rector_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (rector_profile_id) REFERENCES profiles(id) |
+| campuses_vicerector_academico_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (vicerector_academico_profile_id) REFERENCES profiles(id) |
+| campuses_vicerector_administrativo_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (vicerector_administrativo_profile_id) REFERENCES profiles(id) |
 | campuses_location_id_fkey | FOREIGN KEY | FOREIGN KEY (location_id) REFERENCES locations(id) |
 | campuses_pkey | PRIMARY KEY | PRIMARY KEY (id) |
 | campuses_campus_name_key | UNIQUE | UNIQUE (campus_name) |
@@ -44,8 +48,13 @@
 erDiagram
 
 "public.faculties" }o--|| "public.campuses" : "FOREIGN KEY (campus_id) REFERENCES campuses(id)"
+"public.invitations" }o--o| "public.campuses" : "FOREIGN KEY (campus_to_be_rector) REFERENCES campuses(id)"
+"public.invitations" }o--o| "public.campuses" : "FOREIGN KEY (campus_to_be_vicerector_academico) REFERENCES campuses(id)"
+"public.invitations" }o--o| "public.campuses" : "FOREIGN KEY (campus_to_be_vicerector_administrativo) REFERENCES campuses(id)"
 "public.campuses" }o--|| "public.locations" : "FOREIGN KEY (location_id) REFERENCES locations(id)"
-"public.campuses" }o--o| "public.profiles" : "FOREIGN KEY (president_profile_id) REFERENCES profiles(id)"
+"public.campuses" }o--o| "public.profiles" : "FOREIGN KEY (rector_profile_id) REFERENCES profiles(id)"
+"public.campuses" }o--o| "public.profiles" : "FOREIGN KEY (vicerector_administrativo_profile_id) REFERENCES profiles(id)"
+"public.campuses" }o--o| "public.profiles" : "FOREIGN KEY (vicerector_academico_profile_id) REFERENCES profiles(id)"
 
 "public.campuses" {
   timestamp_with_time_zone created_at ""
@@ -55,7 +64,9 @@ erDiagram
   bigint id ""
   bigint location_id FK ""
   text campus_name ""
-  uuid president_profile_id FK ""
+  uuid rector_profile_id FK ""
+  uuid vicerector_administrativo_profile_id FK ""
+  uuid vicerector_academico_profile_id FK ""
 }
 "public.faculties" {
   timestamp_with_time_zone created_at ""
@@ -70,6 +81,25 @@ erDiagram
   smallint max_members ""
   uuid dean_profile_id FK ""
   uuid coordinator_profile_id FK ""
+}
+"public.invitations" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  uuid invited_by_profile_id FK ""
+  bigint faculty_to_be_coordinator FK ""
+  bigint school_to_be_subcoordinator FK ""
+  bigint campus_to_be_rector FK ""
+  bigint campus_to_be_vicerector_administrativo FK ""
+  bigint campus_to_be_vicerector_academico FK ""
+  bigint role_to_have_id FK ""
+  text email ""
+  text hashed_token ""
+  integer failed_attemps ""
+  timestamp_with_time_zone token_expires_at ""
+  timestamp_with_time_zone reclaimed_at ""
 }
 "public.locations" {
   timestamp_with_time_zone created_at ""

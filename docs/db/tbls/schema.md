@@ -12,11 +12,11 @@
 | [public.states](public.states.md) | 7 |  | BASE TABLE |
 | [public.cities](public.cities.md) | 7 |  | BASE TABLE |
 | [public.locations](public.locations.md) | 7 |  | BASE TABLE |
-| [public.campuses](public.campuses.md) | 8 |  | BASE TABLE |
+| [public.campuses](public.campuses.md) | 10 |  | BASE TABLE |
 | [public.faculties](public.faculties.md) | 12 |  | BASE TABLE |
 | [public.degrees](public.degrees.md) | 6 |  | BASE TABLE |
 | [public.schools](public.schools.md) | 8 |  | BASE TABLE |
-| [public.invitations](public.invitations.md) | 14 |  | BASE TABLE |
+| [public.invitations](public.invitations.md) | 17 |  | BASE TABLE |
 | [public.students](public.students.md) | 10 |  | BASE TABLE |
 | [public.documents](public.documents.md) | 8 |  | BASE TABLE |
 | [public.institutions](public.institutions.md) | 8 |  | BASE TABLE |
@@ -72,6 +72,9 @@
 | public.handle_new_student_profile | trigger |  | FUNCTION |
 | public.assign_faculty_to_coordinator_on_signup | trigger |  | FUNCTION |
 | public.assign_school_to_subcoordinator_on_signup | trigger |  | FUNCTION |
+| public.assign_rector_to_campus_on_signup | trigger |  | FUNCTION |
+| public.assign_vicerector_administrativo_to_campus_on_signup | trigger |  | FUNCTION |
+| public.assign_vicerector_academico_to_campus_on_signup | trigger |  | FUNCTION |
 | public.deactivate_invitation_on_signup | trigger |  | FUNCTION |
 | public.get_invitation_rol | text | p_email text, p_token text | FUNCTION |
 | public.set_invited_by_profile_id | trigger |  | FUNCTION |
@@ -89,6 +92,7 @@
 | public.mark_notifications_external_delivery_sent | bool | p_delivery_id bigint | FUNCTION |
 | public.mark_notifications_external_delivery_failed | bool | p_delivery_id bigint, p_error_message text | FUNCTION |
 | public.dispatch_notification_event_now | trigger |  | FUNCTION |
+| public.a_validate_project_document_pdf | trigger |  | FUNCTION |
 
 ## Enums
 

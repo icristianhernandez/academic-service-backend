@@ -14,6 +14,9 @@
 | invited_by_profile_id | uuid |  | true |  | [public.profiles](public.profiles.md) |  |
 | faculty_to_be_coordinator | bigint |  | true |  | [public.faculties](public.faculties.md) |  |
 | school_to_be_subcoordinator | bigint |  | true |  | [public.schools](public.schools.md) |  |
+| campus_to_be_rector | bigint |  | true |  | [public.campuses](public.campuses.md) |  |
+| campus_to_be_vicerector_administrativo | bigint |  | true |  | [public.campuses](public.campuses.md) |  |
+| campus_to_be_vicerector_academico | bigint |  | true |  | [public.campuses](public.campuses.md) |  |
 | role_to_have_id | bigint |  | true |  | [public.roles](public.roles.md) |  |
 | email | text |  | false |  |  |  |
 | hashed_token | text |  | false |  |  |  |
@@ -27,6 +30,9 @@
 | ---- | ---- | ---------- |
 | invitations_role_to_have_id_fkey | FOREIGN KEY | FOREIGN KEY (role_to_have_id) REFERENCES roles(id) |
 | invitations_invited_by_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (invited_by_profile_id) REFERENCES profiles(id) |
+| invitations_campus_to_be_rector_fkey | FOREIGN KEY | FOREIGN KEY (campus_to_be_rector) REFERENCES campuses(id) |
+| invitations_campus_to_be_vicerector_academico_fkey | FOREIGN KEY | FOREIGN KEY (campus_to_be_vicerector_academico) REFERENCES campuses(id) |
+| invitations_campus_to_be_vicerector_administrativo_fkey | FOREIGN KEY | FOREIGN KEY (campus_to_be_vicerector_administrativo) REFERENCES campuses(id) |
 | invitations_faculty_to_be_coordinator_fkey | FOREIGN KEY | FOREIGN KEY (faculty_to_be_coordinator) REFERENCES faculties(id) |
 | invitations_school_to_be_subcoordinator_fkey | FOREIGN KEY | FOREIGN KEY (school_to_be_subcoordinator) REFERENCES schools(id) |
 | invitations_pkey | PRIMARY KEY | PRIMARY KEY (id) |
@@ -56,6 +62,9 @@ erDiagram
 "public.invitations" }o--o| "public.profiles" : "FOREIGN KEY (invited_by_profile_id) REFERENCES profiles(id)"
 "public.invitations" }o--o| "public.faculties" : "FOREIGN KEY (faculty_to_be_coordinator) REFERENCES faculties(id)"
 "public.invitations" }o--o| "public.schools" : "FOREIGN KEY (school_to_be_subcoordinator) REFERENCES schools(id)"
+"public.invitations" }o--o| "public.campuses" : "FOREIGN KEY (campus_to_be_rector) REFERENCES campuses(id)"
+"public.invitations" }o--o| "public.campuses" : "FOREIGN KEY (campus_to_be_vicerector_administrativo) REFERENCES campuses(id)"
+"public.invitations" }o--o| "public.campuses" : "FOREIGN KEY (campus_to_be_vicerector_academico) REFERENCES campuses(id)"
 "public.invitations" }o--o| "public.roles" : "FOREIGN KEY (role_to_have_id) REFERENCES roles(id)"
 
 "public.invitations" {
@@ -67,6 +76,9 @@ erDiagram
   uuid invited_by_profile_id FK ""
   bigint faculty_to_be_coordinator FK ""
   bigint school_to_be_subcoordinator FK ""
+  bigint campus_to_be_rector FK ""
+  bigint campus_to_be_vicerector_administrativo FK ""
+  bigint campus_to_be_vicerector_academico FK ""
   bigint role_to_have_id FK ""
   text email ""
   text hashed_token ""
@@ -115,6 +127,18 @@ erDiagram
   bigint degree_id FK ""
   bigint faculty_id FK ""
   uuid subcoordinator_profile_id FK ""
+}
+"public.campuses" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint location_id FK ""
+  text campus_name ""
+  uuid rector_profile_id FK ""
+  uuid vicerector_administrativo_profile_id FK ""
+  uuid vicerector_academico_profile_id FK ""
 }
 "public.roles" {
   timestamp_with_time_zone created_at ""

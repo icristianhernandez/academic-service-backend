@@ -60,7 +60,9 @@ erDiagram
   bigint id ""
   bigint location_id FK ""
   text campus_name ""
-  uuid president_profile_id FK ""
+  uuid rector_profile_id FK ""
+  uuid vicerector_administrativo_profile_id FK ""
+  uuid vicerector_academico_profile_id FK ""
 }
 "public.institutions" {
   timestamp_with_time_zone created_at ""

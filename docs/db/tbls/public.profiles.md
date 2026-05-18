@@ -53,7 +53,9 @@
 ```mermaid
 erDiagram
 
-"public.campuses" }o--o| "public.profiles" : "FOREIGN KEY (president_profile_id) REFERENCES profiles(id)"
+"public.campuses" }o--o| "public.profiles" : "FOREIGN KEY (rector_profile_id) REFERENCES profiles(id)"
+"public.campuses" }o--o| "public.profiles" : "FOREIGN KEY (vicerector_academico_profile_id) REFERENCES profiles(id)"
+"public.campuses" }o--o| "public.profiles" : "FOREIGN KEY (vicerector_administrativo_profile_id) REFERENCES profiles(id)"
 "public.faculties" }o--o| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
 "public.faculties" }o--o| "public.profiles" : "FOREIGN KEY (dean_profile_id) REFERENCES profiles(id)"
 "public.schools" }o--o| "public.profiles" : "FOREIGN KEY (subcoordinator_profile_id) REFERENCES profiles(id)"
@@ -96,7 +98,9 @@ erDiagram
   bigint id ""
   bigint location_id FK ""
   text campus_name ""
-  uuid president_profile_id FK ""
+  uuid rector_profile_id FK ""
+  uuid vicerector_administrativo_profile_id FK ""
+  uuid vicerector_academico_profile_id FK ""
 }
 "public.faculties" {
   timestamp_with_time_zone created_at ""
@@ -131,6 +135,9 @@ erDiagram
   uuid invited_by_profile_id FK ""
   bigint faculty_to_be_coordinator FK ""
   bigint school_to_be_subcoordinator FK ""
+  bigint campus_to_be_rector FK ""
+  bigint campus_to_be_vicerector_administrativo FK ""
+  bigint campus_to_be_vicerector_academico FK ""
   bigint role_to_have_id FK ""
   text email ""
   text hashed_token ""

@@ -12,11 +12,11 @@
 | [public.states](public.states.md) | 7 |  | BASE TABLE |
 | [public.cities](public.cities.md) | 7 |  | BASE TABLE |
 | [public.locations](public.locations.md) | 7 |  | BASE TABLE |
-| [public.campuses](public.campuses.md) | 8 |  | BASE TABLE |
+| [public.campuses](public.campuses.md) | 10 |  | BASE TABLE |
 | [public.faculties](public.faculties.md) | 12 |  | BASE TABLE |
 | [public.degrees](public.degrees.md) | 6 |  | BASE TABLE |
 | [public.schools](public.schools.md) | 8 |  | BASE TABLE |
-| [public.invitations](public.invitations.md) | 14 |  | BASE TABLE |
+| [public.invitations](public.invitations.md) | 17 |  | BASE TABLE |
 | [public.students](public.students.md) | 10 |  | BASE TABLE |
 | [public.documents](public.documents.md) | 8 |  | BASE TABLE |
 | [public.institutions](public.institutions.md) | 8 |  | BASE TABLE |
@@ -72,6 +72,9 @@
 | public.handle_new_student_profile | trigger |  | FUNCTION |
 | public.assign_faculty_to_coordinator_on_signup | trigger |  | FUNCTION |
 | public.assign_school_to_subcoordinator_on_signup | trigger |  | FUNCTION |
+| public.assign_rector_to_campus_on_signup | trigger |  | FUNCTION |
+| public.assign_vicerector_administrativo_to_campus_on_signup | trigger |  | FUNCTION |
+| public.assign_vicerector_academico_to_campus_on_signup | trigger |  | FUNCTION |
 | public.deactivate_invitation_on_signup | trigger |  | FUNCTION |
 | public.get_invitation_rol | text | p_email text, p_token text | FUNCTION |
 | public.set_invited_by_profile_id | trigger |  | FUNCTION |
@@ -89,6 +92,7 @@
 | public.mark_notifications_external_delivery_sent | bool | p_delivery_id bigint | FUNCTION |
 | public.mark_notifications_external_delivery_failed | bool | p_delivery_id bigint, p_error_message text | FUNCTION |
 | public.dispatch_notification_event_now | trigger |  | FUNCTION |
+| public.a_validate_project_document_pdf | trigger |  | FUNCTION |
 
 ## Enums
 
@@ -124,7 +128,9 @@ erDiagram
 "public.states" }o--|| "public.countries" : "FOREIGN KEY (country_id) REFERENCES countries(id)"
 "public.cities" }o--|| "public.states" : "FOREIGN KEY (state_id) REFERENCES states(id)"
 "public.locations" }o--|| "public.cities" : "FOREIGN KEY (city_id) REFERENCES cities(id)"
-"public.campuses" }o--o| "public.profiles" : "FOREIGN KEY (president_profile_id) REFERENCES profiles(id)"
+"public.campuses" }o--o| "public.profiles" : "FOREIGN KEY (rector_profile_id) REFERENCES profiles(id)"
+"public.campuses" }o--o| "public.profiles" : "FOREIGN KEY (vicerector_academico_profile_id) REFERENCES profiles(id)"
+"public.campuses" }o--o| "public.profiles" : "FOREIGN KEY (vicerector_administrativo_profile_id) REFERENCES profiles(id)"
 "public.campuses" }o--|| "public.locations" : "FOREIGN KEY (location_id) REFERENCES locations(id)"
 "public.faculties" }o--o| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
 "public.faculties" }o--o| "public.profiles" : "FOREIGN KEY (dean_profile_id) REFERENCES profiles(id)"
@@ -134,6 +140,9 @@ erDiagram
 "public.schools" }o--|| "public.degrees" : "FOREIGN KEY (degree_id) REFERENCES degrees(id)"
 "public.invitations" }o--o| "public.roles" : "FOREIGN KEY (role_to_have_id) REFERENCES roles(id)"
 "public.invitations" }o--o| "public.profiles" : "FOREIGN KEY (invited_by_profile_id) REFERENCES profiles(id)"
+"public.invitations" }o--o| "public.campuses" : "FOREIGN KEY (campus_to_be_rector) REFERENCES campuses(id)"
+"public.invitations" }o--o| "public.campuses" : "FOREIGN KEY (campus_to_be_vicerector_academico) REFERENCES campuses(id)"
+"public.invitations" }o--o| "public.campuses" : "FOREIGN KEY (campus_to_be_vicerector_administrativo) REFERENCES campuses(id)"
 "public.invitations" }o--o| "public.faculties" : "FOREIGN KEY (faculty_to_be_coordinator) REFERENCES faculties(id)"
 "public.invitations" }o--o| "public.schools" : "FOREIGN KEY (school_to_be_subcoordinator) REFERENCES schools(id)"
 "public.students" }o--|| "public.profiles" : "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
@@ -249,7 +258,9 @@ erDiagram
   bigint id ""
   bigint location_id FK ""
   text campus_name ""
-  uuid president_profile_id FK ""
+  uuid rector_profile_id FK ""
+  uuid vicerector_administrativo_profile_id FK ""
+  uuid vicerector_academico_profile_id FK ""
 }
 "public.faculties" {
   timestamp_with_time_zone created_at ""
@@ -292,6 +303,9 @@ erDiagram
   uuid invited_by_profile_id FK ""
   bigint faculty_to_be_coordinator FK ""
   bigint school_to_be_subcoordinator FK ""
+  bigint campus_to_be_rector FK ""
+  bigint campus_to_be_vicerector_administrativo FK ""
+  bigint campus_to_be_vicerector_academico FK ""
   bigint role_to_have_id FK ""
   text email ""
   text hashed_token ""

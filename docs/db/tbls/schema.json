@@ -827,7 +827,17 @@
           "nullable": false
         },
         {
-          "name": "president_profile_id",
+          "name": "rector_profile_id",
+          "type": "uuid",
+          "nullable": true
+        },
+        {
+          "name": "vicerector_administrativo_profile_id",
+          "type": "uuid",
+          "nullable": true
+        },
+        {
+          "name": "vicerector_academico_profile_id",
           "type": "uuid",
           "nullable": true
         }
@@ -852,13 +862,39 @@
       ],
       "constraints": [
         {
-          "name": "campuses_president_profile_id_fkey",
+          "name": "campuses_rector_profile_id_fkey",
           "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (president_profile_id) REFERENCES profiles(id)",
+          "def": "FOREIGN KEY (rector_profile_id) REFERENCES profiles(id)",
           "table": "public.campuses",
           "referenced_table": "profiles",
           "columns": [
-            "president_profile_id"
+            "rector_profile_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "campuses_vicerector_academico_profile_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (vicerector_academico_profile_id) REFERENCES profiles(id)",
+          "table": "public.campuses",
+          "referenced_table": "profiles",
+          "columns": [
+            "vicerector_academico_profile_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "campuses_vicerector_administrativo_profile_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (vicerector_administrativo_profile_id) REFERENCES profiles(id)",
+          "table": "public.campuses",
+          "referenced_table": "profiles",
+          "columns": [
+            "vicerector_administrativo_profile_id"
           ],
           "referenced_columns": [
             "id"
@@ -1392,6 +1428,21 @@
           "nullable": true
         },
         {
+          "name": "campus_to_be_rector",
+          "type": "bigint",
+          "nullable": true
+        },
+        {
+          "name": "campus_to_be_vicerector_administrativo",
+          "type": "bigint",
+          "nullable": true
+        },
+        {
+          "name": "campus_to_be_vicerector_academico",
+          "type": "bigint",
+          "nullable": true
+        },
+        {
           "name": "role_to_have_id",
           "type": "bigint",
           "nullable": true
@@ -1464,6 +1515,45 @@
           "referenced_table": "profiles",
           "columns": [
             "invited_by_profile_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "invitations_campus_to_be_rector_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (campus_to_be_rector) REFERENCES campuses(id)",
+          "table": "public.invitations",
+          "referenced_table": "campuses",
+          "columns": [
+            "campus_to_be_rector"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "invitations_campus_to_be_vicerector_academico_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (campus_to_be_vicerector_academico) REFERENCES campuses(id)",
+          "table": "public.invitations",
+          "referenced_table": "campuses",
+          "columns": [
+            "campus_to_be_vicerector_academico"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "invitations_campus_to_be_vicerector_administrativo_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (campus_to_be_vicerector_administrativo) REFERENCES campuses(id)",
+          "table": "public.invitations",
+          "referenced_table": "campuses",
+          "columns": [
+            "campus_to_be_vicerector_administrativo"
           ],
           "referenced_columns": [
             "id"
@@ -1772,6 +1862,10 @@
         }
       ],
       "triggers": [
+        {
+          "name": "a_validate_project_document_pdf",
+          "def": "CREATE TRIGGER a_validate_project_document_pdf BEFORE INSERT ON public.documents FOR EACH ROW EXECUTE FUNCTION a_validate_project_document_pdf()"
+        },
         {
           "name": "audit_documents_changes",
           "def": "CREATE TRIGGER audit_documents_changes AFTER INSERT OR DELETE OR UPDATE ON public.documents FOR EACH ROW EXECUTE FUNCTION log_changes()"
@@ -2221,6 +2315,14 @@
           "table": "public.projects",
           "columns": [
             "student_profile_id"
+          ]
+        },
+        {
+          "name": "idx_projects_unique_title",
+          "def": "CREATE UNIQUE INDEX idx_projects_unique_title ON public.projects USING btree (lower(TRIM(BOTH FROM title)))",
+          "table": "public.projects",
+          "columns": [
+            "lower"
           ]
         }
       ],
@@ -3787,7 +3889,7 @@
     {
       "table": "public.campuses",
       "columns": [
-        "president_profile_id"
+        "rector_profile_id"
       ],
       "cardinality": "zero_or_more",
       "parent_table": "public.profiles",
@@ -3795,7 +3897,33 @@
         "id"
       ],
       "parent_cardinality": "zero_or_one",
-      "def": "FOREIGN KEY (president_profile_id) REFERENCES profiles(id)"
+      "def": "FOREIGN KEY (rector_profile_id) REFERENCES profiles(id)"
+    },
+    {
+      "table": "public.campuses",
+      "columns": [
+        "vicerector_academico_profile_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.profiles",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (vicerector_academico_profile_id) REFERENCES profiles(id)"
+    },
+    {
+      "table": "public.campuses",
+      "columns": [
+        "vicerector_administrativo_profile_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.profiles",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (vicerector_administrativo_profile_id) REFERENCES profiles(id)"
     },
     {
       "table": "public.campuses",
@@ -3913,6 +4041,45 @@
       ],
       "parent_cardinality": "zero_or_one",
       "def": "FOREIGN KEY (invited_by_profile_id) REFERENCES profiles(id)"
+    },
+    {
+      "table": "public.invitations",
+      "columns": [
+        "campus_to_be_rector"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.campuses",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (campus_to_be_rector) REFERENCES campuses(id)"
+    },
+    {
+      "table": "public.invitations",
+      "columns": [
+        "campus_to_be_vicerector_academico"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.campuses",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (campus_to_be_vicerector_academico) REFERENCES campuses(id)"
+    },
+    {
+      "table": "public.invitations",
+      "columns": [
+        "campus_to_be_vicerector_administrativo"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.campuses",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (campus_to_be_vicerector_administrativo) REFERENCES campuses(id)"
     },
     {
       "table": "public.invitations",
@@ -4472,6 +4639,24 @@
       "type": "FUNCTION"
     },
     {
+      "name": "public.assign_rector_to_campus_on_signup",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.assign_vicerector_administrativo_to_campus_on_signup",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.assign_vicerector_academico_to_campus_on_signup",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
+    },
+    {
       "name": "public.deactivate_invitation_on_signup",
       "return_type": "trigger",
       "arguments": "",
@@ -4569,6 +4754,12 @@
     },
     {
       "name": "public.dispatch_notification_event_now",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.a_validate_project_document_pdf",
       "return_type": "trigger",
       "arguments": "",
       "type": "FUNCTION"
