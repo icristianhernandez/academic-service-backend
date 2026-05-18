@@ -37,7 +37,8 @@ function resolve_email_template(delivery: claimed_delivery): email_template_cont
 
   if (
     notification_type === "project-phase-advanced-to-review" ||
-    notification_type === "project-state-to-review"
+    notification_type === "project-state-to-review" ||
+    notification_type === "project-subcoordinator-approved-to-coordinator"
   ) {
     return {
       subject: "Nueva entrega recibida para revision",

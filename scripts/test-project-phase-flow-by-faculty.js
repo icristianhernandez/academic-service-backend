@@ -45,9 +45,9 @@ async function lookupContext() {
     throw new Error(`Project phases lookup failed: ${phaseError.message}`);
   }
 
-  const waitingStateId = stateData.find((state) => state.project_state_name === "En Espera")?.id;
+  const waitingStateId = stateData.find((state) => state.project_state_name === "Aprobado por Coordinador")?.id;
   if (!waitingStateId) {
-    throw new Error("En Espera state not found");
+    throw new Error("Aprobado por Coordinador state not found");
   }
 
   const preprojectPhase = phaseData.find((phase) => phase.phase_kind === "preproject");
@@ -242,7 +242,7 @@ async function runZeroReportsScenario(context) {
     phaseId: context.finalReportPhase.id,
   });
 
-  await expectProgressSuccess("0 reports: Aprobado", {
+  await expectProgressSuccess("0 reports: Aprobado por Coordinador", {
     ...basePayload,
     phaseId: context.approvedPhase.id,
   });
@@ -295,7 +295,7 @@ async function runTwoReportsScenario(context) {
     phaseId: context.finalReportPhase.id,
   });
 
-  await expectProgressSuccess("2 reports: Aprobado", {
+  await expectProgressSuccess("2 reports: Aprobado por Coordinador", {
     ...basePayload,
     phaseId: context.approvedPhase.id,
   });
@@ -345,7 +345,7 @@ async function runTenReportsScenario(context) {
     phaseId: context.finalReportPhase.id,
   });
 
-  await expectProgressSuccess("10 reports: Aprobado", {
+  await expectProgressSuccess("10 reports: Aprobado por Coordinador", {
     ...basePayload,
     phaseId: context.approvedPhase.id,
   });

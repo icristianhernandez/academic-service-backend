@@ -53,7 +53,8 @@ insert into project_states (project_state_name)
 select seed_state.project_state_name
 from (
     values
-    ('Aprobado'),
+    ('Aprobado por Subcoordinador'),
+    ('Aprobado por Coordinador'),
     ('En revisión'),
     ('Rechazado para corrección')
 ) as seed_state (project_state_name)
@@ -71,7 +72,9 @@ from (
     ('project-phase-advanced-to-review'),
     ('project-phase-advanced'),
     ('project-state-to-review'),
-    ('project-review-to-wait-same-phase')
+    ('project-review-to-wait-same-phase'),
+    ('project-submitted-to-subcoordinator-review'),
+    ('project-subcoordinator-approved-to-coordinator')
 ) as seed_type (type_key)
 where not exists (
     select 1
@@ -147,7 +150,7 @@ select
         'old_project_state_id', (
             select project_state.id
             from public.project_states as project_state
-            where project_state.project_state_name = 'Aprobado'
+            where project_state.project_state_name = 'Aprobado por Coordinador'
         )
     ) as match_context
 from notification_types as notification_type
@@ -186,7 +189,7 @@ select
         'old_project_state_id', (
             select project_state.id
             from public.project_states as project_state
-            where project_state.project_state_name = 'Aprobado'
+            where project_state.project_state_name = 'Aprobado por Coordinador'
         )
     ) as match_context
 from notification_types as notification_type
@@ -302,7 +305,228 @@ cross join project_states as waiting_state
 where
     notification_type.type_key = 'project-review-to-wait-same-phase'
     and review_state.project_state_name = 'En revisión'
-    and waiting_state.project_state_name = 'Aprobado'
+    and waiting_state.project_state_name = 'Aprobado por Coordinador'
+on conflict (
+    source_kind,
+    operation_kind,
+    notification_type_id,
+    priority,
+    match_context
+) do update
+    set
+        is_active = true;
+
+insert into notification_type_resolution_rules (
+    source_kind,
+    operation_kind,
+    notification_type_id,
+    priority,
+    match_context
+)
+select
+    'project_progress' as source_kind,
+    'update' as operation_kind,
+    notification_type.id as notification_type_id,
+    265 as priority,
+    jsonb_build_object(
+        'has_previous_progress', true,
+        'state_changed', true,
+        'has_subcoordinator', true,
+        'old_project_state_id', old_state.id,
+        'project_state_id', review_state.id
+    ) as match_context
+from notification_types as notification_type
+cross join project_states as old_state
+cross join project_states as review_state
+where
+    notification_type.type_key = 'project-submitted-to-subcoordinator-review'
+    and review_state.project_state_name = 'En revisión'
+    and old_state.id <> review_state.id
+on conflict (
+    source_kind,
+    operation_kind,
+    notification_type_id,
+    priority,
+    match_context
+) do update
+    set
+        is_active = true;
+
+insert into notification_type_resolution_rules (
+    source_kind,
+    operation_kind,
+    notification_type_id,
+    priority,
+    match_context
+)
+select
+    'project_progress' as source_kind,
+    'update' as operation_kind,
+    notification_type.id as notification_type_id,
+    261 as priority,
+    jsonb_build_object(
+        'has_previous_progress', false,
+        'is_first_progress', true,
+        'state_changed', true,
+        'has_subcoordinator', true,
+        'project_state_id', review_state.id,
+        'old_project_state_id', approved_state.id
+    ) as match_context
+from notification_types as notification_type
+cross join project_states as review_state
+cross join project_states as approved_state
+where
+    notification_type.type_key = 'project-submitted-to-subcoordinator-review'
+    and review_state.project_state_name = 'En revisión'
+    and approved_state.project_state_name = 'Aprobado por Coordinador'
+on conflict (
+    source_kind,
+    operation_kind,
+    notification_type_id,
+    priority,
+    match_context
+) do update
+    set
+        is_active = true;
+
+insert into notification_type_resolution_rules (
+    source_kind,
+    operation_kind,
+    notification_type_id,
+    priority,
+    match_context
+)
+select
+    'project_progress' as source_kind,
+    'update' as operation_kind,
+    notification_type.id as notification_type_id,
+    355 as priority,
+    jsonb_build_object(
+        'has_previous_progress', true,
+        'phase_advanced', true,
+        'state_changed', true,
+        'has_subcoordinator', true,
+        'project_state_id', review_state.id
+    ) as match_context
+from notification_types as notification_type
+cross join project_states as review_state
+where
+    notification_type.type_key = 'project-submitted-to-subcoordinator-review'
+    and review_state.project_state_name = 'En revisión'
+on conflict (
+    source_kind,
+    operation_kind,
+    notification_type_id,
+    priority,
+    match_context
+) do update
+    set
+        is_active = true;
+
+insert into notification_type_resolution_rules (
+    source_kind,
+    operation_kind,
+    notification_type_id,
+    priority,
+    match_context
+)
+select
+    'project_progress' as source_kind,
+    'update' as operation_kind,
+    notification_type.id as notification_type_id,
+    355 as priority,
+    jsonb_build_object(
+        'has_previous_progress', false,
+        'is_first_progress', true,
+        'phase_advanced', true,
+        'state_changed', true,
+        'has_subcoordinator', true,
+        'project_state_id', review_state.id,
+        'old_project_state_id', approved_state.id
+    ) as match_context
+from notification_types as notification_type
+cross join project_states as review_state
+cross join project_states as approved_state
+where
+    notification_type.type_key = 'project-submitted-to-subcoordinator-review'
+    and review_state.project_state_name = 'En revisión'
+    and approved_state.project_state_name = 'Aprobado por Coordinador'
+on conflict (
+    source_kind,
+    operation_kind,
+    notification_type_id,
+    priority,
+    match_context
+) do update
+    set
+        is_active = true;
+
+insert into notification_type_resolution_rules (
+    source_kind,
+    operation_kind,
+    notification_type_id,
+    priority,
+    match_context
+)
+select
+    'project_progress' as source_kind,
+    'update' as operation_kind,
+    notification_type.id as notification_type_id,
+    300 as priority,
+    jsonb_build_object(
+        'has_previous_progress', true,
+        'same_phase', true,
+        'state_changed', true,
+        'old_project_state_id', review_state.id,
+        'project_state_id', subcoord_approved_state.id
+    ) as match_context
+from notification_types as notification_type
+cross join project_states as review_state
+cross join project_states as subcoord_approved_state
+where
+    notification_type.type_key
+    = 'project-subcoordinator-approved-to-coordinator'
+    and review_state.project_state_name = 'En revisión'
+    and subcoord_approved_state.project_state_name
+    = 'Aprobado por Subcoordinador'
+on conflict (
+    source_kind,
+    operation_kind,
+    notification_type_id,
+    priority,
+    match_context
+) do update
+    set
+        is_active = true;
+
+insert into notification_type_resolution_rules (
+    source_kind,
+    operation_kind,
+    notification_type_id,
+    priority,
+    match_context
+)
+select
+    'project_progress' as source_kind,
+    'update' as operation_kind,
+    notification_type.id as notification_type_id,
+    296 as priority,
+    jsonb_build_object(
+        'has_previous_progress', true,
+        'same_phase', true,
+        'state_changed', true,
+        'old_project_state_id', subcoord_approved_state.id,
+        'project_state_id', coordinator_approved_state.id
+    ) as match_context
+from notification_types as notification_type
+cross join project_states as subcoord_approved_state
+cross join project_states as coordinator_approved_state
+where
+    notification_type.type_key = 'project-review-to-wait-same-phase'
+    and subcoord_approved_state.project_state_name
+    = 'Aprobado por Subcoordinador'
+    and coordinator_approved_state.project_state_name
+    = 'Aprobado por Coordinador'
 on conflict (
     source_kind,
     operation_kind,
@@ -327,9 +551,10 @@ cross join (
     values
     ('project-phase-advanced', 'student_profile_id'),
     ('project-phase-advanced', 'coordinator_profile_id'),
-    ('project-state-to-review', 'subcoordinator_profile_id'),
     ('project-state-to-review', 'coordinator_profile_id'),
-    ('project-review-to-wait-same-phase', 'student_profile_id')
+    ('project-review-to-wait-same-phase', 'student_profile_id'),
+    ('project-submitted-to-subcoordinator-review', 'subcoordinator_profile_id'),
+    ('project-subcoordinator-approved-to-coordinator', 'coordinator_profile_id')
 ) as recipient_targets (type_key, recipient_target)
 where
     notification_type.type_key = recipient_targets.type_key
@@ -350,8 +575,7 @@ from notification_types as notification_type
 cross join (
     values
     ('student_profile_id'),
-    ('coordinator_profile_id'),
-    ('subcoordinator_profile_id')
+    ('coordinator_profile_id')
 ) as recipient_targets (recipient_target)
 where notification_type.type_key = 'project-phase-advanced-to-review'
 on conflict (

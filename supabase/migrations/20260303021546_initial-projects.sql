@@ -43,7 +43,7 @@ create table project_states (
 create table projects (
     like audit_meta including all,
     id bigint generated always as identity primary key,
-    subcoordinator_profile_id uuid not null references profiles (id),
+    subcoordinator_profile_id uuid references profiles (id),
     coordinator_profile_id uuid not null references profiles (id),
     student_profile_id uuid not null references profiles (id) unique,
     institution_id bigint not null references institutions (id),
@@ -91,6 +91,7 @@ declare
     previous_progress public.project_progress;
     previous_phase public.project_phases;
     previous_state_name text;
+    new_state_name text;
     is_valid_transition boolean := false;
 begin
     select
@@ -177,15 +178,37 @@ begin
     end if;
 
     if new_phase.project_phase_order > previous_phase.project_phase_order then
-        if previous_state_name <> 'Aprobado' then
+        if previous_state_name <> 'Aprobado por Coordinador' then
             raise exception
-                'Project progress validation failed. Cannot advance phase because previous phase is not approved. Current state: %',
+                'Cannot advance phase because previous phase is not approved. Current state: %',
                 previous_state_name
                 using errcode = 'P0001';
         end if;
     end if;
 
     if new_phase.project_phase_order = previous_phase.project_phase_order then
+        select project_state_name into new_state_name
+        from public.project_states
+        where id = new.project_state_id;
+
+        if previous_state_name = 'En revisión' then
+            if new_state_name not in ('Aprobado por Subcoordinador', 'Aprobado por Coordinador', 'Rechazado para corrección') then
+                raise exception 'Invalid state transition from En revisión to %', new_state_name;
+            end if;
+        elsif previous_state_name = 'Aprobado por Subcoordinador' then
+            if new_state_name not in ('Aprobado por Coordinador', 'Rechazado para corrección') then
+                raise exception 'Invalid state transition from Aprobado por Subcoordinador to %', new_state_name;
+            end if;
+        elsif previous_state_name = 'Rechazado para corrección' then
+            if new_state_name <> 'En revisión' then
+                raise exception 'Invalid state transition from Rechazado para corrección to %', new_state_name;
+            end if;
+        elsif previous_state_name = 'Aprobado por Coordinador' then
+            if new_state_name <> 'En revisión' then
+                raise exception 'Invalid state transition from Aprobado por Coordinador to %', new_state_name;
+            end if;
+        end if;
+
         return new;
     end if;
 
@@ -273,13 +296,6 @@ begin
     ) then
         raise exception
             'Project creation failed. Student is already a member of another project'
-            using errcode = 'P0001';
-    end if;
-
-    if subcoordinator_id is null then
-        raise exception
-            'Project creation failed. School % has no subcoordinator assigned',
-            school_id
             using errcode = 'P0001';
     end if;
 

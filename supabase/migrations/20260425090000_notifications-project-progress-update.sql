@@ -48,7 +48,7 @@ cross join project_states as waiting_state
 where
     notification_type.type_key = 'project-review-to-wait-same-phase'
     and review_state.project_state_name = 'En revisión'
-    and waiting_state.project_state_name = 'Aprobado'
+    and waiting_state.project_state_name = 'Aprobado por Coordinador'
 on conflict (
     source_kind,
     operation_kind,
@@ -161,6 +161,7 @@ declare
     new_phase_order smallint;
     old_phase_order smallint;
     effective_actor_id uuid;
+    has_subcoordinator boolean;
 begin
     if tg_op = 'UPDATE'
        and new.project_state_id is not distinct from old.project_state_id
@@ -179,6 +180,21 @@ begin
             'Notification event creation failed. No project found for project_id %',
             new.project_id
             using errcode = 'P0001';
+    end if;
+
+    select
+        school.subcoordinator_profile_id is not null as has_subcoordinator_val
+    into has_subcoordinator
+    from public.projects as project_row
+    join public.students as student
+        on student.profile_id = project_row.student_profile_id
+    join public.schools as school
+        on school.id = student.school_id
+    where project_row.id = new.project_id
+    limit 1;
+
+    if not found then
+        has_subcoordinator := false;
     end if;
 
     if tg_op = 'UPDATE' then
@@ -237,6 +253,7 @@ begin
             'phase_advanced', phase_advanced,
             'same_phase', same_phase,
             'state_changed', state_changed,
+            'has_subcoordinator', has_subcoordinator,
             'project_phase_id', new.project_phase_id,
             'project_state_id', new.project_state_id,
             'old_project_phase_id', previous_progress.project_phase_id,
@@ -256,10 +273,16 @@ begin
             'phase_advanced', phase_advanced,
             'same_phase', true,
             'state_changed', state_changed,
+            'has_subcoordinator', has_subcoordinator,
             'project_phase_id', new.project_phase_id,
             'project_state_id', new.project_state_id,
             'old_project_phase_id', 0,
-            'old_project_state_id', 1
+            'old_project_state_id', (
+                select id
+                from public.project_states
+                where project_state_name = 'Aprobado por Coordinador'
+                limit 1
+            )
         );
         resolved_notification_type_id := public.resolve_notification_type_id(
             'project_progress',
