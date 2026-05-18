@@ -1,0 +1,120 @@
+# public.exoneration_progress
+
+## Description
+
+## Columns
+
+| Name | Type | Default | Nullable | Children | Parents | Comment |
+| ---- | ---- | ------- | -------- | -------- | ------- | ------- |
+| created_at | timestamp with time zone | now() | false |  |  |  |
+| created_by | uuid | auth.uid() | false |  |  |  |
+| updated_at | timestamp with time zone | now() | false |  |  |  |
+| updated_by | uuid | auth.uid() | true |  |  |  |
+| id | bigint |  | false |  |  |  |
+| exoneration_id | bigint |  | false |  | [public.exonerations](public.exonerations.md) |  |
+| exoneration_state_id | bigint |  | false |  | [public.exoneration_states](public.exoneration_states.md) |  |
+| author_profile_id | uuid |  | false |  | [public.profiles](public.profiles.md) |  |
+| document_id | bigint |  | true |  | [public.documents](public.documents.md) |  |
+| observations | text |  | true |  |  |  |
+
+## Constraints
+
+| Name | Type | Definition |
+| ---- | ---- | ---------- |
+| exoneration_progress_author_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (author_profile_id) REFERENCES profiles(id) |
+| exoneration_progress_document_id_fkey | FOREIGN KEY | FOREIGN KEY (document_id) REFERENCES documents(id) |
+| exoneration_progress_exoneration_state_id_fkey | FOREIGN KEY | FOREIGN KEY (exoneration_state_id) REFERENCES exoneration_states(id) |
+| exoneration_progress_exoneration_id_fkey | FOREIGN KEY | FOREIGN KEY (exoneration_id) REFERENCES exonerations(id) |
+| exoneration_progress_pkey | PRIMARY KEY | PRIMARY KEY (id) |
+
+## Indexes
+
+| Name | Definition |
+| ---- | ---------- |
+| exoneration_progress_pkey | CREATE UNIQUE INDEX exoneration_progress_pkey ON public.exoneration_progress USING btree (id) |
+| idx_exoneration_progress_lookup | CREATE INDEX idx_exoneration_progress_lookup ON public.exoneration_progress USING btree (exoneration_id, created_at DESC, id DESC) |
+
+## Triggers
+
+| Name | Definition |
+| ---- | ---------- |
+| a_validate_exoneration_progress_transition | CREATE TRIGGER a_validate_exoneration_progress_transition BEFORE INSERT ON public.exoneration_progress FOR EACH ROW EXECUTE FUNCTION validate_exoneration_progress_transition() |
+| audit_exoneration_progress_changes | CREATE TRIGGER audit_exoneration_progress_changes AFTER INSERT OR DELETE OR UPDATE ON public.exoneration_progress FOR EACH ROW EXECUTE FUNCTION log_changes() |
+| b_enqueue_exoneration_progress_notification_event | CREATE TRIGGER b_enqueue_exoneration_progress_notification_event AFTER INSERT OR UPDATE ON public.exoneration_progress FOR EACH ROW EXECUTE FUNCTION enqueue_exoneration_progress_notification_event() |
+| trg_audit_update_exoneration_progress | CREATE TRIGGER trg_audit_update_exoneration_progress BEFORE UPDATE ON public.exoneration_progress FOR EACH ROW EXECUTE FUNCTION handle_audit_update() |
+
+## Relations
+
+```mermaid
+erDiagram
+
+"public.exoneration_progress" }o--|| "public.exonerations" : "FOREIGN KEY (exoneration_id) REFERENCES exonerations(id)"
+"public.exoneration_progress" }o--|| "public.exoneration_states" : "FOREIGN KEY (exoneration_state_id) REFERENCES exoneration_states(id)"
+"public.exoneration_progress" }o--|| "public.profiles" : "FOREIGN KEY (author_profile_id) REFERENCES profiles(id)"
+"public.exoneration_progress" }o--o| "public.documents" : "FOREIGN KEY (document_id) REFERENCES documents(id)"
+
+"public.exoneration_progress" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint exoneration_id FK ""
+  bigint exoneration_state_id FK ""
+  uuid author_profile_id FK ""
+  bigint document_id FK ""
+  text observations ""
+}
+"public.exonerations" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  uuid student_profile_id FK ""
+  uuid coordinator_profile_id FK ""
+  text achievement_title ""
+  bigint grade_document_id FK ""
+  bigint certificate_document_id FK ""
+}
+"public.exoneration_states" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  text exoneration_state_name ""
+}
+"public.profiles" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  uuid id FK ""
+  text user_names ""
+  text user_last_names ""
+  text national_id ""
+  text primary_contact ""
+  text secondary_contact ""
+  text email ""
+  bigint role_id FK ""
+  text profile_photo_path ""
+  boolean email_notifications_enabled ""
+  boolean inbox_notifications_enabled ""
+  timestamp_with_time_zone disabled_at ""
+}
+"public.documents" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  text bucket_id FK ""
+  text storage_path ""
+  uuid uploaded_by_profile_id FK ""
+}
+```
+
+---
+
+> Generated by [tbls](https://github.com/k1LoW/tbls)

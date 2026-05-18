@@ -10,7 +10,7 @@
 | created_by | uuid | auth.uid() | false |  |  |  |
 | updated_at | timestamp with time zone | now() | false |  |  |  |
 | updated_by | uuid | auth.uid() | true |  |  |  |
-| id | uuid |  | false | [public.campuses](public.campuses.md) [public.faculties](public.faculties.md) [public.schools](public.schools.md) [public.invitations](public.invitations.md) [public.students](public.students.md) [public.documents](public.documents.md) [public.institutions](public.institutions.md) [public.projects](public.projects.md) [public.project_progress](public.project_progress.md) [public.project_members](public.project_members.md) [public.notifications_events](public.notifications_events.md) [public.notification_recipients](public.notification_recipients.md) [public.service_validations](public.service_validations.md) [public.service_validation_progress](public.service_validation_progress.md) |  |  |
+| id | uuid |  | false | [public.campuses](public.campuses.md) [public.faculties](public.faculties.md) [public.schools](public.schools.md) [public.invitations](public.invitations.md) [public.students](public.students.md) [public.documents](public.documents.md) [public.institutions](public.institutions.md) [public.projects](public.projects.md) [public.project_progress](public.project_progress.md) [public.project_members](public.project_members.md) [public.notifications_events](public.notifications_events.md) [public.notification_recipients](public.notification_recipients.md) [public.exonerations](public.exonerations.md) [public.exoneration_progress](public.exoneration_progress.md) |  |  |
 | user_names | text |  | false |  |  |  |
 | user_last_names | text |  | false |  |  |  |
 | national_id | text |  | false |  |  |  |
@@ -70,9 +70,9 @@ erDiagram
 "public.project_members" |o--|| "public.profiles" : "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
 "public.notifications_events" }o--o| "public.profiles" : "FOREIGN KEY (actor_id) REFERENCES profiles(id)"
 "public.notification_recipients" }o--|| "public.profiles" : "FOREIGN KEY (recipient_id) REFERENCES profiles(id)"
-"public.service_validations" }o--|| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
-"public.service_validations" |o--|| "public.profiles" : "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
-"public.service_validation_progress" }o--|| "public.profiles" : "FOREIGN KEY (author_profile_id) REFERENCES profiles(id)"
+"public.exonerations" }o--|| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
+"public.exonerations" |o--|| "public.profiles" : "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
+"public.exoneration_progress" }o--|| "public.profiles" : "FOREIGN KEY (author_profile_id) REFERENCES profiles(id)"
 "public.profiles" }o--o| "public.roles" : "FOREIGN KEY (role_id) REFERENCES roles(id)"
 
 "public.profiles" {
@@ -243,7 +243,7 @@ erDiagram
   bigint notification_id FK ""
   uuid recipient_id FK ""
 }
-"public.service_validations" {
+"public.exonerations" {
   timestamp_with_time_zone created_at ""
   uuid created_by ""
   timestamp_with_time_zone updated_at ""
@@ -255,14 +255,14 @@ erDiagram
   bigint grade_document_id FK ""
   bigint certificate_document_id FK ""
 }
-"public.service_validation_progress" {
+"public.exoneration_progress" {
   timestamp_with_time_zone created_at ""
   uuid created_by ""
   timestamp_with_time_zone updated_at ""
   uuid updated_by ""
   bigint id ""
-  bigint service_validation_id FK ""
-  bigint validacion_state_id FK ""
+  bigint exoneration_id FK ""
+  bigint exoneration_state_id FK ""
   uuid author_profile_id FK ""
   bigint document_id FK ""
   text observations ""

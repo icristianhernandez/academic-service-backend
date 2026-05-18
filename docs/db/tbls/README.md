@@ -33,9 +33,9 @@
 | [public.notification_recipients](public.notification_recipients.md) | 7 |  | BASE TABLE |
 | [public.user_inbox](public.user_inbox.md) | 7 |  | BASE TABLE |
 | [public.notifications_external_deliveries](public.notifications_external_deliveries.md) | 12 |  | BASE TABLE |
-| [public.validacion_states](public.validacion_states.md) | 6 |  | BASE TABLE |
-| [public.service_validations](public.service_validations.md) | 10 |  | BASE TABLE |
-| [public.service_validation_progress](public.service_validation_progress.md) | 10 |  | BASE TABLE |
+| [public.exoneration_states](public.exoneration_states.md) | 6 |  | BASE TABLE |
+| [public.exonerations](public.exonerations.md) | 10 |  | BASE TABLE |
+| [public.exoneration_progress](public.exoneration_progress.md) | 10 |  | BASE TABLE |
 
 ## Stored procedures and functions
 
@@ -96,10 +96,10 @@
 | public.mark_notifications_external_delivery_failed | bool | p_delivery_id bigint, p_error_message text | FUNCTION |
 | public.dispatch_notification_event_now | trigger |  | FUNCTION |
 | public.a_validate_project_document_pdf | trigger |  | FUNCTION |
-| public.set_service_validation_staff_on_insert | trigger |  | FUNCTION |
-| public.validate_service_validation_no_project | trigger |  | FUNCTION |
-| public.validate_service_validation_progress_transition | trigger |  | FUNCTION |
-| public.enqueue_validation_progress_notification_event | trigger |  | FUNCTION |
+| public.set_exoneration_staff_on_insert | trigger |  | FUNCTION |
+| public.validate_exoneration_no_project | trigger |  | FUNCTION |
+| public.validate_exoneration_progress_transition | trigger |  | FUNCTION |
+| public.enqueue_exoneration_progress_notification_event | trigger |  | FUNCTION |
 
 ## Enums
 
@@ -177,14 +177,14 @@ erDiagram
 "public.notification_recipients" }o--|| "public.notifications_events" : "FOREIGN KEY (notification_id) REFERENCES notifications_events(id)"
 "public.user_inbox" |o--|| "public.notification_recipients" : "FOREIGN KEY (notification_recipient_id) REFERENCES notification_recipients(id)"
 "public.notifications_external_deliveries" }o--|| "public.notification_recipients" : "FOREIGN KEY (notification_recipient_id) REFERENCES notification_recipients(id)"
-"public.service_validations" }o--|| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
-"public.service_validations" |o--|| "public.profiles" : "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
-"public.service_validations" }o--|| "public.documents" : "FOREIGN KEY (certificate_document_id) REFERENCES documents(id)"
-"public.service_validations" }o--o| "public.documents" : "FOREIGN KEY (grade_document_id) REFERENCES documents(id)"
-"public.service_validation_progress" }o--|| "public.profiles" : "FOREIGN KEY (author_profile_id) REFERENCES profiles(id)"
-"public.service_validation_progress" }o--o| "public.documents" : "FOREIGN KEY (document_id) REFERENCES documents(id)"
-"public.service_validation_progress" }o--|| "public.validacion_states" : "FOREIGN KEY (validacion_state_id) REFERENCES validacion_states(id)"
-"public.service_validation_progress" }o--|| "public.service_validations" : "FOREIGN KEY (service_validation_id) REFERENCES service_validations(id)"
+"public.exonerations" }o--|| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
+"public.exonerations" |o--|| "public.profiles" : "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
+"public.exonerations" }o--|| "public.documents" : "FOREIGN KEY (certificate_document_id) REFERENCES documents(id)"
+"public.exonerations" }o--o| "public.documents" : "FOREIGN KEY (grade_document_id) REFERENCES documents(id)"
+"public.exoneration_progress" }o--|| "public.profiles" : "FOREIGN KEY (author_profile_id) REFERENCES profiles(id)"
+"public.exoneration_progress" }o--o| "public.documents" : "FOREIGN KEY (document_id) REFERENCES documents(id)"
+"public.exoneration_progress" }o--|| "public.exoneration_states" : "FOREIGN KEY (exoneration_state_id) REFERENCES exoneration_states(id)"
+"public.exoneration_progress" }o--|| "public.exonerations" : "FOREIGN KEY (exoneration_id) REFERENCES exonerations(id)"
 
 "public.audit_meta" {
   timestamp_with_time_zone created_at ""
@@ -506,15 +506,15 @@ erDiagram
   text error_message ""
   timestamp_with_time_zone last_attempt ""
 }
-"public.validacion_states" {
+"public.exoneration_states" {
   timestamp_with_time_zone created_at ""
   uuid created_by ""
   timestamp_with_time_zone updated_at ""
   uuid updated_by ""
   bigint id ""
-  text validacion_state_name ""
+  text exoneration_state_name ""
 }
-"public.service_validations" {
+"public.exonerations" {
   timestamp_with_time_zone created_at ""
   uuid created_by ""
   timestamp_with_time_zone updated_at ""
@@ -526,14 +526,14 @@ erDiagram
   bigint grade_document_id FK ""
   bigint certificate_document_id FK ""
 }
-"public.service_validation_progress" {
+"public.exoneration_progress" {
   timestamp_with_time_zone created_at ""
   uuid created_by ""
   timestamp_with_time_zone updated_at ""
   uuid updated_by ""
   bigint id ""
-  bigint service_validation_id FK ""
-  bigint validacion_state_id FK ""
+  bigint exoneration_id FK ""
+  bigint exoneration_state_id FK ""
   uuid author_profile_id FK ""
   bigint document_id FK ""
   text observations ""

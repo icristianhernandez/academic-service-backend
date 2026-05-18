@@ -10,7 +10,7 @@
 | created_by | uuid | auth.uid() | false |  |  |  |
 | updated_at | timestamp with time zone | now() | false |  |  |  |
 | updated_by | uuid | auth.uid() | true |  |  |  |
-| id | bigint |  | false | [public.project_progress](public.project_progress.md) [public.service_validations](public.service_validations.md) [public.service_validation_progress](public.service_validation_progress.md) |  |  |
+| id | bigint |  | false | [public.project_progress](public.project_progress.md) [public.exonerations](public.exonerations.md) [public.exoneration_progress](public.exoneration_progress.md) |  |  |
 | bucket_id | text | 'project'::text | false |  |  |  |
 | storage_path | text |  | false |  |  |  |
 | uploaded_by_profile_id | uuid |  | false |  | [public.profiles](public.profiles.md) |  |
@@ -45,9 +45,9 @@
 erDiagram
 
 "public.project_progress" }o--|| "public.documents" : "FOREIGN KEY (document_id) REFERENCES documents(id)"
-"public.service_validations" }o--|| "public.documents" : "FOREIGN KEY (certificate_document_id) REFERENCES documents(id)"
-"public.service_validations" }o--o| "public.documents" : "FOREIGN KEY (grade_document_id) REFERENCES documents(id)"
-"public.service_validation_progress" }o--o| "public.documents" : "FOREIGN KEY (document_id) REFERENCES documents(id)"
+"public.exonerations" }o--|| "public.documents" : "FOREIGN KEY (certificate_document_id) REFERENCES documents(id)"
+"public.exonerations" }o--o| "public.documents" : "FOREIGN KEY (grade_document_id) REFERENCES documents(id)"
+"public.exoneration_progress" }o--o| "public.documents" : "FOREIGN KEY (document_id) REFERENCES documents(id)"
 "public.documents" }o--|| "public.profiles" : "FOREIGN KEY (uploaded_by_profile_id) REFERENCES profiles(id) ON DELETE CASCADE"
 
 "public.documents" {
@@ -73,7 +73,7 @@ erDiagram
   bigint document_id FK ""
   text observations ""
 }
-"public.service_validations" {
+"public.exonerations" {
   timestamp_with_time_zone created_at ""
   uuid created_by ""
   timestamp_with_time_zone updated_at ""
@@ -85,14 +85,14 @@ erDiagram
   bigint grade_document_id FK ""
   bigint certificate_document_id FK ""
 }
-"public.service_validation_progress" {
+"public.exoneration_progress" {
   timestamp_with_time_zone created_at ""
   uuid created_by ""
   timestamp_with_time_zone updated_at ""
   uuid updated_by ""
   bigint id ""
-  bigint service_validation_id FK ""
-  bigint validacion_state_id FK ""
+  bigint exoneration_id FK ""
+  bigint exoneration_state_id FK ""
   uuid author_profile_id FK ""
   bigint document_id FK ""
   text observations ""

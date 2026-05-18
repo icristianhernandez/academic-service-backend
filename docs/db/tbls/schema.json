@@ -3833,7 +3833,7 @@
       ]
     },
     {
-      "name": "public.validacion_states",
+      "name": "public.exoneration_states",
       "type": "BASE TABLE",
       "columns": [
         {
@@ -3866,64 +3866,64 @@
           "nullable": false
         },
         {
-          "name": "validacion_state_name",
+          "name": "exoneration_state_name",
           "type": "text",
           "nullable": false
         }
       ],
       "indexes": [
         {
-          "name": "validacion_states_pkey",
-          "def": "CREATE UNIQUE INDEX validacion_states_pkey ON public.validacion_states USING btree (id)",
-          "table": "public.validacion_states",
+          "name": "exoneration_states_pkey",
+          "def": "CREATE UNIQUE INDEX exoneration_states_pkey ON public.exoneration_states USING btree (id)",
+          "table": "public.exoneration_states",
           "columns": [
             "id"
           ]
         },
         {
-          "name": "validacion_states_validacion_state_name_key",
-          "def": "CREATE UNIQUE INDEX validacion_states_validacion_state_name_key ON public.validacion_states USING btree (validacion_state_name)",
-          "table": "public.validacion_states",
+          "name": "exoneration_states_exoneration_state_name_key",
+          "def": "CREATE UNIQUE INDEX exoneration_states_exoneration_state_name_key ON public.exoneration_states USING btree (exoneration_state_name)",
+          "table": "public.exoneration_states",
           "columns": [
-            "validacion_state_name"
+            "exoneration_state_name"
           ]
         }
       ],
       "constraints": [
         {
-          "name": "validacion_states_pkey",
+          "name": "exoneration_states_pkey",
           "type": "PRIMARY KEY",
           "def": "PRIMARY KEY (id)",
-          "table": "public.validacion_states",
+          "table": "public.exoneration_states",
           "referenced_table": "",
           "columns": [
             "id"
           ]
         },
         {
-          "name": "validacion_states_validacion_state_name_key",
+          "name": "exoneration_states_exoneration_state_name_key",
           "type": "UNIQUE",
-          "def": "UNIQUE (validacion_state_name)",
-          "table": "public.validacion_states",
+          "def": "UNIQUE (exoneration_state_name)",
+          "table": "public.exoneration_states",
           "referenced_table": "",
           "columns": [
-            "validacion_state_name"
+            "exoneration_state_name"
           ]
         }
       ],
       "triggers": [
         {
-          "name": "audit_validacion_states_changes",
-          "def": "CREATE TRIGGER audit_validacion_states_changes AFTER INSERT OR DELETE OR UPDATE ON public.validacion_states FOR EACH ROW EXECUTE FUNCTION log_changes()"
+          "name": "audit_exoneration_states_changes",
+          "def": "CREATE TRIGGER audit_exoneration_states_changes AFTER INSERT OR DELETE OR UPDATE ON public.exoneration_states FOR EACH ROW EXECUTE FUNCTION log_changes()"
         },
         {
-          "name": "trg_audit_update_validacion_states",
-          "def": "CREATE TRIGGER trg_audit_update_validacion_states BEFORE UPDATE ON public.validacion_states FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
+          "name": "trg_audit_update_exoneration_states",
+          "def": "CREATE TRIGGER trg_audit_update_exoneration_states BEFORE UPDATE ON public.exoneration_states FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
     {
-      "name": "public.service_validations",
+      "name": "public.exonerations",
       "type": "BASE TABLE",
       "columns": [
         {
@@ -3983,17 +3983,17 @@
       ],
       "indexes": [
         {
-          "name": "service_validations_pkey",
-          "def": "CREATE UNIQUE INDEX service_validations_pkey ON public.service_validations USING btree (id)",
-          "table": "public.service_validations",
+          "name": "exonerations_pkey",
+          "def": "CREATE UNIQUE INDEX exonerations_pkey ON public.exonerations USING btree (id)",
+          "table": "public.exonerations",
           "columns": [
             "id"
           ]
         },
         {
-          "name": "service_validations_student_profile_id_unique",
-          "def": "CREATE UNIQUE INDEX service_validations_student_profile_id_unique ON public.service_validations USING btree (student_profile_id)",
-          "table": "public.service_validations",
+          "name": "exonerations_student_profile_id_unique",
+          "def": "CREATE UNIQUE INDEX exonerations_student_profile_id_unique ON public.exonerations USING btree (student_profile_id)",
+          "table": "public.exonerations",
           "columns": [
             "student_profile_id"
           ]
@@ -4001,10 +4001,10 @@
       ],
       "constraints": [
         {
-          "name": "service_validations_coordinator_profile_id_fkey",
+          "name": "exonerations_coordinator_profile_id_fkey",
           "type": "FOREIGN KEY",
           "def": "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)",
-          "table": "public.service_validations",
+          "table": "public.exonerations",
           "referenced_table": "profiles",
           "columns": [
             "coordinator_profile_id"
@@ -4014,10 +4014,10 @@
           ]
         },
         {
-          "name": "service_validations_student_profile_id_fkey",
+          "name": "exonerations_student_profile_id_fkey",
           "type": "FOREIGN KEY",
           "def": "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)",
-          "table": "public.service_validations",
+          "table": "public.exonerations",
           "referenced_table": "profiles",
           "columns": [
             "student_profile_id"
@@ -4027,10 +4027,10 @@
           ]
         },
         {
-          "name": "service_validations_certificate_document_id_fkey",
+          "name": "exonerations_certificate_document_id_fkey",
           "type": "FOREIGN KEY",
           "def": "FOREIGN KEY (certificate_document_id) REFERENCES documents(id)",
-          "table": "public.service_validations",
+          "table": "public.exonerations",
           "referenced_table": "documents",
           "columns": [
             "certificate_document_id"
@@ -4040,10 +4040,10 @@
           ]
         },
         {
-          "name": "service_validations_grade_document_id_fkey",
+          "name": "exonerations_grade_document_id_fkey",
           "type": "FOREIGN KEY",
           "def": "FOREIGN KEY (grade_document_id) REFERENCES documents(id)",
-          "table": "public.service_validations",
+          "table": "public.exonerations",
           "referenced_table": "documents",
           "columns": [
             "grade_document_id"
@@ -4053,20 +4053,20 @@
           ]
         },
         {
-          "name": "service_validations_pkey",
+          "name": "exonerations_pkey",
           "type": "PRIMARY KEY",
           "def": "PRIMARY KEY (id)",
-          "table": "public.service_validations",
+          "table": "public.exonerations",
           "referenced_table": "",
           "columns": [
             "id"
           ]
         },
         {
-          "name": "service_validations_student_profile_id_unique",
+          "name": "exonerations_student_profile_id_unique",
           "type": "UNIQUE",
           "def": "UNIQUE (student_profile_id)",
-          "table": "public.service_validations",
+          "table": "public.exonerations",
           "referenced_table": "",
           "columns": [
             "student_profile_id"
@@ -4075,25 +4075,25 @@
       ],
       "triggers": [
         {
-          "name": "a_set_service_validation_staff_on_insert",
-          "def": "CREATE TRIGGER a_set_service_validation_staff_on_insert BEFORE INSERT ON public.service_validations FOR EACH ROW EXECUTE FUNCTION set_service_validation_staff_on_insert()"
+          "name": "a_set_exoneration_staff_on_insert",
+          "def": "CREATE TRIGGER a_set_exoneration_staff_on_insert BEFORE INSERT ON public.exonerations FOR EACH ROW EXECUTE FUNCTION set_exoneration_staff_on_insert()"
         },
         {
-          "name": "a_validate_service_validation_no_project",
-          "def": "CREATE TRIGGER a_validate_service_validation_no_project BEFORE INSERT OR UPDATE ON public.service_validations FOR EACH ROW EXECUTE FUNCTION validate_service_validation_no_project()"
+          "name": "a_validate_exoneration_no_project",
+          "def": "CREATE TRIGGER a_validate_exoneration_no_project BEFORE INSERT OR UPDATE ON public.exonerations FOR EACH ROW EXECUTE FUNCTION validate_exoneration_no_project()"
         },
         {
-          "name": "audit_service_validations_changes",
-          "def": "CREATE TRIGGER audit_service_validations_changes AFTER INSERT OR DELETE OR UPDATE ON public.service_validations FOR EACH ROW EXECUTE FUNCTION log_changes()"
+          "name": "audit_exonerations_changes",
+          "def": "CREATE TRIGGER audit_exonerations_changes AFTER INSERT OR DELETE OR UPDATE ON public.exonerations FOR EACH ROW EXECUTE FUNCTION log_changes()"
         },
         {
-          "name": "trg_audit_update_service_validations",
-          "def": "CREATE TRIGGER trg_audit_update_service_validations BEFORE UPDATE ON public.service_validations FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
+          "name": "trg_audit_update_exonerations",
+          "def": "CREATE TRIGGER trg_audit_update_exonerations BEFORE UPDATE ON public.exonerations FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     },
     {
-      "name": "public.service_validation_progress",
+      "name": "public.exoneration_progress",
       "type": "BASE TABLE",
       "columns": [
         {
@@ -4126,12 +4126,12 @@
           "nullable": false
         },
         {
-          "name": "service_validation_id",
+          "name": "exoneration_id",
           "type": "bigint",
           "nullable": false
         },
         {
-          "name": "validacion_state_id",
+          "name": "exoneration_state_id",
           "type": "bigint",
           "nullable": false
         },
@@ -4153,19 +4153,19 @@
       ],
       "indexes": [
         {
-          "name": "service_validation_progress_pkey",
-          "def": "CREATE UNIQUE INDEX service_validation_progress_pkey ON public.service_validation_progress USING btree (id)",
-          "table": "public.service_validation_progress",
+          "name": "exoneration_progress_pkey",
+          "def": "CREATE UNIQUE INDEX exoneration_progress_pkey ON public.exoneration_progress USING btree (id)",
+          "table": "public.exoneration_progress",
           "columns": [
             "id"
           ]
         },
         {
-          "name": "idx_service_validation_progress_lookup",
-          "def": "CREATE INDEX idx_service_validation_progress_lookup ON public.service_validation_progress USING btree (service_validation_id, created_at DESC, id DESC)",
-          "table": "public.service_validation_progress",
+          "name": "idx_exoneration_progress_lookup",
+          "def": "CREATE INDEX idx_exoneration_progress_lookup ON public.exoneration_progress USING btree (exoneration_id, created_at DESC, id DESC)",
+          "table": "public.exoneration_progress",
           "columns": [
-            "service_validation_id",
+            "exoneration_id",
             "created_at",
             "id"
           ]
@@ -4173,10 +4173,10 @@
       ],
       "constraints": [
         {
-          "name": "service_validation_progress_author_profile_id_fkey",
+          "name": "exoneration_progress_author_profile_id_fkey",
           "type": "FOREIGN KEY",
           "def": "FOREIGN KEY (author_profile_id) REFERENCES profiles(id)",
-          "table": "public.service_validation_progress",
+          "table": "public.exoneration_progress",
           "referenced_table": "profiles",
           "columns": [
             "author_profile_id"
@@ -4186,10 +4186,10 @@
           ]
         },
         {
-          "name": "service_validation_progress_document_id_fkey",
+          "name": "exoneration_progress_document_id_fkey",
           "type": "FOREIGN KEY",
           "def": "FOREIGN KEY (document_id) REFERENCES documents(id)",
-          "table": "public.service_validation_progress",
+          "table": "public.exoneration_progress",
           "referenced_table": "documents",
           "columns": [
             "document_id"
@@ -4199,36 +4199,36 @@
           ]
         },
         {
-          "name": "service_validation_progress_validacion_state_id_fkey",
+          "name": "exoneration_progress_exoneration_state_id_fkey",
           "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (validacion_state_id) REFERENCES validacion_states(id)",
-          "table": "public.service_validation_progress",
-          "referenced_table": "validacion_states",
+          "def": "FOREIGN KEY (exoneration_state_id) REFERENCES exoneration_states(id)",
+          "table": "public.exoneration_progress",
+          "referenced_table": "exoneration_states",
           "columns": [
-            "validacion_state_id"
+            "exoneration_state_id"
           ],
           "referenced_columns": [
             "id"
           ]
         },
         {
-          "name": "service_validation_progress_service_validation_id_fkey",
+          "name": "exoneration_progress_exoneration_id_fkey",
           "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (service_validation_id) REFERENCES service_validations(id)",
-          "table": "public.service_validation_progress",
-          "referenced_table": "service_validations",
+          "def": "FOREIGN KEY (exoneration_id) REFERENCES exonerations(id)",
+          "table": "public.exoneration_progress",
+          "referenced_table": "exonerations",
           "columns": [
-            "service_validation_id"
+            "exoneration_id"
           ],
           "referenced_columns": [
             "id"
           ]
         },
         {
-          "name": "service_validation_progress_pkey",
+          "name": "exoneration_progress_pkey",
           "type": "PRIMARY KEY",
           "def": "PRIMARY KEY (id)",
-          "table": "public.service_validation_progress",
+          "table": "public.exoneration_progress",
           "referenced_table": "",
           "columns": [
             "id"
@@ -4237,20 +4237,20 @@
       ],
       "triggers": [
         {
-          "name": "a_validate_service_validation_progress_transition",
-          "def": "CREATE TRIGGER a_validate_service_validation_progress_transition BEFORE INSERT ON public.service_validation_progress FOR EACH ROW EXECUTE FUNCTION validate_service_validation_progress_transition()"
+          "name": "a_validate_exoneration_progress_transition",
+          "def": "CREATE TRIGGER a_validate_exoneration_progress_transition BEFORE INSERT ON public.exoneration_progress FOR EACH ROW EXECUTE FUNCTION validate_exoneration_progress_transition()"
         },
         {
-          "name": "audit_service_validation_progress_changes",
-          "def": "CREATE TRIGGER audit_service_validation_progress_changes AFTER INSERT OR DELETE OR UPDATE ON public.service_validation_progress FOR EACH ROW EXECUTE FUNCTION log_changes()"
+          "name": "audit_exoneration_progress_changes",
+          "def": "CREATE TRIGGER audit_exoneration_progress_changes AFTER INSERT OR DELETE OR UPDATE ON public.exoneration_progress FOR EACH ROW EXECUTE FUNCTION log_changes()"
         },
         {
-          "name": "b_enqueue_validation_progress_notification_event",
-          "def": "CREATE TRIGGER b_enqueue_validation_progress_notification_event AFTER INSERT OR UPDATE ON public.service_validation_progress FOR EACH ROW EXECUTE FUNCTION enqueue_validation_progress_notification_event()"
+          "name": "b_enqueue_exoneration_progress_notification_event",
+          "def": "CREATE TRIGGER b_enqueue_exoneration_progress_notification_event AFTER INSERT OR UPDATE ON public.exoneration_progress FOR EACH ROW EXECUTE FUNCTION enqueue_exoneration_progress_notification_event()"
         },
         {
-          "name": "trg_audit_update_service_validation_progress",
-          "def": "CREATE TRIGGER trg_audit_update_service_validation_progress BEFORE UPDATE ON public.service_validation_progress FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
+          "name": "trg_audit_update_exoneration_progress",
+          "def": "CREATE TRIGGER trg_audit_update_exoneration_progress BEFORE UPDATE ON public.exoneration_progress FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
     }
@@ -4855,7 +4855,7 @@
       "def": "FOREIGN KEY (notification_recipient_id) REFERENCES notification_recipients(id)"
     },
     {
-      "table": "public.service_validations",
+      "table": "public.exonerations",
       "columns": [
         "coordinator_profile_id"
       ],
@@ -4868,7 +4868,7 @@
       "def": "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
     },
     {
-      "table": "public.service_validations",
+      "table": "public.exonerations",
       "columns": [
         "student_profile_id"
       ],
@@ -4881,7 +4881,7 @@
       "def": "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
     },
     {
-      "table": "public.service_validations",
+      "table": "public.exonerations",
       "columns": [
         "certificate_document_id"
       ],
@@ -4894,7 +4894,7 @@
       "def": "FOREIGN KEY (certificate_document_id) REFERENCES documents(id)"
     },
     {
-      "table": "public.service_validations",
+      "table": "public.exonerations",
       "columns": [
         "grade_document_id"
       ],
@@ -4907,7 +4907,7 @@
       "def": "FOREIGN KEY (grade_document_id) REFERENCES documents(id)"
     },
     {
-      "table": "public.service_validation_progress",
+      "table": "public.exoneration_progress",
       "columns": [
         "author_profile_id"
       ],
@@ -4920,7 +4920,7 @@
       "def": "FOREIGN KEY (author_profile_id) REFERENCES profiles(id)"
     },
     {
-      "table": "public.service_validation_progress",
+      "table": "public.exoneration_progress",
       "columns": [
         "document_id"
       ],
@@ -4933,30 +4933,30 @@
       "def": "FOREIGN KEY (document_id) REFERENCES documents(id)"
     },
     {
-      "table": "public.service_validation_progress",
+      "table": "public.exoneration_progress",
       "columns": [
-        "validacion_state_id"
+        "exoneration_state_id"
       ],
       "cardinality": "zero_or_more",
-      "parent_table": "public.validacion_states",
+      "parent_table": "public.exoneration_states",
       "parent_columns": [
         "id"
       ],
       "parent_cardinality": "exactly_one",
-      "def": "FOREIGN KEY (validacion_state_id) REFERENCES validacion_states(id)"
+      "def": "FOREIGN KEY (exoneration_state_id) REFERENCES exoneration_states(id)"
     },
     {
-      "table": "public.service_validation_progress",
+      "table": "public.exoneration_progress",
       "columns": [
-        "service_validation_id"
+        "exoneration_id"
       ],
       "cardinality": "zero_or_more",
-      "parent_table": "public.service_validations",
+      "parent_table": "public.exonerations",
       "parent_columns": [
         "id"
       ],
       "parent_cardinality": "exactly_one",
-      "def": "FOREIGN KEY (service_validation_id) REFERENCES service_validations(id)"
+      "def": "FOREIGN KEY (exoneration_id) REFERENCES exonerations(id)"
     }
   ],
   "functions": [
@@ -5291,25 +5291,25 @@
       "type": "FUNCTION"
     },
     {
-      "name": "public.set_service_validation_staff_on_insert",
+      "name": "public.set_exoneration_staff_on_insert",
       "return_type": "trigger",
       "arguments": "",
       "type": "FUNCTION"
     },
     {
-      "name": "public.validate_service_validation_no_project",
+      "name": "public.validate_exoneration_no_project",
       "return_type": "trigger",
       "arguments": "",
       "type": "FUNCTION"
     },
     {
-      "name": "public.validate_service_validation_progress_transition",
+      "name": "public.validate_exoneration_progress_transition",
       "return_type": "trigger",
       "arguments": "",
       "type": "FUNCTION"
     },
     {
-      "name": "public.enqueue_validation_progress_notification_event",
+      "name": "public.enqueue_exoneration_progress_notification_event",
       "return_type": "trigger",
       "arguments": "",
       "type": "FUNCTION"
