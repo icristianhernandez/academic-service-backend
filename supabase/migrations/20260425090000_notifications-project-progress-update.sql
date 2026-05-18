@@ -298,6 +298,7 @@ begin
         'coordinator_profile_id', project_staff.coordinator_profile_id,
         'student_profile_id', project_staff.student_profile_id,
         'project_phase_id', new.project_phase_id,
+        'project_phase_name', (SELECT project_phase_name FROM public.project_phases WHERE id = new.project_phase_id),
         'project_state_id', new.project_state_id
     );
 

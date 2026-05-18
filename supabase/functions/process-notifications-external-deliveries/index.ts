@@ -52,13 +52,16 @@ function resolve_email_template(delivery: claimed_delivery): email_template_cont
   }
 
   if (notification_type === "project-review-to-wait-same-phase") {
+    const phase_name =
+      (delivery.payload?.project_phase_name as string | undefined)?.trim() ||
+      "documento";
     return {
       subject: "Tu entrega fue aprobada",
       title: "Entrega aprobada",
-      message:
-        "Tu entrega fue aprobada por la autoridad correspondiente. Puedes continuar con la siguiente fase del proyecto en la plataforma.",
-      action_label: "Continuar proyecto",
-      action_hint: "Revisa tus entregas para verificar la fase habilitada y los proximos pasos.",
+      message: `Debes consignar el "${phase_name}" en fisico al coordinador.`,
+      action_label: "Consignar documentos",
+      action_hint:
+        "Dirigete a la coordinacion para entregar los documentos fisicos correspondientes.",
       accent_color: "#0a7d33",
     };
   }
