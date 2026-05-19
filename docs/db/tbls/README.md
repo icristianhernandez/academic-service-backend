@@ -100,6 +100,8 @@
 | public.validate_exoneration_no_project | trigger |  | FUNCTION |
 | public.validate_exoneration_progress_transition | trigger |  | FUNCTION |
 | public.enqueue_exoneration_progress_notification_event | trigger |  | FUNCTION |
+| public.find_student_by_national_id | record | p_national_id text | FUNCTION |
+| public.get_student_faculty_member_limits | record | p_profile_id uuid | FUNCTION |
 
 ## Enums
 

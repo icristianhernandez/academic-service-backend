@@ -5302,6 +5302,18 @@
       "return_type": "trigger",
       "arguments": "",
       "type": "FUNCTION"
+    },
+    {
+      "name": "public.find_student_by_national_id",
+      "return_type": "record",
+      "arguments": "p_national_id text",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.get_student_faculty_member_limits",
+      "return_type": "record",
+      "arguments": "p_profile_id uuid",
+      "type": "FUNCTION"
     }
   ],
   "enums": [
