@@ -18,7 +18,8 @@ create table project_phases (
         phase_kind in (
             'preproject',
             'report',
-            'final_report'
+            'final_report',
+            'planning'
         )
     ),
     check (
@@ -58,7 +59,7 @@ create table project_progress (
     project_phase_id bigint not null references project_phases (id),
     project_state_id bigint not null references project_states (id),
     author_profile_id uuid not null references profiles (id),
-    document_id bigint not null references documents (id),
+    document_id bigint references documents (id),
     observations text
 );
 
@@ -251,7 +252,7 @@ end;
 $$;
 
 create trigger b_validate_project_progress_phase_transition
-before insert on project_progress
+before insert or update on project_progress
 for each row
 execute procedure public.validate_project_progress_phase_transition();
 

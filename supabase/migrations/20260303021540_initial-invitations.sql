@@ -8,8 +8,8 @@ create table invitations (
     -- audit logs, but is not a reference. Why audit_logs is not a reference?
     -- mmm
     invited_by_profile_id uuid references profiles (id),
-    faculty_to_be_coordinator bigint references faculties (id),
-    school_to_be_subcoordinator bigint references schools (id),
+    faculties_to_be_coordinator bigint[],
+    schools_to_be_subcoordinator bigint[],
     campus_to_be_rector bigint references campuses (id),
     campus_to_be_vicerector_administrativo bigint references campuses (id),
     campus_to_be_vicerector_academico bigint references campuses (id),

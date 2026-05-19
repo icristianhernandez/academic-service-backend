@@ -35,6 +35,23 @@ function escape_html(value: string): string {
 function resolve_email_template(delivery: claimed_delivery): email_template_content {
   const notification_type = delivery.notification_type_key;
 
+  if (notification_type === "project-subcoordinator-approved-to-coordinator") {
+    const is_student = delivery.recipient_id === delivery.payload?.student_profile_id;
+    if (is_student) {
+      const phase_name =
+        (delivery.payload?.project_phase_name as string | undefined)?.trim() ||
+        "documento";
+      return {
+        subject: "Tu entrega fue aprobada por el subcoordinador",
+        title: "Entrega aprobada por Subcoordinador",
+        message: `Tu entrega de "${phase_name}" fue aprobada por el subcoordinador y ahora está en espera de la aprobación del coordinador general.`,
+        action_label: "Ver estado de entrega",
+        action_hint: "Ingresa a la plataforma para ver el progreso de tu proyecto.",
+        accent_color: "#0a7d33",
+      };
+    }
+  }
+
   if (
     notification_type === "project-phase-advanced-to-review" ||
     notification_type === "project-state-to-review" ||

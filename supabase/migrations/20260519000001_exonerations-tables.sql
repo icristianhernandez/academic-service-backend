@@ -4,7 +4,10 @@ create table exonerations (
     student_profile_id uuid not null references profiles (id),
     coordinator_profile_id uuid not null references profiles (id),
     achievement_title text,
-    grade_document_id bigint references documents (id),
+    project_title text not null,
+    project_location text not null,
+    degree_document_id bigint not null references documents (id),
+    grade_document_id bigint not null references documents (id),
     certificate_document_id bigint not null references documents (id)
 );
 

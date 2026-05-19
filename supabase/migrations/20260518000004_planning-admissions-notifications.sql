@@ -31,17 +31,18 @@ select
     265 as priority,
     jsonb_build_object(
         'has_previous_progress', true,
-        'same_phase', true,
+        'phase_advanced', true,
+        'same_phase', false,
         'state_changed', true,
-        'old_project_state_id', subcoord_state.id,
+        'old_project_state_id', coord_state.id,
         'project_state_id', consigned_state.id
     ) as match_context
 from public.notification_types as notification_type
-cross join public.project_states as subcoord_state
+cross join public.project_states as coord_state
 cross join public.project_states as consigned_state
 where
     notification_type.type_key = 'project-consigned-to-planning-admissions'
-    and subcoord_state.project_state_name = 'Aprobado por Subcoordinador'
+    and coord_state.project_state_name = 'Aprobado por Coordinador'
     and consigned_state.project_state_name
     = 'Consignado a Planeamiento y Admisión'
 on conflict (

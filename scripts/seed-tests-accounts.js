@@ -231,9 +231,9 @@ async function main() {
       };
 
       if (account.role === "coordinator") {
-        invitationPayload.faculty_to_be_coordinator = engineeringFacultyId;
+        invitationPayload.faculties_to_be_coordinator = [engineeringFacultyId];
       } else if (account.role === "subcoordinator") {
-        invitationPayload.school_to_be_subcoordinator = systemsSchoolId;
+        invitationPayload.schools_to_be_subcoordinator = [systemsSchoolId];
       } else if (account.role === "rector") {
         invitationPayload.campus_to_be_rector = campusId;
       } else if (account.role === "vicerector_administrativo") {

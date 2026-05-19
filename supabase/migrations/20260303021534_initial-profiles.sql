@@ -285,11 +285,12 @@ language plpgsql
 security definer set search_path = ''
 as $$
 declare
-    faculty_id bigint;
+    v_faculty_ids bigint[];
     role_name text;
+    v_faculty_id bigint;
 begin
-    select invitation.faculty_to_be_coordinator, role.role_name
-    into faculty_id, role_name
+    select invitation.faculties_to_be_coordinator, role.role_name
+    into v_faculty_ids, role_name
     from public.invitations invitation
     join public.roles role on role.id = invitation.role_to_have_id
     where invitation.email = new.email
@@ -300,21 +301,28 @@ begin
         return new;
     end if;
 
-    if exists (
-        select 1
-        from public.faculties faculty
-        where faculty.id = faculty_id
-          and faculty.coordinator_profile_id is not null
-    ) then
-        raise exception
-            'Signup failed. Faculty % already has a coordinator assigned',
-            faculty_id
-            using errcode = 'P0001';
-    end if;
+    if v_faculty_ids is not null then
+        foreach v_faculty_id in array v_faculty_ids loop
+            if v_faculty_id is not null then
+                if exists (
+                    select 1
+                    from public.faculties faculty
+                    where faculty.id = v_faculty_id
+                      and faculty.coordinator_profile_id is not null
+                      and faculty.coordinator_profile_id <> new.id
+                ) then
+                    raise exception
+                        'Signup failed. Faculty % already has a coordinator assigned',
+                        v_faculty_id
+                        using errcode = 'P0001';
+                end if;
 
-    update public.faculties
-    set coordinator_profile_id = new.id
-    where id = faculty_id;
+                update public.faculties
+                set coordinator_profile_id = new.id
+                where id = v_faculty_id;
+            end if;
+        end loop;
+    end if;
 
     return new;
 end;
@@ -326,11 +334,12 @@ language plpgsql
 security definer set search_path = ''
 as $$
 declare
-    school_id bigint;
+    v_school_ids bigint[];
     role_name text;
+    v_school_id bigint;
 begin
-    select invitation.school_to_be_subcoordinator, role.role_name
-    into school_id, role_name
+    select invitation.schools_to_be_subcoordinator, role.role_name
+    into v_school_ids, role_name
     from public.invitations invitation
     join public.roles role on role.id = invitation.role_to_have_id
     where invitation.email = new.email
@@ -341,21 +350,28 @@ begin
         return new;
     end if;
 
-    if exists (
-        select 1
-        from public.schools school
-        where school.id = school_id
-          and school.subcoordinator_profile_id is not null
-    ) then
-        raise exception
-            'Signup failed. School % already has a subcoordinator assigned',
-            school_id
-            using errcode = 'P0001';
-    end if;
+    if v_school_ids is not null then
+        foreach v_school_id in array v_school_ids loop
+            if v_school_id is not null then
+                if exists (
+                    select 1
+                    from public.schools school
+                    where school.id = v_school_id
+                      and school.subcoordinator_profile_id is not null
+                      and school.subcoordinator_profile_id <> new.id
+                ) then
+                    raise exception
+                        'Signup failed. School % already has a subcoordinator assigned',
+                        v_school_id
+                        using errcode = 'P0001';
+                end if;
 
-    update public.schools
-    set subcoordinator_profile_id = new.id
-    where id = school_id;
+                update public.schools
+                set subcoordinator_profile_id = new.id
+                where id = v_school_id;
+            end if;
+        end loop;
+    end if;
 
     return new;
 end;
