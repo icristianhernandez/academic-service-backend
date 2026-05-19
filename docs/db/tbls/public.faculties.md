@@ -10,7 +10,7 @@
 | created_by | uuid | auth.uid() | false |  |  |  |
 | updated_at | timestamp with time zone | now() | false |  |  |  |
 | updated_by | uuid | auth.uid() | true |  |  |  |
-| id | bigint |  | false | [public.schools](public.schools.md) |  |  |
+| id | bigint |  | false | [public.schools](public.schools.md) [public.invitations](public.invitations.md) |  |  |
 | campus_id | bigint |  | false |  | [public.campuses](public.campuses.md) |  |
 | faculty_name | text |  | false |  |  |  |
 | reports_required_count | smallint | 3 | false |  |  |  |
@@ -53,6 +53,7 @@
 erDiagram
 
 "public.schools" }o--|| "public.faculties" : "FOREIGN KEY (faculty_id) REFERENCES faculties(id)"
+"public.invitations" }o--o| "public.faculties" : "FOREIGN KEY (faculty_to_be_dean) REFERENCES faculties(id)"
 "public.faculties" }o--|| "public.campuses" : "FOREIGN KEY (campus_id) REFERENCES campuses(id)"
 "public.faculties" }o--o| "public.profiles" : "FOREIGN KEY (dean_profile_id) REFERENCES profiles(id)"
 "public.faculties" }o--o| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
@@ -80,6 +81,26 @@ erDiagram
   bigint degree_id FK ""
   bigint faculty_id FK ""
   uuid subcoordinator_profile_id FK ""
+}
+"public.invitations" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  uuid invited_by_profile_id FK ""
+  bigint__ faculties_to_be_coordinator ""
+  bigint__ schools_to_be_subcoordinator ""
+  bigint campus_to_be_rector FK ""
+  bigint campus_to_be_vicerector_administrativo FK ""
+  bigint campus_to_be_vicerector_academico FK ""
+  bigint faculty_to_be_dean FK ""
+  bigint role_to_have_id FK ""
+  text email ""
+  text hashed_token ""
+  integer failed_attemps ""
+  timestamp_with_time_zone token_expires_at ""
+  timestamp_with_time_zone reclaimed_at ""
 }
 "public.campuses" {
   timestamp_with_time_zone created_at ""

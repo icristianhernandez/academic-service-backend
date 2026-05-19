@@ -94,6 +94,7 @@ erDiagram
   bigint campus_to_be_rector FK ""
   bigint campus_to_be_vicerector_administrativo FK ""
   bigint campus_to_be_vicerector_academico FK ""
+  bigint faculty_to_be_dean FK ""
   bigint role_to_have_id FK ""
   text email ""
   text hashed_token ""

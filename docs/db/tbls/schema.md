@@ -16,7 +16,7 @@
 | [public.faculties](public.faculties.md) | 12 |  | BASE TABLE |
 | [public.degrees](public.degrees.md) | 6 |  | BASE TABLE |
 | [public.schools](public.schools.md) | 8 |  | BASE TABLE |
-| [public.invitations](public.invitations.md) | 17 |  | BASE TABLE |
+| [public.invitations](public.invitations.md) | 18 |  | BASE TABLE |
 | [public.students](public.students.md) | 10 |  | BASE TABLE |
 | [public.documents](public.documents.md) | 8 |  | BASE TABLE |
 | [public.institutions](public.institutions.md) | 8 |  | BASE TABLE |
@@ -78,6 +78,7 @@
 | public.assign_rector_to_campus_on_signup | trigger |  | FUNCTION |
 | public.assign_vicerector_administrativo_to_campus_on_signup | trigger |  | FUNCTION |
 | public.assign_vicerector_academico_to_campus_on_signup | trigger |  | FUNCTION |
+| public.assign_faculty_to_dean_on_signup | trigger |  | FUNCTION |
 | public.deactivate_invitation_on_signup | trigger |  | FUNCTION |
 | public.get_invitation_rol | text | p_email text, p_token text | FUNCTION |
 | public.set_invited_by_profile_id | trigger |  | FUNCTION |

@@ -16,7 +16,7 @@
 | [public.faculties](public.faculties.md) | 12 |  | BASE TABLE |
 | [public.degrees](public.degrees.md) | 6 |  | BASE TABLE |
 | [public.schools](public.schools.md) | 8 |  | BASE TABLE |
-| [public.invitations](public.invitations.md) | 17 |  | BASE TABLE |
+| [public.invitations](public.invitations.md) | 18 |  | BASE TABLE |
 | [public.students](public.students.md) | 10 |  | BASE TABLE |
 | [public.documents](public.documents.md) | 8 |  | BASE TABLE |
 | [public.institutions](public.institutions.md) | 8 |  | BASE TABLE |
@@ -78,6 +78,7 @@
 | public.assign_rector_to_campus_on_signup | trigger |  | FUNCTION |
 | public.assign_vicerector_administrativo_to_campus_on_signup | trigger |  | FUNCTION |
 | public.assign_vicerector_academico_to_campus_on_signup | trigger |  | FUNCTION |
+| public.assign_faculty_to_dean_on_signup | trigger |  | FUNCTION |
 | public.deactivate_invitation_on_signup | trigger |  | FUNCTION |
 | public.get_invitation_rol | text | p_email text, p_token text | FUNCTION |
 | public.set_invited_by_profile_id | trigger |  | FUNCTION |
@@ -152,6 +153,7 @@ erDiagram
 "public.invitations" }o--o| "public.campuses" : "FOREIGN KEY (campus_to_be_rector) REFERENCES campuses(id)"
 "public.invitations" }o--o| "public.campuses" : "FOREIGN KEY (campus_to_be_vicerector_academico) REFERENCES campuses(id)"
 "public.invitations" }o--o| "public.campuses" : "FOREIGN KEY (campus_to_be_vicerector_administrativo) REFERENCES campuses(id)"
+"public.invitations" }o--o| "public.faculties" : "FOREIGN KEY (faculty_to_be_dean) REFERENCES faculties(id)"
 "public.students" }o--|| "public.profiles" : "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
 "public.students" }o--|| "public.schools" : "FOREIGN KEY (school_id) REFERENCES schools(id)"
 "public.documents" }o--|| "public.profiles" : "FOREIGN KEY (uploaded_by_profile_id) REFERENCES profiles(id) ON DELETE CASCADE"
@@ -322,6 +324,7 @@ erDiagram
   bigint campus_to_be_rector FK ""
   bigint campus_to_be_vicerector_administrativo FK ""
   bigint campus_to_be_vicerector_academico FK ""
+  bigint faculty_to_be_dean FK ""
   bigint role_to_have_id FK ""
   text email ""
   text hashed_token ""

@@ -17,6 +17,7 @@
 | campus_to_be_rector | bigint |  | true |  | [public.campuses](public.campuses.md) |  |
 | campus_to_be_vicerector_administrativo | bigint |  | true |  | [public.campuses](public.campuses.md) |  |
 | campus_to_be_vicerector_academico | bigint |  | true |  | [public.campuses](public.campuses.md) |  |
+| faculty_to_be_dean | bigint |  | true |  | [public.faculties](public.faculties.md) |  |
 | role_to_have_id | bigint |  | true |  | [public.roles](public.roles.md) |  |
 | email | text |  | false |  |  |  |
 | hashed_token | text |  | false |  |  |  |
@@ -33,6 +34,7 @@
 | invitations_campus_to_be_rector_fkey | FOREIGN KEY | FOREIGN KEY (campus_to_be_rector) REFERENCES campuses(id) |
 | invitations_campus_to_be_vicerector_academico_fkey | FOREIGN KEY | FOREIGN KEY (campus_to_be_vicerector_academico) REFERENCES campuses(id) |
 | invitations_campus_to_be_vicerector_administrativo_fkey | FOREIGN KEY | FOREIGN KEY (campus_to_be_vicerector_administrativo) REFERENCES campuses(id) |
+| invitations_faculty_to_be_dean_fkey | FOREIGN KEY | FOREIGN KEY (faculty_to_be_dean) REFERENCES faculties(id) |
 | invitations_pkey | PRIMARY KEY | PRIMARY KEY (id) |
 | invitations_email_key | UNIQUE | UNIQUE (email) |
 
@@ -61,6 +63,7 @@ erDiagram
 "public.invitations" }o--o| "public.campuses" : "FOREIGN KEY (campus_to_be_rector) REFERENCES campuses(id)"
 "public.invitations" }o--o| "public.campuses" : "FOREIGN KEY (campus_to_be_vicerector_administrativo) REFERENCES campuses(id)"
 "public.invitations" }o--o| "public.campuses" : "FOREIGN KEY (campus_to_be_vicerector_academico) REFERENCES campuses(id)"
+"public.invitations" }o--o| "public.faculties" : "FOREIGN KEY (faculty_to_be_dean) REFERENCES faculties(id)"
 "public.invitations" }o--o| "public.roles" : "FOREIGN KEY (role_to_have_id) REFERENCES roles(id)"
 
 "public.invitations" {
@@ -75,6 +78,7 @@ erDiagram
   bigint campus_to_be_rector FK ""
   bigint campus_to_be_vicerector_administrativo FK ""
   bigint campus_to_be_vicerector_academico FK ""
+  bigint faculty_to_be_dean FK ""
   bigint role_to_have_id FK ""
   text email ""
   text hashed_token ""
@@ -111,6 +115,20 @@ erDiagram
   uuid rector_profile_id FK ""
   uuid vicerector_administrativo_profile_id FK ""
   uuid vicerector_academico_profile_id FK ""
+}
+"public.faculties" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  bigint campus_id FK ""
+  text faculty_name ""
+  smallint reports_required_count ""
+  smallint min_members ""
+  smallint max_members ""
+  uuid dean_profile_id FK ""
+  uuid coordinator_profile_id FK ""
 }
 "public.roles" {
   timestamp_with_time_zone created_at ""

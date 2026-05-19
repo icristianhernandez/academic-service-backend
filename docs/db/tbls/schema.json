@@ -1443,6 +1443,11 @@
           "nullable": true
         },
         {
+          "name": "faculty_to_be_dean",
+          "type": "bigint",
+          "nullable": true
+        },
+        {
           "name": "role_to_have_id",
           "type": "bigint",
           "nullable": true
@@ -1554,6 +1559,19 @@
           "referenced_table": "campuses",
           "columns": [
             "campus_to_be_vicerector_administrativo"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "invitations_faculty_to_be_dean_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (faculty_to_be_dean) REFERENCES faculties(id)",
+          "table": "public.invitations",
+          "referenced_table": "faculties",
+          "columns": [
+            "faculty_to_be_dean"
           ],
           "referenced_columns": [
             "id"
@@ -4506,6 +4524,19 @@
       "def": "FOREIGN KEY (campus_to_be_vicerector_administrativo) REFERENCES campuses(id)"
     },
     {
+      "table": "public.invitations",
+      "columns": [
+        "faculty_to_be_dean"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.faculties",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (faculty_to_be_dean) REFERENCES faculties(id)"
+    },
+    {
       "table": "public.students",
       "columns": [
         "profile_id"
@@ -5167,6 +5198,12 @@
     },
     {
       "name": "public.assign_vicerector_academico_to_campus_on_signup",
+      "return_type": "trigger",
+      "arguments": "",
+      "type": "FUNCTION"
+    },
+    {
+      "name": "public.assign_faculty_to_dean_on_signup",
       "return_type": "trigger",
       "arguments": "",
       "type": "FUNCTION"
