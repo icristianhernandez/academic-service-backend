@@ -201,6 +201,32 @@ begin
             )
             select
                 queued_event.id,
+                pm.profile_id,
+                worker_profile_id,
+                worker_profile_id
+            from public.notification_recipients_rules as recipient_rule
+            join public.project_progress as pp 
+                on pp.id = queued_event.source_record_id::bigint
+            join public.project_members as pm 
+                on pm.project_id = pp.project_id
+            where recipient_rule.notification_type_id = queued_event.notification_type_id
+              and recipient_rule.rule_target_kind = 'payload'
+              and recipient_rule.recipient_target = 'student_profile_id'
+              and queued_event.source_kind = 'project_progress'
+              and (
+                  queued_event.actor_id is null
+                  or pm.profile_id <> queued_event.actor_id
+              )
+            on conflict (notification_id, recipient_id) do nothing;
+
+            insert into public.notification_recipients (
+                notification_id,
+                recipient_id,
+                created_by,
+                updated_by
+            )
+            select
+                queued_event.id,
                 recipient_profile.id,
                 worker_profile_id,
                 worker_profile_id
