@@ -34,7 +34,7 @@
 | [public.user_inbox](public.user_inbox.md) | 7 |  | BASE TABLE |
 | [public.notifications_external_deliveries](public.notifications_external_deliveries.md) | 12 |  | BASE TABLE |
 | [public.exoneration_states](public.exoneration_states.md) | 6 |  | BASE TABLE |
-| [public.exonerations](public.exonerations.md) | 10 |  | BASE TABLE |
+| [public.exonerations](public.exonerations.md) | 13 |  | BASE TABLE |
 | [public.exoneration_progress](public.exoneration_progress.md) | 10 |  | BASE TABLE |
 
 ## Stored procedures and functions
@@ -150,8 +150,6 @@ erDiagram
 "public.invitations" }o--o| "public.campuses" : "FOREIGN KEY (campus_to_be_rector) REFERENCES campuses(id)"
 "public.invitations" }o--o| "public.campuses" : "FOREIGN KEY (campus_to_be_vicerector_academico) REFERENCES campuses(id)"
 "public.invitations" }o--o| "public.campuses" : "FOREIGN KEY (campus_to_be_vicerector_administrativo) REFERENCES campuses(id)"
-"public.invitations" }o--o| "public.faculties" : "FOREIGN KEY (faculty_to_be_coordinator) REFERENCES faculties(id)"
-"public.invitations" }o--o| "public.schools" : "FOREIGN KEY (school_to_be_subcoordinator) REFERENCES schools(id)"
 "public.students" }o--|| "public.profiles" : "FOREIGN KEY (profile_id) REFERENCES profiles(id)"
 "public.students" }o--|| "public.schools" : "FOREIGN KEY (school_id) REFERENCES schools(id)"
 "public.documents" }o--|| "public.profiles" : "FOREIGN KEY (uploaded_by_profile_id) REFERENCES profiles(id) ON DELETE CASCADE"
@@ -162,7 +160,7 @@ erDiagram
 "public.projects" }o--o| "public.profiles" : "FOREIGN KEY (subcoordinator_profile_id) REFERENCES profiles(id)"
 "public.projects" }o--|| "public.institutions" : "FOREIGN KEY (institution_id) REFERENCES institutions(id)"
 "public.project_progress" }o--|| "public.profiles" : "FOREIGN KEY (author_profile_id) REFERENCES profiles(id)"
-"public.project_progress" }o--|| "public.documents" : "FOREIGN KEY (document_id) REFERENCES documents(id)"
+"public.project_progress" }o--o| "public.documents" : "FOREIGN KEY (document_id) REFERENCES documents(id)"
 "public.project_progress" }o--|| "public.project_phases" : "FOREIGN KEY (project_phase_id) REFERENCES project_phases(id)"
 "public.project_progress" }o--|| "public.project_states" : "FOREIGN KEY (project_state_id) REFERENCES project_states(id)"
 "public.project_progress" }o--|| "public.projects" : "FOREIGN KEY (project_id) REFERENCES projects(id)"
@@ -180,7 +178,8 @@ erDiagram
 "public.exonerations" }o--|| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
 "public.exonerations" |o--|| "public.profiles" : "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
 "public.exonerations" }o--|| "public.documents" : "FOREIGN KEY (certificate_document_id) REFERENCES documents(id)"
-"public.exonerations" }o--o| "public.documents" : "FOREIGN KEY (grade_document_id) REFERENCES documents(id)"
+"public.exonerations" }o--|| "public.documents" : "FOREIGN KEY (degree_document_id) REFERENCES documents(id)"
+"public.exonerations" }o--|| "public.documents" : "FOREIGN KEY (grade_document_id) REFERENCES documents(id)"
 "public.exoneration_progress" }o--|| "public.profiles" : "FOREIGN KEY (author_profile_id) REFERENCES profiles(id)"
 "public.exoneration_progress" }o--o| "public.documents" : "FOREIGN KEY (document_id) REFERENCES documents(id)"
 "public.exoneration_progress" }o--|| "public.exoneration_states" : "FOREIGN KEY (exoneration_state_id) REFERENCES exoneration_states(id)"
@@ -316,8 +315,8 @@ erDiagram
   uuid updated_by ""
   bigint id ""
   uuid invited_by_profile_id FK ""
-  bigint faculty_to_be_coordinator FK ""
-  bigint school_to_be_subcoordinator FK ""
+  bigint__ faculties_to_be_coordinator ""
+  bigint__ schools_to_be_subcoordinator ""
   bigint campus_to_be_rector FK ""
   bigint campus_to_be_vicerector_administrativo FK ""
   bigint campus_to_be_vicerector_academico FK ""
@@ -523,6 +522,9 @@ erDiagram
   uuid student_profile_id FK ""
   uuid coordinator_profile_id FK ""
   text achievement_title ""
+  text project_title ""
+  text project_location ""
+  bigint degree_document_id FK ""
   bigint grade_document_id FK ""
   bigint certificate_document_id FK ""
 }

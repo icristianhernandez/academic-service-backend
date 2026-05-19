@@ -14,7 +14,10 @@
 | student_profile_id | uuid |  | false |  | [public.profiles](public.profiles.md) |  |
 | coordinator_profile_id | uuid |  | false |  | [public.profiles](public.profiles.md) |  |
 | achievement_title | text |  | true |  |  |  |
-| grade_document_id | bigint |  | true |  | [public.documents](public.documents.md) |  |
+| project_title | text |  | false |  |  |  |
+| project_location | text |  | false |  |  |  |
+| degree_document_id | bigint |  | false |  | [public.documents](public.documents.md) |  |
+| grade_document_id | bigint |  | false |  | [public.documents](public.documents.md) |  |
 | certificate_document_id | bigint |  | false |  | [public.documents](public.documents.md) |  |
 
 ## Constraints
@@ -24,6 +27,7 @@
 | exonerations_coordinator_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id) |
 | exonerations_student_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (student_profile_id) REFERENCES profiles(id) |
 | exonerations_certificate_document_id_fkey | FOREIGN KEY | FOREIGN KEY (certificate_document_id) REFERENCES documents(id) |
+| exonerations_degree_document_id_fkey | FOREIGN KEY | FOREIGN KEY (degree_document_id) REFERENCES documents(id) |
 | exonerations_grade_document_id_fkey | FOREIGN KEY | FOREIGN KEY (grade_document_id) REFERENCES documents(id) |
 | exonerations_pkey | PRIMARY KEY | PRIMARY KEY (id) |
 | exonerations_student_profile_id_unique | UNIQUE | UNIQUE (student_profile_id) |
@@ -52,7 +56,8 @@ erDiagram
 "public.exoneration_progress" }o--|| "public.exonerations" : "FOREIGN KEY (exoneration_id) REFERENCES exonerations(id)"
 "public.exonerations" |o--|| "public.profiles" : "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
 "public.exonerations" }o--|| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
-"public.exonerations" }o--o| "public.documents" : "FOREIGN KEY (grade_document_id) REFERENCES documents(id)"
+"public.exonerations" }o--|| "public.documents" : "FOREIGN KEY (degree_document_id) REFERENCES documents(id)"
+"public.exonerations" }o--|| "public.documents" : "FOREIGN KEY (grade_document_id) REFERENCES documents(id)"
 "public.exonerations" }o--|| "public.documents" : "FOREIGN KEY (certificate_document_id) REFERENCES documents(id)"
 
 "public.exonerations" {
@@ -64,6 +69,9 @@ erDiagram
   uuid student_profile_id FK ""
   uuid coordinator_profile_id FK ""
   text achievement_title ""
+  text project_title ""
+  text project_location ""
+  bigint degree_document_id FK ""
   bigint grade_document_id FK ""
   bigint certificate_document_id FK ""
 }
