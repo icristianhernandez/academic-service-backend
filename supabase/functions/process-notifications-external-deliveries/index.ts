@@ -75,7 +75,7 @@ function resolve_email_template(delivery: claimed_delivery): email_template_cont
     return {
       subject: "Tu entrega fue aprobada",
       title: "Entrega aprobada",
-      message: `Debes consignar el "${phase_name}" en fisico al coordinador.`,
+      message: `¡Buenas noticias! Tu entrega de "${phase_name}" ha sido aprobada en el sistema. Recuerda que es obligatorio consignar este documento firmado en físico en la oficina del Coordinador para completar tu expediente académico.`,
       action_label: "Consignar documentos",
       action_hint:
         "Dirigete a la coordinacion para entregar los documentos fisicos correspondientes.",
