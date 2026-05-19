@@ -1418,13 +1418,13 @@
           "nullable": true
         },
         {
-          "name": "faculty_to_be_coordinator",
-          "type": "bigint",
+          "name": "faculties_to_be_coordinator",
+          "type": "bigint[]",
           "nullable": true
         },
         {
-          "name": "school_to_be_subcoordinator",
-          "type": "bigint",
+          "name": "schools_to_be_subcoordinator",
+          "type": "bigint[]",
           "nullable": true
         },
         {
@@ -1554,32 +1554,6 @@
           "referenced_table": "campuses",
           "columns": [
             "campus_to_be_vicerector_administrativo"
-          ],
-          "referenced_columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "invitations_faculty_to_be_coordinator_fkey",
-          "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (faculty_to_be_coordinator) REFERENCES faculties(id)",
-          "table": "public.invitations",
-          "referenced_table": "faculties",
-          "columns": [
-            "faculty_to_be_coordinator"
-          ],
-          "referenced_columns": [
-            "id"
-          ]
-        },
-        {
-          "name": "invitations_school_to_be_subcoordinator_fkey",
-          "type": "FOREIGN KEY",
-          "def": "FOREIGN KEY (school_to_be_subcoordinator) REFERENCES schools(id)",
-          "table": "public.invitations",
-          "referenced_table": "schools",
-          "columns": [
-            "school_to_be_subcoordinator"
           ],
           "referenced_columns": [
             "id"
@@ -2097,7 +2071,7 @@
         {
           "name": "project_phases_phase_kind_check",
           "type": "CHECK",
-          "def": "CHECK ((phase_kind = ANY (ARRAY['preproject'::text, 'report'::text, 'final_report'::text])))",
+          "def": "CHECK ((phase_kind = ANY (ARRAY['preproject'::text, 'report'::text, 'final_report'::text, 'planning'::text])))",
           "table": "public.project_phases",
           "referenced_table": "",
           "columns": [
@@ -2471,7 +2445,7 @@
         {
           "name": "document_id",
           "type": "bigint",
-          "nullable": false
+          "nullable": true
         },
         {
           "name": "observations",
@@ -2587,7 +2561,7 @@
         },
         {
           "name": "b_validate_project_progress_phase_transition",
-          "def": "CREATE TRIGGER b_validate_project_progress_phase_transition BEFORE INSERT ON public.project_progress FOR EACH ROW EXECUTE FUNCTION validate_project_progress_phase_transition()"
+          "def": "CREATE TRIGGER b_validate_project_progress_phase_transition BEFORE INSERT OR UPDATE ON public.project_progress FOR EACH ROW EXECUTE FUNCTION validate_project_progress_phase_transition()"
         },
         {
           "name": "trg_audit_update_project_progress",
@@ -3971,9 +3945,24 @@
           "nullable": true
         },
         {
+          "name": "project_title",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "project_location",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "degree_document_id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
           "name": "grade_document_id",
           "type": "bigint",
-          "nullable": true
+          "nullable": false
         },
         {
           "name": "certificate_document_id",
@@ -4034,6 +4023,19 @@
           "referenced_table": "documents",
           "columns": [
             "certificate_document_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "exonerations_degree_document_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (degree_document_id) REFERENCES documents(id)",
+          "table": "public.exonerations",
+          "referenced_table": "documents",
+          "columns": [
+            "degree_document_id"
           ],
           "referenced_columns": [
             "id"
@@ -4504,32 +4506,6 @@
       "def": "FOREIGN KEY (campus_to_be_vicerector_administrativo) REFERENCES campuses(id)"
     },
     {
-      "table": "public.invitations",
-      "columns": [
-        "faculty_to_be_coordinator"
-      ],
-      "cardinality": "zero_or_more",
-      "parent_table": "public.faculties",
-      "parent_columns": [
-        "id"
-      ],
-      "parent_cardinality": "zero_or_one",
-      "def": "FOREIGN KEY (faculty_to_be_coordinator) REFERENCES faculties(id)"
-    },
-    {
-      "table": "public.invitations",
-      "columns": [
-        "school_to_be_subcoordinator"
-      ],
-      "cardinality": "zero_or_more",
-      "parent_table": "public.schools",
-      "parent_columns": [
-        "id"
-      ],
-      "parent_cardinality": "zero_or_one",
-      "def": "FOREIGN KEY (school_to_be_subcoordinator) REFERENCES schools(id)"
-    },
-    {
       "table": "public.students",
       "columns": [
         "profile_id"
@@ -4669,7 +4645,7 @@
       "parent_columns": [
         "id"
       ],
-      "parent_cardinality": "exactly_one",
+      "parent_cardinality": "zero_or_one",
       "def": "FOREIGN KEY (document_id) REFERENCES documents(id)"
     },
     {
@@ -4896,6 +4872,19 @@
     {
       "table": "public.exonerations",
       "columns": [
+        "degree_document_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.documents",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (degree_document_id) REFERENCES documents(id)"
+    },
+    {
+      "table": "public.exonerations",
+      "columns": [
         "grade_document_id"
       ],
       "cardinality": "zero_or_more",
@@ -4903,7 +4892,7 @@
       "parent_columns": [
         "id"
       ],
-      "parent_cardinality": "zero_or_one",
+      "parent_cardinality": "exactly_one",
       "def": "FOREIGN KEY (grade_document_id) REFERENCES documents(id)"
     },
     {

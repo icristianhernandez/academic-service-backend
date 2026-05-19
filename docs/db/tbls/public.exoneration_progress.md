@@ -74,6 +74,9 @@ erDiagram
   uuid student_profile_id FK ""
   uuid coordinator_profile_id FK ""
   text achievement_title ""
+  text project_title ""
+  text project_location ""
+  bigint degree_document_id FK ""
   bigint grade_document_id FK ""
   bigint certificate_document_id FK ""
 }

@@ -15,7 +15,7 @@
 | project_phase_id | bigint |  | false |  | [public.project_phases](public.project_phases.md) |  |
 | project_state_id | bigint |  | false |  | [public.project_states](public.project_states.md) |  |
 | author_profile_id | uuid |  | false |  | [public.profiles](public.profiles.md) |  |
-| document_id | bigint |  | false |  | [public.documents](public.documents.md) |  |
+| document_id | bigint |  | true |  | [public.documents](public.documents.md) |  |
 | observations | text |  | true |  |  |  |
 
 ## Constraints
@@ -42,7 +42,7 @@
 | ---- | ---------- |
 | audit_project_progress_changes | CREATE TRIGGER audit_project_progress_changes AFTER INSERT OR DELETE OR UPDATE ON public.project_progress FOR EACH ROW EXECUTE FUNCTION log_changes() |
 | b_enqueue_proj_progress_notif | CREATE TRIGGER b_enqueue_proj_progress_notif AFTER INSERT OR UPDATE ON public.project_progress FOR EACH ROW EXECUTE FUNCTION enqueue_project_progress_notification_event() |
-| b_validate_project_progress_phase_transition | CREATE TRIGGER b_validate_project_progress_phase_transition BEFORE INSERT ON public.project_progress FOR EACH ROW EXECUTE FUNCTION validate_project_progress_phase_transition() |
+| b_validate_project_progress_phase_transition | CREATE TRIGGER b_validate_project_progress_phase_transition BEFORE INSERT OR UPDATE ON public.project_progress FOR EACH ROW EXECUTE FUNCTION validate_project_progress_phase_transition() |
 | trg_audit_update_project_progress | CREATE TRIGGER trg_audit_update_project_progress BEFORE UPDATE ON public.project_progress FOR EACH ROW EXECUTE FUNCTION handle_audit_update() |
 
 ## Relations
@@ -54,7 +54,7 @@ erDiagram
 "public.project_progress" }o--|| "public.project_phases" : "FOREIGN KEY (project_phase_id) REFERENCES project_phases(id)"
 "public.project_progress" }o--|| "public.project_states" : "FOREIGN KEY (project_state_id) REFERENCES project_states(id)"
 "public.project_progress" }o--|| "public.profiles" : "FOREIGN KEY (author_profile_id) REFERENCES profiles(id)"
-"public.project_progress" }o--|| "public.documents" : "FOREIGN KEY (document_id) REFERENCES documents(id)"
+"public.project_progress" }o--o| "public.documents" : "FOREIGN KEY (document_id) REFERENCES documents(id)"
 
 "public.project_progress" {
   timestamp_with_time_zone created_at ""
