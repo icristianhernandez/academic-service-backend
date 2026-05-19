@@ -21,7 +21,8 @@ values
 ('sysadmin', 6),
 ('rector', 4),
 ('vicerector_administrativo', 4),
-('vicerector_academico', 4)
+('vicerector_academico', 4),
+('director_general', 6)
 on conflict (role_name) do update
     set permission_level = excluded.permission_level;
 

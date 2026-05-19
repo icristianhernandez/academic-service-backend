@@ -500,6 +500,50 @@ begin
 end;
 $$;
 
+create function public.assign_faculty_to_dean_on_signup()
+returns trigger
+language plpgsql
+security definer set search_path = ''
+as $$
+declare
+    v_faculty_id bigint;
+    v_role_name text;
+begin
+    select invitation.faculty_to_be_dean, role.role_name
+    into v_faculty_id, v_role_name
+    from public.invitations invitation
+    join public.roles role on role.id = invitation.role_to_have_id
+    where invitation.email = new.email
+      and invitation.reclaimed_at is null
+    limit 1;
+
+    if v_role_name is distinct from 'dean' then
+        return new;
+    end if;
+
+    if v_faculty_id is not null then
+        if exists (
+            select 1
+            from public.faculties faculty
+            where faculty.id = v_faculty_id
+              and faculty.dean_profile_id is not null
+              and faculty.dean_profile_id <> new.id
+        ) then
+            raise exception
+                'Signup failed. Faculty % already has a dean assigned',
+                v_faculty_id
+                using errcode = 'P0001';
+        end if;
+
+        update public.faculties
+        set dean_profile_id = new.id
+        where id = v_faculty_id;
+    end if;
+
+    return new;
+end;
+$$;
+
 create function public.deactivate_invitation_on_signup()
 returns trigger
 language plpgsql
@@ -559,6 +603,11 @@ create trigger h_assign_campus_to_vicerector_academico_on_signup
 after insert on auth.users
 for each row
 execute procedure public.assign_vicerector_academico_to_campus_on_signup();
+
+create trigger h2_assign_faculty_to_dean_on_signup
+after insert on auth.users
+for each row
+execute procedure public.assign_faculty_to_dean_on_signup();
 
 create trigger z_deactivate_invitation_on_signup
 after insert on auth.users
