@@ -18,6 +18,9 @@ create table exoneration_progress (
     exoneration_state_id bigint not null references exoneration_states (id),
     author_profile_id uuid not null references profiles (id),
     document_id bigint references documents (id),
+    degree_document_id bigint references documents (id),
+    grade_document_id bigint references documents (id),
+    certificate_document_id bigint references documents (id),
     observations text
 );
 

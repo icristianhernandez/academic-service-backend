@@ -575,7 +575,6 @@ select
 from notification_types as notification_type
 cross join (
     values
-    ('student_profile_id'),
     ('coordinator_profile_id')
 ) as recipient_targets (recipient_target)
 where notification_type.type_key = 'project-phase-advanced-to-review'

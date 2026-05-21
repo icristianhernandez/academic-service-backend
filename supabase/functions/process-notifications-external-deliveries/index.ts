@@ -35,6 +35,72 @@ function escape_html(value: string): string {
 function resolve_email_template(delivery: claimed_delivery): email_template_content {
   const notification_type = delivery.notification_type_key;
 
+  if (notification_type === "exoneration-submitted-for-review") {
+    return {
+      subject: "Tienes un trámite de exoneración pendiente de revisión",
+      title: "Trámite de Exoneración Pendiente",
+      message: "Hola, un estudiante ha enviado una solicitud de exoneración para tu revisión. Por favor, ingresa al sistema para evaluarla y continuar el proceso.",
+      action_label: "Evaluar trámite",
+      action_hint: "Ingresa al panel de administración y revisa las solicitudes de exoneración pendientes.",
+      accent_color: "#003d82",
+    };
+  }
+
+  if (notification_type === "exoneration-coordinator-validated") {
+    return {
+      subject: "Tu trámite de exoneración fue aprobado por el coordinador",
+      title: "Exoneración Validada por Coordinador",
+      message: "Tu solicitud de exoneración fue aprobada y validada por el coordinador de tu facultad. Ahora ha sido enviada a Planeamiento para su aprobación y validación final.",
+      action_label: "Ver estado del trámite",
+      action_hint: "Consulta la plataforma para ver el progreso de tu exoneración.",
+      accent_color: "#0a7d33",
+    };
+  }
+
+  if (notification_type === "exoneration-consigned-to-planning") {
+    const is_student = delivery.recipient_id === delivery.payload?.student_profile_id;
+    if (is_student) {
+      return {
+        subject: "Tu trámite de exoneración fue consignado",
+        title: "Trámite de Exoneración Consignado",
+        message: "Tu trámite de exoneración ha sido consignado a Planeamiento y Admisión para su validación final.",
+        action_label: "Ver estado del trámite",
+        action_hint: "Consulta la plataforma para ver el progreso de tu exoneración.",
+        accent_color: "#003d82",
+      };
+    }
+    return {
+      subject: "Nuevo trámite de exoneración para validación",
+      title: "Exoneración para Validación",
+      message: "Un trámite de exoneración ha sido consignado por el coordinador para tu validación final. Por favor, ingresa al sistema para revisarlo.",
+      action_label: "Validar trámite",
+      action_hint: "Ingresa al sistema y revisa las solicitudes pendientes de Planeamiento.",
+      accent_color: "#003d82",
+    };
+  }
+
+  if (notification_type === "exoneration-planning-approved") {
+    return {
+      subject: "Tu trámite de exoneración ha sido aprobado por Planeamiento",
+      title: "Exoneración Aprobada por Planeamiento",
+      message: "¡Felicidades! Tu trámite de exoneración ha sido formalmente aprobado y validado por la oficina de Planeamiento.",
+      action_label: "Ver Progreso",
+      action_hint: "Ingresa al sistema para ver el progreso del servicio completo.",
+      accent_color: "#0a7d33",
+    };
+  }
+
+  if (notification_type === "exoneration-rejected-for-correction") {
+    return {
+      subject: "Tu trámite de exoneración requiere corrección",
+      title: "Exoneración Rechazada para Corrección",
+      message: "Tu solicitud de exoneración fue rechazada con observaciones. Por favor, ingresa a la plataforma, revisa las observaciones del coordinador, realiza las correcciones indicadas y vuelve a enviar la solicitud.",
+      action_label: "Corregir y reenviar",
+      action_hint: "Consulta las observaciones en la sección de entregas antes de volver a enviar.",
+      accent_color: "#b3261e",
+    };
+  }
+
   if (notification_type === "project-subcoordinator-approved-to-coordinator") {
     const is_student = delivery.recipient_id === delivery.payload?.student_profile_id;
     if (is_student) {
@@ -92,6 +158,20 @@ function resolve_email_template(delivery: claimed_delivery): email_template_cont
       action_label: "Corregir y reenviar",
       action_hint: "Consulta observaciones en la seccion de entregas antes de volver a enviar el documento.",
       accent_color: "#b3261e",
+    };
+  }
+
+  if (notification_type === "project-submitted-to-subcoordinator-review") {
+    const phase_name =
+      (delivery.payload?.project_phase_name as string | undefined)?.trim() ||
+      "documento";
+    return {
+      subject: "Tienes una nueva entrega pendiente de revisión",
+      title: "Entrega Pendiente de Evaluación",
+      message: `Hola, un estudiante ha realizado la entrega de "${phase_name}" para tu revisión. Por favor, ingresa al sistema para evaluarla y continuar el proceso de aprobación.`,
+      action_label: "Evaluar entrega",
+      action_hint: "Dirígete a la cola de documentos y selecciona la entrega para revisarla.",
+      accent_color: "#003d82",
     };
   }
 

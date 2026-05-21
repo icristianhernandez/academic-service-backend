@@ -321,7 +321,19 @@ begin
         );
     end if;
 
-    effective_actor_id := coalesce(auth.uid(), new.author_profile_id);
+    effective_actor_id := auth.uid();
+    if new.exoneration_state_id in (
+        select id from public.exoneration_states
+        where exoneration_state_name in ('Validado por Coordinador', 'Rechazado para corrección', 'Consignado a Planeamiento y Admisión', 'Aprobado por Planeamiento y Admisión')
+    ) then
+        if effective_actor_id is null or effective_actor_id = exoneration_row.student_profile_id then
+            effective_actor_id := exoneration_row.coordinator_profile_id;
+        end if;
+    else
+        if effective_actor_id is null or effective_actor_id = exoneration_row.coordinator_profile_id then
+            effective_actor_id := exoneration_row.student_profile_id;
+        end if;
+    end if;
 
     notification_payload := jsonb_build_object(
         'student_profile_id', exoneration_row.student_profile_id,
