@@ -30,19 +30,13 @@ select
     notification_type.id as notification_type_id,
     265 as priority,
     jsonb_build_object(
-        'has_previous_progress', true,
-        'phase_advanced', true,
-        'same_phase', false,
         'state_changed', true,
-        'old_project_state_id', coord_state.id,
         'project_state_id', consigned_state.id
     ) as match_context
 from public.notification_types as notification_type
-cross join public.project_states as coord_state
 cross join public.project_states as consigned_state
 where
     notification_type.type_key = 'project-consigned-to-planning-admissions'
-    and coord_state.project_state_name = 'Aprobado por Coordinador'
     and consigned_state.project_state_name
     = 'Consignado a Planeamiento y Admisión'
 on conflict (
@@ -100,6 +94,23 @@ select
     notification_type.id,
     'role'::public.notification_rule_target_kind_enum,
     'planning_admissions' as recipient_target
+from public.notification_types as notification_type
+where notification_type.type_key = 'project-consigned-to-planning-admissions'
+on conflict (
+    notification_type_id,
+    rule_target_kind,
+    recipient_target
+) do nothing;
+
+insert into public.notification_recipients_rules (
+    notification_type_id,
+    rule_target_kind,
+    recipient_target
+)
+select
+    notification_type.id,
+    'payload'::public.notification_rule_target_kind_enum,
+    'student_profile_id' as recipient_target
 from public.notification_types as notification_type
 where notification_type.type_key = 'project-consigned-to-planning-admissions'
 on conflict (
