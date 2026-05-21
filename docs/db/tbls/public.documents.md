@@ -48,7 +48,10 @@ erDiagram
 "public.exonerations" }o--|| "public.documents" : "FOREIGN KEY (certificate_document_id) REFERENCES documents(id)"
 "public.exonerations" }o--|| "public.documents" : "FOREIGN KEY (degree_document_id) REFERENCES documents(id)"
 "public.exonerations" }o--|| "public.documents" : "FOREIGN KEY (grade_document_id) REFERENCES documents(id)"
+"public.exoneration_progress" }o--o| "public.documents" : "FOREIGN KEY (certificate_document_id) REFERENCES documents(id)"
+"public.exoneration_progress" }o--o| "public.documents" : "FOREIGN KEY (degree_document_id) REFERENCES documents(id)"
 "public.exoneration_progress" }o--o| "public.documents" : "FOREIGN KEY (document_id) REFERENCES documents(id)"
+"public.exoneration_progress" }o--o| "public.documents" : "FOREIGN KEY (grade_document_id) REFERENCES documents(id)"
 "public.documents" }o--|| "public.profiles" : "FOREIGN KEY (uploaded_by_profile_id) REFERENCES profiles(id) ON DELETE CASCADE"
 
 "public.documents" {
@@ -99,6 +102,9 @@ erDiagram
   bigint exoneration_state_id FK ""
   uuid author_profile_id FK ""
   bigint document_id FK ""
+  bigint degree_document_id FK ""
+  bigint grade_document_id FK ""
+  bigint certificate_document_id FK ""
   text observations ""
 }
 "public.profiles" {

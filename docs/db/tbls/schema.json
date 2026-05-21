@@ -4166,6 +4166,21 @@
           "nullable": true
         },
         {
+          "name": "degree_document_id",
+          "type": "bigint",
+          "nullable": true
+        },
+        {
+          "name": "grade_document_id",
+          "type": "bigint",
+          "nullable": true
+        },
+        {
+          "name": "certificate_document_id",
+          "type": "bigint",
+          "nullable": true
+        },
+        {
           "name": "observations",
           "type": "text",
           "nullable": true
@@ -4206,6 +4221,32 @@
           ]
         },
         {
+          "name": "exoneration_progress_certificate_document_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (certificate_document_id) REFERENCES documents(id)",
+          "table": "public.exoneration_progress",
+          "referenced_table": "documents",
+          "columns": [
+            "certificate_document_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "exoneration_progress_degree_document_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (degree_document_id) REFERENCES documents(id)",
+          "table": "public.exoneration_progress",
+          "referenced_table": "documents",
+          "columns": [
+            "degree_document_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
           "name": "exoneration_progress_document_id_fkey",
           "type": "FOREIGN KEY",
           "def": "FOREIGN KEY (document_id) REFERENCES documents(id)",
@@ -4213,6 +4254,19 @@
           "referenced_table": "documents",
           "columns": [
             "document_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "exoneration_progress_grade_document_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (grade_document_id) REFERENCES documents(id)",
+          "table": "public.exoneration_progress",
+          "referenced_table": "documents",
+          "columns": [
+            "grade_document_id"
           ],
           "referenced_columns": [
             "id"
@@ -4942,6 +4996,32 @@
     {
       "table": "public.exoneration_progress",
       "columns": [
+        "certificate_document_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.documents",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (certificate_document_id) REFERENCES documents(id)"
+    },
+    {
+      "table": "public.exoneration_progress",
+      "columns": [
+        "degree_document_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.documents",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (degree_document_id) REFERENCES documents(id)"
+    },
+    {
+      "table": "public.exoneration_progress",
+      "columns": [
         "document_id"
       ],
       "cardinality": "zero_or_more",
@@ -4951,6 +5031,19 @@
       ],
       "parent_cardinality": "zero_or_one",
       "def": "FOREIGN KEY (document_id) REFERENCES documents(id)"
+    },
+    {
+      "table": "public.exoneration_progress",
+      "columns": [
+        "grade_document_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.documents",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (grade_document_id) REFERENCES documents(id)"
     },
     {
       "table": "public.exoneration_progress",

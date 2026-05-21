@@ -35,7 +35,7 @@
 | [public.notifications_external_deliveries](public.notifications_external_deliveries.md) | 12 |  | BASE TABLE |
 | [public.exoneration_states](public.exoneration_states.md) | 6 |  | BASE TABLE |
 | [public.exonerations](public.exonerations.md) | 13 |  | BASE TABLE |
-| [public.exoneration_progress](public.exoneration_progress.md) | 10 |  | BASE TABLE |
+| [public.exoneration_progress](public.exoneration_progress.md) | 13 |  | BASE TABLE |
 
 ## Functions
 

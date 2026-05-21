@@ -85,6 +85,9 @@ erDiagram
   bigint exoneration_state_id FK ""
   uuid author_profile_id FK ""
   bigint document_id FK ""
+  bigint degree_document_id FK ""
+  bigint grade_document_id FK ""
+  bigint certificate_document_id FK ""
   text observations ""
 }
 "public.profiles" {

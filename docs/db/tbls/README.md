@@ -35,7 +35,7 @@
 | [public.notifications_external_deliveries](public.notifications_external_deliveries.md) | 12 |  | BASE TABLE |
 | [public.exoneration_states](public.exoneration_states.md) | 6 |  | BASE TABLE |
 | [public.exonerations](public.exonerations.md) | 13 |  | BASE TABLE |
-| [public.exoneration_progress](public.exoneration_progress.md) | 10 |  | BASE TABLE |
+| [public.exoneration_progress](public.exoneration_progress.md) | 13 |  | BASE TABLE |
 
 ## Stored procedures and functions
 
@@ -185,7 +185,10 @@ erDiagram
 "public.exonerations" }o--|| "public.documents" : "FOREIGN KEY (degree_document_id) REFERENCES documents(id)"
 "public.exonerations" }o--|| "public.documents" : "FOREIGN KEY (grade_document_id) REFERENCES documents(id)"
 "public.exoneration_progress" }o--|| "public.profiles" : "FOREIGN KEY (author_profile_id) REFERENCES profiles(id)"
+"public.exoneration_progress" }o--o| "public.documents" : "FOREIGN KEY (certificate_document_id) REFERENCES documents(id)"
+"public.exoneration_progress" }o--o| "public.documents" : "FOREIGN KEY (degree_document_id) REFERENCES documents(id)"
 "public.exoneration_progress" }o--o| "public.documents" : "FOREIGN KEY (document_id) REFERENCES documents(id)"
+"public.exoneration_progress" }o--o| "public.documents" : "FOREIGN KEY (grade_document_id) REFERENCES documents(id)"
 "public.exoneration_progress" }o--|| "public.exoneration_states" : "FOREIGN KEY (exoneration_state_id) REFERENCES exoneration_states(id)"
 "public.exoneration_progress" }o--|| "public.exonerations" : "FOREIGN KEY (exoneration_id) REFERENCES exonerations(id)"
 
@@ -543,6 +546,9 @@ erDiagram
   bigint exoneration_state_id FK ""
   uuid author_profile_id FK ""
   bigint document_id FK ""
+  bigint degree_document_id FK ""
+  bigint grade_document_id FK ""
+  bigint certificate_document_id FK ""
   text observations ""
 }
 ```

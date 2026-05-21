@@ -15,6 +15,9 @@
 | exoneration_state_id | bigint |  | false |  | [public.exoneration_states](public.exoneration_states.md) |  |
 | author_profile_id | uuid |  | false |  | [public.profiles](public.profiles.md) |  |
 | document_id | bigint |  | true |  | [public.documents](public.documents.md) |  |
+| degree_document_id | bigint |  | true |  | [public.documents](public.documents.md) |  |
+| grade_document_id | bigint |  | true |  | [public.documents](public.documents.md) |  |
+| certificate_document_id | bigint |  | true |  | [public.documents](public.documents.md) |  |
 | observations | text |  | true |  |  |  |
 
 ## Constraints
@@ -22,7 +25,10 @@
 | Name | Type | Definition |
 | ---- | ---- | ---------- |
 | exoneration_progress_author_profile_id_fkey | FOREIGN KEY | FOREIGN KEY (author_profile_id) REFERENCES profiles(id) |
+| exoneration_progress_certificate_document_id_fkey | FOREIGN KEY | FOREIGN KEY (certificate_document_id) REFERENCES documents(id) |
+| exoneration_progress_degree_document_id_fkey | FOREIGN KEY | FOREIGN KEY (degree_document_id) REFERENCES documents(id) |
 | exoneration_progress_document_id_fkey | FOREIGN KEY | FOREIGN KEY (document_id) REFERENCES documents(id) |
+| exoneration_progress_grade_document_id_fkey | FOREIGN KEY | FOREIGN KEY (grade_document_id) REFERENCES documents(id) |
 | exoneration_progress_exoneration_state_id_fkey | FOREIGN KEY | FOREIGN KEY (exoneration_state_id) REFERENCES exoneration_states(id) |
 | exoneration_progress_exoneration_id_fkey | FOREIGN KEY | FOREIGN KEY (exoneration_id) REFERENCES exonerations(id) |
 | exoneration_progress_pkey | PRIMARY KEY | PRIMARY KEY (id) |
@@ -52,6 +58,9 @@ erDiagram
 "public.exoneration_progress" }o--|| "public.exoneration_states" : "FOREIGN KEY (exoneration_state_id) REFERENCES exoneration_states(id)"
 "public.exoneration_progress" }o--|| "public.profiles" : "FOREIGN KEY (author_profile_id) REFERENCES profiles(id)"
 "public.exoneration_progress" }o--o| "public.documents" : "FOREIGN KEY (document_id) REFERENCES documents(id)"
+"public.exoneration_progress" }o--o| "public.documents" : "FOREIGN KEY (degree_document_id) REFERENCES documents(id)"
+"public.exoneration_progress" }o--o| "public.documents" : "FOREIGN KEY (grade_document_id) REFERENCES documents(id)"
+"public.exoneration_progress" }o--o| "public.documents" : "FOREIGN KEY (certificate_document_id) REFERENCES documents(id)"
 
 "public.exoneration_progress" {
   timestamp_with_time_zone created_at ""
@@ -63,6 +72,9 @@ erDiagram
   bigint exoneration_state_id FK ""
   uuid author_profile_id FK ""
   bigint document_id FK ""
+  bigint degree_document_id FK ""
+  bigint grade_document_id FK ""
+  bigint certificate_document_id FK ""
   text observations ""
 }
 "public.exonerations" {
