@@ -10,7 +10,7 @@
 | created_by | uuid | auth.uid() | false |  |  |  |
 | updated_at | timestamp with time zone | now() | false |  |  |  |
 | updated_by | uuid | auth.uid() | true |  |  |  |
-| id | uuid |  | false | [public.campuses](public.campuses.md) [public.faculties](public.faculties.md) [public.schools](public.schools.md) [public.invitations](public.invitations.md) [public.students](public.students.md) [public.documents](public.documents.md) [public.institutions](public.institutions.md) [public.projects](public.projects.md) [public.project_progress](public.project_progress.md) [public.project_members](public.project_members.md) [public.notifications_events](public.notifications_events.md) [public.notification_recipients](public.notification_recipients.md) [public.exonerations](public.exonerations.md) [public.exoneration_progress](public.exoneration_progress.md) |  |  |
+| id | uuid |  | false | [public.campuses](public.campuses.md) [public.faculties](public.faculties.md) [public.schools](public.schools.md) [public.invitations](public.invitations.md) [public.students](public.students.md) [public.documents](public.documents.md) [public.institutions](public.institutions.md) [public.projects](public.projects.md) [public.project_progress](public.project_progress.md) [public.project_members](public.project_members.md) [public.notifications_events](public.notifications_events.md) [public.notification_recipients](public.notification_recipients.md) [public.exonerations](public.exonerations.md) [public.exoneration_progress](public.exoneration_progress.md) [public.authority_successions](public.authority_successions.md) |  |  |
 | user_names | text |  | false |  |  |  |
 | user_last_names | text |  | false |  |  |  |
 | national_id | text |  | false |  |  |  |
@@ -77,6 +77,8 @@ erDiagram
 "public.exonerations" }o--|| "public.profiles" : "FOREIGN KEY (coordinator_profile_id) REFERENCES profiles(id)"
 "public.exonerations" |o--|| "public.profiles" : "FOREIGN KEY (student_profile_id) REFERENCES profiles(id)"
 "public.exoneration_progress" }o--|| "public.profiles" : "FOREIGN KEY (author_profile_id) REFERENCES profiles(id)"
+"public.authority_successions" }o--|| "public.profiles" : "FOREIGN KEY (performed_by_profile_id) REFERENCES profiles(id)"
+"public.authority_successions" }o--|| "public.profiles" : "FOREIGN KEY (predecessor_profile_id) REFERENCES profiles(id)"
 "public.profiles" }o--o| "public.roles" : "FOREIGN KEY (role_id) REFERENCES roles(id)"
 
 "public.profiles" {
@@ -277,6 +279,22 @@ erDiagram
   bigint grade_document_id FK ""
   bigint certificate_document_id FK ""
   text observations ""
+}
+"public.authority_successions" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  uuid predecessor_profile_id FK ""
+  text successor_email ""
+  text role_name ""
+  text entity_type ""
+  text entity_id ""
+  text entity_name ""
+  text reason ""
+  uuid performed_by_profile_id FK ""
+  timestamp_with_time_zone executed_at ""
 }
 "public.roles" {
   timestamp_with_time_zone created_at ""

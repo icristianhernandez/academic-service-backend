@@ -36,6 +36,7 @@
 | [public.exoneration_states](public.exoneration_states.md) | 6 |  | BASE TABLE |
 | [public.exonerations](public.exonerations.md) | 13 |  | BASE TABLE |
 | [public.exoneration_progress](public.exoneration_progress.md) | 13 |  | BASE TABLE |
+| [public.authority_successions](public.authority_successions.md) | 14 |  | BASE TABLE |
 
 ## Stored procedures and functions
 
@@ -191,6 +192,8 @@ erDiagram
 "public.exoneration_progress" }o--o| "public.documents" : "FOREIGN KEY (grade_document_id) REFERENCES documents(id)"
 "public.exoneration_progress" }o--|| "public.exoneration_states" : "FOREIGN KEY (exoneration_state_id) REFERENCES exoneration_states(id)"
 "public.exoneration_progress" }o--|| "public.exonerations" : "FOREIGN KEY (exoneration_id) REFERENCES exonerations(id)"
+"public.authority_successions" }o--|| "public.profiles" : "FOREIGN KEY (performed_by_profile_id) REFERENCES profiles(id)"
+"public.authority_successions" }o--|| "public.profiles" : "FOREIGN KEY (predecessor_profile_id) REFERENCES profiles(id)"
 
 "public.audit_meta" {
   timestamp_with_time_zone created_at ""
@@ -550,6 +553,22 @@ erDiagram
   bigint grade_document_id FK ""
   bigint certificate_document_id FK ""
   text observations ""
+}
+"public.authority_successions" {
+  timestamp_with_time_zone created_at ""
+  uuid created_by ""
+  timestamp_with_time_zone updated_at ""
+  uuid updated_by ""
+  bigint id ""
+  uuid predecessor_profile_id FK ""
+  text successor_email ""
+  text role_name ""
+  text entity_type ""
+  text entity_id ""
+  text entity_name ""
+  text reason ""
+  uuid performed_by_profile_id FK ""
+  timestamp_with_time_zone executed_at ""
 }
 ```
 

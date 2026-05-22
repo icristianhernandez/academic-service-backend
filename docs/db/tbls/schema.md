@@ -36,6 +36,7 @@
 | [public.exoneration_states](public.exoneration_states.md) | 6 |  | BASE TABLE |
 | [public.exonerations](public.exonerations.md) | 13 |  | BASE TABLE |
 | [public.exoneration_progress](public.exoneration_progress.md) | 13 |  | BASE TABLE |
+| [public.authority_successions](public.authority_successions.md) | 14 |  | BASE TABLE |
 
 ## Functions
 

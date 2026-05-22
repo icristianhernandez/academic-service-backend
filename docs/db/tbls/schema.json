@@ -4433,6 +4433,145 @@
           "def": "CREATE TRIGGER trg_audit_update_exoneration_progress BEFORE UPDATE ON public.exoneration_progress FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
         }
       ]
+    },
+    {
+      "name": "public.authority_successions",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "nullable": false,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "updated_by",
+          "type": "uuid",
+          "nullable": true,
+          "default": "auth.uid()"
+        },
+        {
+          "name": "id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "predecessor_profile_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "successor_email",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "role_name",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "entity_type",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "entity_id",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "entity_name",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "reason",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "performed_by_profile_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "executed_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "authority_successions_pkey",
+          "def": "CREATE UNIQUE INDEX authority_successions_pkey ON public.authority_successions USING btree (id)",
+          "table": "public.authority_successions",
+          "columns": [
+            "id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "authority_successions_performed_by_profile_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (performed_by_profile_id) REFERENCES profiles(id)",
+          "table": "public.authority_successions",
+          "referenced_table": "profiles",
+          "columns": [
+            "performed_by_profile_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "authority_successions_predecessor_profile_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (predecessor_profile_id) REFERENCES profiles(id)",
+          "table": "public.authority_successions",
+          "referenced_table": "profiles",
+          "columns": [
+            "predecessor_profile_id"
+          ],
+          "referenced_columns": [
+            "id"
+          ]
+        },
+        {
+          "name": "authority_successions_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (id)",
+          "table": "public.authority_successions",
+          "referenced_table": "",
+          "columns": [
+            "id"
+          ]
+        }
+      ],
+      "triggers": [
+        {
+          "name": "audit_authority_successions_changes",
+          "def": "CREATE TRIGGER audit_authority_successions_changes AFTER INSERT OR DELETE OR UPDATE ON public.authority_successions FOR EACH ROW EXECUTE FUNCTION log_changes()"
+        },
+        {
+          "name": "trg_audit_update_authority_successions",
+          "def": "CREATE TRIGGER trg_audit_update_authority_successions BEFORE UPDATE ON public.authority_successions FOR EACH ROW EXECUTE FUNCTION handle_audit_update()"
+        }
+      ]
     }
   ],
   "relations": [
@@ -5176,6 +5315,32 @@
       ],
       "parent_cardinality": "exactly_one",
       "def": "FOREIGN KEY (exoneration_id) REFERENCES exonerations(id)"
+    },
+    {
+      "table": "public.authority_successions",
+      "columns": [
+        "performed_by_profile_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.profiles",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (performed_by_profile_id) REFERENCES profiles(id)"
+    },
+    {
+      "table": "public.authority_successions",
+      "columns": [
+        "predecessor_profile_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.profiles",
+      "parent_columns": [
+        "id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (predecessor_profile_id) REFERENCES profiles(id)"
     }
   ],
   "functions": [
