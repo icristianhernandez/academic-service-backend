@@ -191,7 +191,7 @@ function resolve_email_template(delivery: claimed_delivery): email_template_cont
     subject: "Nueva notificacion del sistema",
     title: "Notificacion de proyecto",
     message:
-      "Se registro una actualizacion relacionada con tu proyecto. Consulta la plataforma para ver el detalle.",
+      "Se registro una nueva entrada de proyecto para validar. Consulta la plataforma para ver el detalle.",
     action_label: "Abrir notificaciones",
     action_hint: "Ingresa al sistema y revisa tu bandeja de notificaciones.",
     accent_color: "#003d82",
