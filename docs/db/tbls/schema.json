@@ -91,6 +91,23 @@
           "columns": [
             "id"
           ]
+        },
+        {
+          "name": "idx_audit_logs_table_name_created_at",
+          "def": "CREATE INDEX idx_audit_logs_table_name_created_at ON public.audit_logs USING btree (table_name, created_at DESC)",
+          "table": "public.audit_logs",
+          "columns": [
+            "table_name",
+            "created_at"
+          ]
+        },
+        {
+          "name": "idx_audit_logs_record_id",
+          "def": "CREATE INDEX idx_audit_logs_record_id ON public.audit_logs USING btree (record_id)",
+          "table": "public.audit_logs",
+          "columns": [
+            "record_id"
+          ]
         }
       ],
       "constraints": [
@@ -315,6 +332,39 @@
           "table": "public.profiles",
           "columns": [
             "email"
+          ]
+        },
+        {
+          "name": "idx_profiles_national_id",
+          "def": "CREATE INDEX idx_profiles_national_id ON public.profiles USING btree (national_id)",
+          "table": "public.profiles",
+          "columns": [
+            "national_id"
+          ]
+        },
+        {
+          "name": "idx_profiles_email",
+          "def": "CREATE INDEX idx_profiles_email ON public.profiles USING btree (email)",
+          "table": "public.profiles",
+          "columns": [
+            "email"
+          ]
+        },
+        {
+          "name": "idx_profiles_role_id",
+          "def": "CREATE INDEX idx_profiles_role_id ON public.profiles USING btree (role_id)",
+          "table": "public.profiles",
+          "columns": [
+            "role_id"
+          ]
+        },
+        {
+          "name": "idx_profiles_names_last_names",
+          "def": "CREATE INDEX idx_profiles_names_last_names ON public.profiles USING btree (user_names, user_last_names)",
+          "table": "public.profiles",
+          "columns": [
+            "user_names",
+            "user_last_names"
           ]
         }
       ],
@@ -1684,6 +1734,22 @@
           "columns": [
             "id"
           ]
+        },
+        {
+          "name": "idx_students_profile_id",
+          "def": "CREATE INDEX idx_students_profile_id ON public.students USING btree (profile_id)",
+          "table": "public.students",
+          "columns": [
+            "profile_id"
+          ]
+        },
+        {
+          "name": "idx_students_school_id",
+          "def": "CREATE INDEX idx_students_school_id ON public.students USING btree (school_id)",
+          "table": "public.students",
+          "columns": [
+            "school_id"
+          ]
         }
       ],
       "constraints": [
@@ -2488,6 +2554,30 @@
             "project_id",
             "created_at",
             "id"
+          ]
+        },
+        {
+          "name": "idx_project_progress_project_id",
+          "def": "CREATE INDEX idx_project_progress_project_id ON public.project_progress USING btree (project_id)",
+          "table": "public.project_progress",
+          "columns": [
+            "project_id"
+          ]
+        },
+        {
+          "name": "idx_project_progress_phase_id",
+          "def": "CREATE INDEX idx_project_progress_phase_id ON public.project_progress USING btree (project_phase_id)",
+          "table": "public.project_progress",
+          "columns": [
+            "project_phase_id"
+          ]
+        },
+        {
+          "name": "idx_project_progress_state_id",
+          "def": "CREATE INDEX idx_project_progress_state_id ON public.project_progress USING btree (project_state_id)",
+          "table": "public.project_progress",
+          "columns": [
+            "project_state_id"
           ]
         }
       ],
@@ -4203,6 +4293,22 @@
             "exoneration_id",
             "created_at",
             "id"
+          ]
+        },
+        {
+          "name": "idx_exoneration_progress_exoneration_id",
+          "def": "CREATE INDEX idx_exoneration_progress_exoneration_id ON public.exoneration_progress USING btree (exoneration_id)",
+          "table": "public.exoneration_progress",
+          "columns": [
+            "exoneration_id"
+          ]
+        },
+        {
+          "name": "idx_exoneration_progress_state_id",
+          "def": "CREATE INDEX idx_exoneration_progress_state_id ON public.exoneration_progress USING btree (exoneration_state_id)",
+          "table": "public.exoneration_progress",
+          "columns": [
+            "exoneration_state_id"
           ]
         }
       ],

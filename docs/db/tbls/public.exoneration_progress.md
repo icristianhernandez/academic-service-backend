@@ -39,6 +39,8 @@
 | ---- | ---------- |
 | exoneration_progress_pkey | CREATE UNIQUE INDEX exoneration_progress_pkey ON public.exoneration_progress USING btree (id) |
 | idx_exoneration_progress_lookup | CREATE INDEX idx_exoneration_progress_lookup ON public.exoneration_progress USING btree (exoneration_id, created_at DESC, id DESC) |
+| idx_exoneration_progress_exoneration_id | CREATE INDEX idx_exoneration_progress_exoneration_id ON public.exoneration_progress USING btree (exoneration_id) |
+| idx_exoneration_progress_state_id | CREATE INDEX idx_exoneration_progress_state_id ON public.exoneration_progress USING btree (exoneration_state_id) |
 
 ## Triggers
 

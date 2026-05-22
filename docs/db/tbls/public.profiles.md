@@ -40,6 +40,10 @@
 | profiles_pkey | CREATE UNIQUE INDEX profiles_pkey ON public.profiles USING btree (id) |
 | profiles_national_id_key | CREATE UNIQUE INDEX profiles_national_id_key ON public.profiles USING btree (national_id) |
 | profiles_email_key | CREATE UNIQUE INDEX profiles_email_key ON public.profiles USING btree (email) |
+| idx_profiles_national_id | CREATE INDEX idx_profiles_national_id ON public.profiles USING btree (national_id) |
+| idx_profiles_email | CREATE INDEX idx_profiles_email ON public.profiles USING btree (email) |
+| idx_profiles_role_id | CREATE INDEX idx_profiles_role_id ON public.profiles USING btree (role_id) |
+| idx_profiles_names_last_names | CREATE INDEX idx_profiles_names_last_names ON public.profiles USING btree (user_names, user_last_names) |
 
 ## Triggers
 

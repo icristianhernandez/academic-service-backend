@@ -35,6 +35,9 @@
 | ---- | ---------- |
 | project_progress_pkey | CREATE UNIQUE INDEX project_progress_pkey ON public.project_progress USING btree (id) |
 | idx_project_progress_project_created | CREATE INDEX idx_project_progress_project_created ON public.project_progress USING btree (project_id, created_at DESC, id DESC) |
+| idx_project_progress_project_id | CREATE INDEX idx_project_progress_project_id ON public.project_progress USING btree (project_id) |
+| idx_project_progress_phase_id | CREATE INDEX idx_project_progress_phase_id ON public.project_progress USING btree (project_phase_id) |
+| idx_project_progress_state_id | CREATE INDEX idx_project_progress_state_id ON public.project_progress USING btree (project_state_id) |
 
 ## Triggers
 

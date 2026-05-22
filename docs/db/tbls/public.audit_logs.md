@@ -27,6 +27,8 @@
 | Name | Definition |
 | ---- | ---------- |
 | audit_logs_pkey | CREATE UNIQUE INDEX audit_logs_pkey ON public.audit_logs USING btree (id) |
+| idx_audit_logs_table_name_created_at | CREATE INDEX idx_audit_logs_table_name_created_at ON public.audit_logs USING btree (table_name, created_at DESC) |
+| idx_audit_logs_record_id | CREATE INDEX idx_audit_logs_record_id ON public.audit_logs USING btree (record_id) |
 
 ## Relations
 

@@ -30,6 +30,8 @@
 | Name | Definition |
 | ---- | ---------- |
 | students_pkey | CREATE UNIQUE INDEX students_pkey ON public.students USING btree (id) |
+| idx_students_profile_id | CREATE INDEX idx_students_profile_id ON public.students USING btree (profile_id) |
+| idx_students_school_id | CREATE INDEX idx_students_school_id ON public.students USING btree (school_id) |
 
 ## Triggers
 
