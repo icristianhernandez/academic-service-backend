@@ -28,7 +28,7 @@ select
     'project_progress' as source_kind,
     'update' as operation_kind,
     notification_type.id as notification_type_id,
-    265 as priority,
+    390 as priority,
     jsonb_build_object(
         'state_changed', true,
         'project_state_id', consigned_state.id

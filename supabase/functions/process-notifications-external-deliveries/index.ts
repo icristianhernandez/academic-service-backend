@@ -50,7 +50,7 @@ function resolve_email_template(delivery: claimed_delivery): email_template_cont
     return {
       subject: "Tu trámite de exoneración fue aprobado por el coordinador",
       title: "Exoneración Validada por Coordinador",
-      message: "Tu solicitud de exoneración fue aprobada y validada por el coordinador de tu facultad. Ahora ha sido enviada a Planeamiento para su aprobación y validación final.",
+      message: "Tu solicitud de exoneración fue aprobada y validada por el coordinador de tu facultad. Ahora ha sido enviada a Planeamiento para su aprobación y validación final. Recuerda que debes llevar original y copia de tus documentos a cordinación para completar tu expediente académico.",
       action_label: "Ver estado del trámite",
       action_hint: "Consulta la plataforma para ver el progreso de tu exoneración.",
       accent_color: "#0a7d33",
