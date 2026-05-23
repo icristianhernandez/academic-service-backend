@@ -80,6 +80,12 @@ async function main() {
     .single();
   const campusId = campusData?.id;
 
+  const { data: engSchoolsList } = await supabase
+    .from("schools")
+    .select("id")
+    .eq("faculty_id", engineeringFacultyId);
+  const engSchoolIds = engSchoolsList?.map((s) => s.id) || [];
+
   // 3. Ensure a default institution exists
   const { data: existingInstitution } = await supabase
     .from("institutions")
@@ -232,6 +238,7 @@ async function main() {
 
       if (account.role === "coordinator") {
         invitationPayload.faculties_to_be_coordinator = [engineeringFacultyId];
+        invitationPayload.schools_to_be_coordinator = engSchoolIds;
       } else if (account.role === "subcoordinator") {
         invitationPayload.schools_to_be_subcoordinator = [systemsSchoolId];
       } else if (account.role === "rector") {

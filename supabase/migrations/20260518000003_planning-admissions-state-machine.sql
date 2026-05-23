@@ -13,15 +13,9 @@ declare
     is_valid_transition boolean := false;
 begin
     select
-        faculty.reports_required_count
+        project_row.reports_required_count
     into reports_required_count
     from public.projects as project_row
-    join public.students as student
-        on student.profile_id = project_row.student_profile_id
-    join public.schools as school
-        on school.id = student.school_id
-    join public.faculties as faculty
-        on faculty.id = school.faculty_id
     where project_row.id = new.project_id
     limit 1;
 

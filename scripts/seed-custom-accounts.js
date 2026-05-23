@@ -92,6 +92,18 @@ async function main() {
     .single();
   const lawSchoolId = lawSchoolData?.id;
 
+  const { data: engSchoolsList } = await supabase
+    .from("schools")
+    .select("id")
+    .eq("faculty_id", engFacultyId);
+  const engSchoolIds = engSchoolsList?.map((s) => s.id) || [];
+
+  const { data: lawSchoolsList } = await supabase
+    .from("schools")
+    .select("id")
+    .eq("faculty_id", lawFacultyId);
+  const lawSchoolIds = lawSchoolsList?.map((s) => s.id) || [];
+
   const { data: campusData } = await supabase
     .from("campuses")
     .select("id")
@@ -364,8 +376,10 @@ async function main() {
       if (account.role === "coordinator") {
         if (account.email.includes("eng")) {
           invitationPayload.faculties_to_be_coordinator = [engFacultyId];
+          invitationPayload.schools_to_be_coordinator = engSchoolIds;
         } else {
           invitationPayload.faculties_to_be_coordinator = [lawFacultyId];
+          invitationPayload.schools_to_be_coordinator = lawSchoolIds;
         }
       } else if (account.role === "subcoordinator") {
         invitationPayload.schools_to_be_subcoordinator = [systemsSchoolId, civilSchoolId];
