@@ -187,6 +187,39 @@ function resolve_email_template(delivery: claimed_delivery): email_template_cont
     };
   }
 
+  if (notification_type === "project-consigned-to-planning-admissions") {
+    const is_student = delivery.recipient_id === delivery.payload?.student_profile_id;
+    if (is_student) {
+      return {
+        subject: "Tu proyecto de servicio comunitario fue consignado",
+        title: "Proyecto Consignado a Planeamiento",
+        message: "Tu proyecto de servicio comunitario ha sido consignado a la oficina de Planeamiento y Admisión para su validación final y generación de certificado.",
+        action_label: "Ver estado del proyecto",
+        action_hint: "Consulta la plataforma para ver el progreso de tu proyecto.",
+        accent_color: "#003d82",
+      };
+    }
+    return {
+      subject: "Nuevo proyecto consignado para validación",
+      title: "Proyecto para Validación",
+      message: "Un proyecto de servicio comunitario ha sido consignado por el coordinador para tu validación final. Por favor, ingresa al sistema para revisarlo.",
+      action_label: "Validar proyecto",
+      action_hint: "Ingresa al sistema y revisa los proyectos pendientes en la sección de Planeamiento.",
+      accent_color: "#003d82",
+    };
+  }
+
+  if (notification_type === "project-planning-admissions-approved") {
+    return {
+      subject: "Tu servicio comunitario ha sido aprobado",
+      title: "Servicio Comunitario Aprobado",
+      message: "¡Felicidades! Tu proyecto de servicio comunitario ha sido formalmente aprobado y validado por la oficina de Planeamiento y Admisión.",
+      action_label: "Ver Progreso",
+      action_hint: "Ingresa a la plataforma para ver tu expediente y certificado.",
+      accent_color: "#0a7d33",
+    };
+  }
+
   return {
     subject: "Nueva notificacion del sistema",
     title: "Notificacion de proyecto",
